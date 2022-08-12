@@ -1,0 +1,23 @@
+name: AutoPEP8
+on: pull_request
+jobs:
+  autopep8:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          ref: ${{ github.head_ref }}
+      - name: AutoPep8
+        id: autopep8
+        uses: peter-evans/autopep8@v1
+        with:
+          args: --exit-code --recursive --in-place --aggressive --aggressive .
+      - name: Commit autopep8 changes
+        if: steps.autopep8.outputs.exit-code == 2
+        run: |
+          git config --global user.name 'AutoPEP8'
+          git config --global user.email 'l.krahbichler05@gmail.com'
+          git commit -am "Automated AutoPEP8 fixes"
+          git push
