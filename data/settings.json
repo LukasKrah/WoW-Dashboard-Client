@@ -1,0 +1,20 @@
+{
+  "API": {
+    "URL": "https://us.battle.net/oauth/token",
+    "data": {
+      "grant_type": "client_credentials"
+    },
+    "auth": [
+      "f34246c0c509489e8231d340185a0920",
+      "ZKvfQllQPILTgOzoVrAQabx0DiQTN5DJ"
+    ]
+  },
+  "myAccount": {
+    "region": "eu",
+    "realmSlug": "alleria",
+    "characterName": "Artuhs",
+    "namespace": "profile-eu",
+    "locale": "de_DE"
+  },
+  "friends": []
+}
