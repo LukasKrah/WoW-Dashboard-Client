@@ -19,11 +19,11 @@ import pyglet
 class FontFactor:
     value: float
 
-    def __init__(self, value: float | None = 0) ->  None:
+    def __init__(self, value: float | None = 0) -> None:
         self.value = value
 
     def __mul__(self, other: int) -> int:
-        return int(other*self.value)
+        return int(other * self.value)
 
 
 @dataclass(frozen=True)
@@ -41,7 +41,3 @@ class _DarkTheme:
 pyglet.font.add_file("style/WoW-plexus.ttf")
 pyglet.font.add_file("style/LifeCraft_Font.ttf")
 Theme = _DarkTheme()
-
-
-
-

@@ -30,9 +30,7 @@ class WoWToken(CTkCanvas):
         Thread(target=self.getTokenPrive).start()
 
     def getTokenPrive(self) -> None:
-        self.price.configure(text=str(API.getTokenPrice())[:-4]+" Gold")
+        self.price.configure(text=str(API.getTokenPrice())[:-4] + " Gold")
 
     def grid_widgets(self) -> None:
         self.price.grid()
-
-
