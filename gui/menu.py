@@ -12,7 +12,8 @@ from customtkinter import *
 from tkinter import *
 from PIL import Image, ImageTk
 
-from data import Settings, Theme
+from data import Settings
+from style import Theme
 
 
 ##################################################
@@ -31,7 +32,7 @@ class LeftMenu(CTkCanvas):
         self.configure(bd=0, highlightthickness=0, background=Theme.background2)
 
         for index, window in enumerate(windows):
-            but = CTkButton(self, text=window, text_font=Theme.font,
+            but = CTkButton(self, text=window, text_font=(Theme.wow_font2, Theme.fontfactor*22),
                             command=lambda win=windows[window]: self.change_to_frame(win))
             but.grid(row=index, column=0, sticky="EW")
 
@@ -56,8 +57,8 @@ class TopMenu(CTkCanvas):
         self.can.create_image(0, 0, image=wow, anchor="nw")
         self.can.photo = wow
 
-        self.can.create_text(100, 25, text=f"Willkommen im WoW-Dashboard {Settings['myAccount']['characterName']}",
-                             anchor="w", font=Theme.font)
+        self.can.create_text(100, 25, text=f"Willkommen  im  WoW-Dashboard  {Settings['myAccount']['characterName']}",
+                             anchor="w", font=(Theme.wow_font2, Theme.fontfactor*22))
 
         self.grid_widgets()
 

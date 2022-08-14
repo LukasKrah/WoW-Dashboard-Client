@@ -8,14 +8,14 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
+from dataclasses import dataclass
+import pyglet
 import json
 
 
 ##################################################
 #                     Code                       #
 ##################################################
-from dataclasses import dataclass
-
 
 class _Settings:
     settings: dict[str, str]
@@ -72,6 +72,8 @@ class _Theme:
     background3: str = "#111111"
 
     font: str = "Arial 18"
+    wow_font: str = "WoW-plexus 18"
 
 
+pyglet.font.add_file("style/WoW-plexus.ttf")
 Theme = _Theme()

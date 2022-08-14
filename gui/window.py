@@ -30,6 +30,7 @@ class Window(CTk):
 
         self.title("WoW-Dashboard")
         self.wm_iconbitmap("images/wow_icon.ico")
+        self.minsize(self.winfo_screenwidth()//2, self.winfo_screenheight()//2)
         self.state("zoomed")
         self.option_add("*font", Theme.font)
 

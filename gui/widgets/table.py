@@ -11,6 +11,7 @@ Author: Lukas Krahbichler
 from typing import Callable
 from customtkinter import *
 from tkinter import *
+from PIL import Image, ImageTk
 
 from data import Theme
 
@@ -24,9 +25,14 @@ class Table(CTkCanvas):
     rows: list
     values: dict
 
-    def __init__(self, master, columns: list | None = None, rows: list | None = None, *args, **kwargs) -> None:
+    def __init__(self, master, columns: list | None = None, rows: list | None = None,
+                 rowheader=None, colheader=None, cells=None, *args, **kwargs) -> None:
         super().__init__(master, *args, **kwargs)
         self.configure(bd=0, highlightthickness=0, background=Theme.background3)
+
+        self.cells = cells
+        self.rowheader = rowheader
+        self.colheader = colheader
 
         if rows is None:
             rows = []
@@ -38,36 +44,30 @@ class Table(CTkCanvas):
         self.values = {}
 
     def reload(self):
-        self.columns = list(self.values.keys())
-        self.rows = list({row: 0 for col in self.values for row in self.values[col]}.keys())
+        self.rows = list(self.values.keys())
+        self.columns = list({col: 0 for row in self.values for col in self.values[row]["chars"].keys()})
 
         # Column headers
         for index, col in enumerate(self.columns):
-            lab = CTkLabel(self, text=col, bg_color=Theme.background3)
+            lab = self.colheader(self, text=col, image=None)
             lab.grid(row=0, column=index+1, sticky="NSEW")
-            self.grid_columnconfigure(index+1, weight=1)
-        add = CTkButton(self, text="+")
-        add.grid(row=0, column=len(self.columns)+1, sticky="NSEW")
 
         # Row headers
         for index, row in enumerate(self.rows):
-            lab = CTkLabel(self, text=row, bg_color=Theme.background3)
-            lab.grid(row=index+1, column=0, sticky="NSEW")
-        add = CTkButton(self, text="+")
-        add.grid(row=len(self.rows) + 1, column=0, sticky="NSEW")
+            lab = self.rowheader(self, text=row, image=self.values[row]["image"])
 
-        for index in range(len(self.columns)+2):
+            lab.grid(row=index+1, column=0, sticky="NSEW")
+
+        for index in range(len(self.columns)+1):
             self.grid_columnconfigure(index, weight=1)
 
-        for index in range(len(self.rows)+2):
+        for index in range(len(self.rows)+1):
             self.grid_rowconfigure(index, weight=1)
 
         # Table
-        for colindex, col in enumerate(self.columns):
-            for rowindex, row in enumerate(self.rows):
-                lab = CTkButton(self, text="", highlightthickness=1, highlightbackground="black",
-                                fg_color="grey", hover_color="darkgrey")
-                lab.configure(command=lambda label=lab: self.values[col][row](label))
+        for rowindex, row in enumerate(self.rows):
+            for colindex, col in enumerate(self.columns):
+                lab = self.cells(self, col=col, row=row)
                 lab.grid(row=rowindex+1, column=colindex+1, sticky="NSEW")
 
         # for col in self.values:
@@ -76,6 +76,9 @@ class Table(CTkCanvas):
         #         lab = CTkCanvas(self, highlightthickness=1, highlightbackground="red", bg="grey")
         #         lab.bind("<Button-1>", lambda label=lab, command=cmd: self.click(label, command))
         #         lab.grid(row=self.rows.index(row)+1, column=self.columns.index(col)+1, sticky="NSEW")
+
+    def add(self, col_row_list: list, column: int, row: int) -> None:
+        ...
 
     def click(self, field: CTkLabel, command: Callable) -> None:
         print("Field", field)
