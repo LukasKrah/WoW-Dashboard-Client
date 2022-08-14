@@ -66,7 +66,7 @@ class FancyListbox(tkinter.Listbox):
             self.delete(i)
 
     def select_all(self):
-    
+
         self.selection_set(0, 'end')
 
 

@@ -30,7 +30,9 @@ class Window(CTk):
 
         self.title("WoW-Dashboard")
         self.wm_iconbitmap("images/wow_icon.ico")
-        self.minsize(self.winfo_screenwidth()//2, self.winfo_screenheight()//2)
+        self.minsize(
+            self.winfo_screenwidth() // 2,
+            self.winfo_screenheight() // 2)
         self.state("zoomed")
         self.option_add("*font", Theme.font)
 
@@ -49,7 +51,6 @@ class Window(CTk):
         self.instanceTable.grid(row=1, column=1, sticky="NSEW")
 
         for column, weight in enumerate([5]):
-            self.grid_columnconfigure(column+1, weight=weight)
+            self.grid_columnconfigure(column + 1, weight=weight)
         for row, weight in enumerate([5]):
-            self.grid_rowconfigure(row+1, weight=weight)
-
+            self.grid_rowconfigure(row + 1, weight=weight)

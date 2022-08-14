@@ -29,7 +29,13 @@ class InstanceRowHeader(CTkCanvas):
     text: str
     image: Image
 
-    def __init__(self, master: Table, text: str, image: str, *args: any, **kwargs: any) -> None:
+    def __init__(
+            self,
+            master: Table,
+            text: str,
+            image: str,
+            *args: any,
+            **kwargs: any) -> None:
         super().__init__(master, *args, **kwargs)
         self.width, self.height = 0, 0
         self.text = text
@@ -38,7 +44,10 @@ class InstanceRowHeader(CTkCanvas):
         else:
             self.image = None
 
-        self.configure(bd=5, highlightthickness=0, background=Theme.background3)
+        self.configure(
+            bd=5,
+            highlightthickness=0,
+            background=Theme.background3)
         self.bind("<Configure>", self.__resize)
 
     def _reload(self) -> None:
@@ -47,12 +56,21 @@ class InstanceRowHeader(CTkCanvas):
         # 200,
         if self.image:
             fact = self.width / self.image.size[0]
-            img = ImageTk.PhotoImage(self.image.resize((int(self.width), int(self.image.size[1]*fact))))
-            self.create_image(self.width/2, self.height/2, image=img)
+            img = ImageTk.PhotoImage(
+                self.image.resize(
+                    (int(
+                        self.width), int(
+                        self.image.size[1] * fact))))
+            self.create_image(self.width / 2, self.height / 2, image=img)
             self.photo = img
 
-        self.create_text(self.width/2, self.height/2, text=self.text, anchor="center",
-                         font=Theme.wow_font, fill="white")
+        self.create_text(
+            self.width / 2,
+            self.height / 2,
+            text=self.text,
+            anchor="center",
+            font=Theme.wow_font,
+            fill="white")
 
     def __resize(self, event: Event) -> None:
         self.width, self.height = event.width, event.height
@@ -69,12 +87,19 @@ class InstanceCell(CTkCanvas):
     column: str
     row: str
 
-    def __init__(self, master: Table, col: str, row: str, *args: any, **kwargs: any) -> None:
+    def __init__(
+            self,
+            master: Table,
+            col: str,
+            row: str,
+            *args: any,
+            **kwargs: any) -> None:
         super().__init__(master, *args, **kwargs)
         self.width, self.height = 0, 0
         self.click_x, self.click_y = 0, 0
         self.column, self.row = col, row
-        self.con = ContextMenu(self, [{"label": "Aktivieren", "command": self.toggle}])
+        self.con = ContextMenu(
+            self, [{"label": "Aktivieren", "command": self.toggle}])
 
         self.__state = "disable"
         if self.column in self.master.values[self.row]["chars"]:
@@ -88,7 +113,10 @@ class InstanceCell(CTkCanvas):
                     self.__state = "neutral"
             self._reload()
 
-        self.configure(bd=5, highlightthickness=0, background=Theme.background3)
+        self.configure(
+            bd=5,
+            highlightthickness=0,
+            background=Theme.background3)
         self.bind("<Configure>", self.__resize)
         self.bind("<Button-1>", self.__click)
         self.bind("<Button-3>", self.con.popup)
@@ -132,55 +160,108 @@ class InstanceCell(CTkCanvas):
 
     def _disable(self) -> None:
         self.create_rectangle(0, 0, self.width, self.height, fill="#555555")
-        self.create_text(self.width/2, self.height/2, text="-", font=(Theme.font, Theme.fontfactor*18))
+        self.create_text(
+            self.width / 2,
+            self.height / 2,
+            text="-",
+            font=(
+                Theme.font,
+                Theme.fontfactor * 18))
 
     def _neutral_click(self) -> None:
-        if self.click_x < self.width/2:
+        if self.click_x < self.width / 2:
             self.__state = "done"
             self.master.values[self.row]["chars"][self.column] = {"done": True}
         else:
             self.__state = "cancel"
-            self.master.values[self.row]["chars"][self.column] = {"done": False}
+            self.master.values[self.row]["chars"][self.column] = {
+                "done": False}
         self._reload()
 
     def _neutral(self) -> None:
-        self.create_rectangle(0, 0, self.width/2, self.height, fill="#00ff00")
-        self.create_rectangle(self.width/2, 0, self.width, self.height, fill="#ff0000")
+        self.create_rectangle(
+            0,
+            0,
+            self.width / 2,
+            self.height,
+            fill="#00ff00")
+        self.create_rectangle(
+            self.width / 2,
+            0,
+            self.width,
+            self.height,
+            fill="#ff0000")
 
-        self.create_text(self.width/4, self.height/2, text="✓", anchor="center",
-                         font=(Theme.font, Theme.fontfactor*18))
-        self.create_text(self.width/4*3, self.height/2, text="❌", anchor="center",
-                         font=(Theme.font, Theme.fontfactor*18))
+        self.create_text(
+            self.width / 4,
+            self.height / 2,
+            text="✓",
+            anchor="center",
+            font=(
+                Theme.font,
+                Theme.fontfactor * 18))
+        self.create_text(
+            self.width / 4 * 3,
+            self.height / 2,
+            text="❌",
+            anchor="center",
+            font=(
+                Theme.font,
+                Theme.fontfactor * 18))
 
     def _done_click(self) -> None:
-        if messagebox.askyesno("Zurücksetzen", "Sicher das du dieses Feld zurücksetzen willst?"):
+        if messagebox.askyesno(
+            "Zurücksetzen",
+                "Sicher das du dieses Feld zurücksetzen willst?"):
             self.__state = "neutral"
             self._reload()
 
     def _done(self) -> None:
         self.create_rectangle(0, 0, self.width, self.height, fill="#00ff00")
 
-        self.create_text(self.width/2, self.height/2, text="Erledigt!", anchor="center",
-                         font=(Theme.font, Theme.fontfactor*18))
+        self.create_text(
+            self.width / 2,
+            self.height / 2,
+            text="Erledigt!",
+            anchor="center",
+            font=(
+                Theme.font,
+                Theme.fontfactor * 18))
 
     def _cancel_click(self) -> None:
-        if messagebox.askyesno("Zurücksetzen", "Sicher das du dieses Feld zurücksetzen willst?"):
+        if messagebox.askyesno(
+            "Zurücksetzen",
+                "Sicher das du dieses Feld zurücksetzen willst?"):
             self.__state = "neutral"
             self._reload()
 
     def _cancel(self) -> None:
         self.create_rectangle(0, 0, self.width, self.height, fill="#ff0000")
 
-        self.create_text(self.width / 2, self.height / 2, text="Machs gefällig\ndu KEK!",
-                         anchor="center", font=(Theme.font, Theme.fontfactor*18), justify="center")
+        self.create_text(
+            self.width / 2,
+            self.height / 2,
+            text="Machs gefällig\ndu KEK!",
+            anchor="center",
+            font=(
+                Theme.font,
+                Theme.fontfactor * 18),
+            justify="center")
 
 
 class InstanceTable(CTkCanvas):
     def __init__(self, *args: any, **kwargs: any) -> None:
         super().__init__(*args, **kwargs)
-        self.configure(bd=0, highlightthickness=0, background=Theme.background3)
+        self.configure(
+            bd=0,
+            highlightthickness=0,
+            background=Theme.background3)
 
-        self.table = Table(self, cells=InstanceCell, rowheader=InstanceRowHeader, colheader=InstanceRowHeader)
+        self.table = Table(
+            self,
+            cells=InstanceCell,
+            rowheader=InstanceRowHeader,
+            colheader=InstanceRowHeader)
         self.table.values = InstanceManager.values
         self.table.reload()
         self.navBar = NavBar(self)
@@ -192,6 +273,3 @@ class InstanceTable(CTkCanvas):
         self.navBar.grid(row=1, column=0, sticky="NSEW")
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-
-
-
