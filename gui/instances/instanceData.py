@@ -23,7 +23,11 @@ class _InstanceManager:
     __path: str
 
     def __init__(self) -> None:
-        self.__today = list((date.today() + timedelta(days=5, hours=15)).isocalendar())
+        self.__today = list(
+            (date.today() +
+             timedelta(
+                days=5,
+                hours=15)).isocalendar())
         self.__values = {}
 
     @property
@@ -33,10 +37,19 @@ class _InstanceManager:
     @today.setter
     def today(self, value: str | None) -> None:
         if value == "Diese Woche":
-            self.__today = list((date.today() + timedelta(days=5, hours=15)).isocalendar())
+            self.__today = list(
+                (date.today() +
+                 timedelta(
+                    days=5,
+                    hours=15)).isocalendar())
         else:
-            splitvalue = [int(splitter) for splitter in value.rstrip(".json").split("_")]
-            self.__today = list(date.fromisocalendar(year=splitvalue[1], week=splitvalue[0], day=1).isocalendar())
+            splitvalue = [int(splitter)
+                          for splitter in value.rstrip(".json").split("_")]
+            self.__today = list(
+                date.fromisocalendar(
+                    year=splitvalue[1],
+                    week=splitvalue[0],
+                    day=1).isocalendar())
         self.read()
 
     @property
@@ -60,7 +73,8 @@ class _InstanceManager:
                             splitfile = file.rstrip(".json").split("_")
                             age = int(f"{splitfile[1]}{splitfile[0]}")
                             try:
-                                age_youngest = int(f"{youngest[1]}{youngest[0]}")
+                                age_youngest = int(
+                                    f"{youngest[1]}{youngest[0]}")
                                 if age < age_youngest:
                                     youngest = splitfile
                             except IndexError:

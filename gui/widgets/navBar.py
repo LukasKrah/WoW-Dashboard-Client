@@ -35,11 +35,19 @@ class NavBar(CTkCanvas):
         self.master = master
         self.week_call = week_call
 
-        self.new_ToDo = CTkButton(self, text="Neues ToDo", text_font=(Theme.wow_font2, Theme.fontfactor*18))
-        self.new_char = CTkButton(self, text="Neuer Char", text_font=(Theme.wow_font2, Theme.fontfactor * 18))
+        self.new_ToDo = CTkButton(
+            self, text="Neues ToDo", text_font=(
+                Theme.wow_font2, Theme.fontfactor * 18))
+        self.new_char = CTkButton(
+            self, text="Neuer Char", text_font=(
+                Theme.wow_font2, Theme.fontfactor * 18))
 
         self.weeks = {}
-        today = list((date.today() + timedelta(days=5, hours=15)).isocalendar())
+        today = list(
+            (date.today() +
+             timedelta(
+                days=5,
+                hours=15)).isocalendar())
         thisweek = f"{today[1]}_{today[0]}.json"
         for file in listdir("data/instance_data"):
             if file.endswith(".json"):
@@ -49,7 +57,11 @@ class NavBar(CTkCanvas):
                     self.weeks[file.rstrip(".json")] = file
 
         self.weekvar = StringVar()
-        self.week = CTkOptionMenu(self, values=list(self.weeks.keys()), command=self.week_call)
+        self.week = CTkOptionMenu(
+            self,
+            values=list(
+                self.weeks.keys()),
+            command=self.week_call)
         self.week.set("Diese Woche")
 
         self.grid_widgets()
