@@ -130,3 +130,5 @@ dmypy.json
 
 # Jetbrains Pycharm
 .idea/
+
+data/instance_data/*.json

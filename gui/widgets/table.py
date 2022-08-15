@@ -56,8 +56,12 @@ class Table(CTkCanvas):
 
     def reload(self):
         self.rows = list(self.values.keys())
-        self.columns = list(
-            {col: 0 for row in self.values for col in self.values[row]["chars"].keys()})
+        self.columns = []
+        for instance in self.values:
+            for diff in self.values[instance]["difficulty"]:
+                for char in self.values[instance]["difficulty"][diff]["chars"]:
+                    if char not in self.columns:
+                        self.columns.append(char)
 
         # Column headers
         for index, col in enumerate(self.columns):
@@ -71,17 +75,17 @@ class Table(CTkCanvas):
 
             lab.grid(row=index + 1, column=0, sticky="NSEW")
 
-        for index in range(len(self.columns) + 1):
-            self.grid_columnconfigure(index, weight=1)
-
-        for index in range(len(self.rows) + 1):
-            self.grid_rowconfigure(index, weight=1)
-
         # Table
         for rowindex, row in enumerate(self.rows):
             for colindex, col in enumerate(self.columns):
                 lab = self.cells(self, col=col, row=row)
                 lab.grid(row=rowindex + 1, column=colindex + 1, sticky="NSEW")
+
+        for index in range(len(self.columns) + 1):
+            self.grid_columnconfigure(index, weight=1)
+
+        for index in range(len(self.rows) + 1):
+            self.grid_rowconfigure(index, weight=1)
 
         # for col in self.values:
         #     for row in self.values[col]:
