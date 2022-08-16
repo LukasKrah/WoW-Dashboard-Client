@@ -140,22 +140,26 @@ class InstanceCell(CTkCanvas):
     def _get_index(self, cord_y: int | None = None) -> int:
         if cord_y is None:
             cord_y = self.rclick_y
-        return int(cord_y/self.height*len(self.diffs))
+        return int(cord_y / self.height * len(self.diffs))
 
-    def _get_height(self, index: int | None = None, all_len: int | None = None) -> int:
+    def _get_height(self, index: int | None = None,
+                    all_len: int | None = None) -> int:
         index = self.index if index is None else index
         all_len = len(self.diffs) if all_len is None else all_len
-        return int(self.height*(index/all_len))
+        return int(self.height * (index / all_len))
 
-    def _get_height_top(self, index: int | None = None, all_len: int | None = None) -> int:
+    def _get_height_top(self, index: int | None = None,
+                        all_len: int | None = None) -> int:
         if index is None:
             index = self.index
-        return self._get_height(index=index+1, all_len=all_len)
+        return self._get_height(index=index + 1, all_len=all_len)
 
-    def _get_height_text(self, index: int | None = None, all_len: int | None = None) -> int:
+    def _get_height_text(self, index: int | None = None,
+                         all_len: int | None = None) -> int:
         if all_len is None:
             all_len = len(self.diffs)
-        return self._get_height(index=index, all_len=all_len)+int((self.height/all_len)/2)
+        return self._get_height(index=index, all_len=all_len) + \
+            int((self.height / all_len) / 2)
 
     def _popup(self, event: Event) -> None:
         self.rclick_y = event.y
@@ -177,11 +181,13 @@ class InstanceCell(CTkCanvas):
         for index in indexes:
             if self.__states[index] == "disable":
                 self.__states[index] = "neutral"
-                self.master.values[self.row]["difficulty"][self.diffs[index]]["chars"][self.column] = {"done": None}
+                self.master.values[self.row]["difficulty"][self.diffs[index]
+                                                           ]["chars"][self.column] = {"done": None}
                 self.con[index].change_label(0, "Deaktivieren")
             else:
                 self.__states[index] = "disable"
-                del self.master.values[self.row]["difficulty"][self.diffs[index]]["chars"][self.column]
+                del self.master.values[self.row]["difficulty"][self.diffs[index]
+                                                               ]["chars"][self.column]
                 self.con[index].change_label(0, "Aktivieren")
         self._reload()
         InstanceManager.write()
@@ -212,7 +218,8 @@ class InstanceCell(CTkCanvas):
         self.click_x, self.click_y = event.x, event.y
 
         if self._all_equal() and self.__states[0] not in ["neutral"]:
-            eval(f"self._{self.__states[0]}_click({dumps([index for index in range(len(self.diffs))])})")
+            eval(
+                f"self._{self.__states[0]}_click({dumps([index for index in range(len(self.diffs))])})")
         else:
             index = self._get_index(self.click_y)
             eval(f"self._{self.__states[index]}_click([{index}])")
@@ -224,7 +231,14 @@ class InstanceCell(CTkCanvas):
         ...
 
     def _disable(self, **kwargs) -> None:
-        self.create_rectangle(0, self._get_height(**kwargs), self.width, self._get_height_top(**kwargs), fill="#555555")
+        self.create_rectangle(
+            0,
+            self._get_height(
+                **kwargs),
+            self.width,
+            self._get_height_top(
+                **kwargs),
+            fill="#555555")
         self.create_text(
             self.width / 2,
             self._get_height_text(**kwargs),
@@ -240,18 +254,30 @@ class InstanceCell(CTkCanvas):
                 self.__states[index] = "done"
 
                 print(self.diffs)
-                self.master.values[self.row]["difficulty"][self.diffs[index]]["chars"][self.column] = {"done": True}
+                self.master.values[self.row]["difficulty"][self.diffs[index]
+                                                           ]["chars"][self.column] = {"done": True}
             else:
                 self.__states[index] = "cancel"
-                self.master.values[self.row]["difficulty"][self.diffs[index]]["chars"][self.column] = {"done": False}
+                self.master.values[self.row]["difficulty"][self.diffs[index]
+                                                           ]["chars"][self.column] = {"done": False}
             self._reload()
 
     def _neutral(self, **kwargs) -> None:
         self.create_rectangle(
-            0, self._get_height(**kwargs), self.width / 2, self._get_height_top(**kwargs),
+            0,
+            self._get_height(
+                **kwargs),
+            self.width / 2,
+            self._get_height_top(
+                **kwargs),
             fill="#00ff00")
         self.create_rectangle(
-            self.width / 2, self._get_height(**kwargs), self.width, self._get_height_top(**kwargs),
+            self.width / 2,
+            self._get_height(
+                **kwargs),
+            self.width,
+            self._get_height_top(
+                **kwargs),
             fill="#ff0000")
 
         self.create_text(
@@ -278,11 +304,19 @@ class InstanceCell(CTkCanvas):
                 "Sicher das du dieses Feld zurücksetzen willst?"):
             for index in indexes:
                 self.__states[index] = "neutral"
-                self.master.values[self.row]["difficulty"][self.diffs[index]]["chars"][self.column] = {"done": None}
+                self.master.values[self.row]["difficulty"][self.diffs[index]
+                                                           ]["chars"][self.column] = {"done": None}
             self._reload()
 
     def _done(self, **kwargs) -> None:
-        self.create_rectangle(0, self._get_height(**kwargs), self.width, self._get_height_top(**kwargs), fill="#00ff00")
+        self.create_rectangle(
+            0,
+            self._get_height(
+                **kwargs),
+            self.width,
+            self._get_height_top(
+                **kwargs),
+            fill="#00ff00")
 
         self.create_text(
             self.width / 2,
@@ -301,13 +335,18 @@ class InstanceCell(CTkCanvas):
         h1, h2 = self._get_height(**kwargs), self._get_height_top(**kwargs)
         self.create_rectangle(0, h1, self.width, h2, fill="#ff0000")
         self.create_text(
-            self.width / 2,
-            self._get_height_text(**kwargs),
-            text="Machs gefällig\ndu KEK!" if h2-h1 > Theme.fontfactor * 50 else "KEKW!",
+            self.width /
+            2,
+            self._get_height_text(
+                **kwargs),
+            text="Machs gefällig\ndu KEK!" if h2 -
+            h1 > Theme.fontfactor *
+            50 else "KEKW!",
             anchor="center",
             font=(
                 Theme.font,
-                Theme.fontfactor * 18),
+                Theme.fontfactor *
+                18),
             justify="center")
 
 
