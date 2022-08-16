@@ -43,6 +43,8 @@ class Window(CTk):
         self.leftMenu = LeftMenu(self, {"InstanzenTabelle": self.instanceTable,
                                         "WoW-Marke": self.wowToken})
 
+        self.bind("<F11>", self.toggle_fullscreen)
+
         self.grid_widgets()
 
     def grid_widgets(self) -> None:
@@ -54,3 +56,9 @@ class Window(CTk):
             self.grid_columnconfigure(column + 1, weight=weight)
         for row, weight in enumerate([5]):
             self.grid_rowconfigure(row + 1, weight=weight)
+
+    def toggle_fullscreen(self, _event: Event) -> None:
+        if self.state() == "zoomed":
+            self.state("normal")
+            return
+        self.state("zoomed")

@@ -16,6 +16,8 @@ from tkinter import *
 
 from style import Theme
 
+from .popup import PopUp
+
 ##################################################
 #                     Code                       #
 ##################################################
@@ -24,6 +26,8 @@ from style import Theme
 class NavBar(CTkCanvas):
     weeks: dict[str, str]
     week_call: Callable
+    new_char_popup: PopUp
+    new_ToDo_popup: PopUp
 
     def __init__(self, master, week_call: Callable, *args, **kwargs) -> None:
         super().__init__(master, *args, **kwargs)
@@ -35,8 +39,18 @@ class NavBar(CTkCanvas):
         self.master = master
         self.week_call = week_call
 
-        self.new_ToDo = CTkButton(self, text="Neues ToDo", text_font=(Theme.wow_font2, Theme.fontfactor*18))
-        self.new_char = CTkButton(self, text="Neuer Char", text_font=(Theme.wow_font2, Theme.fontfactor * 18))
+        self.new_char_popup = PopUp(self, "Neuer Char", inputs=[{"type": "InputText", "label": "Name"},
+                                                  {"type": "InputText", "label": "Realm"}],
+                                    confirm_call=self.new_char)
+        self.new_ToDo_popup = PopUp(self, "Neuer Char",
+                                    inputs=[{"type": "InputText", "label": "Name"},
+                                            {"type": "OptionMenu", "label": "Typ", "validValues": ["Daily", "Weekly"]},
+                                            {"type": "ComboBox", "label": "Difficultys", "validValues": ["NHC 10", "NHC 25", "HC 10", "HC 25", "M"]}],
+                                    confirm_call=self.new_char)
+        self.new_ToDo = CTkButton(self, text="Neues ToDo", text_font=(Theme.wow_font2, Theme.fontfactor*18),
+                                  command=self.new_ToDo_popup.open_popup)
+        self.new_char = CTkButton(self, text="Neuer Char", text_font=(Theme.wow_font2, Theme.fontfactor*18),
+                                  command=self.new_char_popup.open_popup)
 
         self.weeks = {}
         today = list((date.today() + timedelta(days=5, hours=15)).isocalendar())
@@ -53,6 +67,12 @@ class NavBar(CTkCanvas):
         self.week.set("Diese Woche")
 
         self.grid_widgets()
+
+    def new_char(self, *args) -> None:
+        print("CHAR", *args)
+
+    def new_ToDo(self, *args) -> None:
+        print("TODO", *args)
 
     def grid_widgets(self) -> None:
         self.new_ToDo.grid(row=0, column=0, sticky="NSEW", padx=(0, 20))
