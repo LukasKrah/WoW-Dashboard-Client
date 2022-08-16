@@ -50,7 +50,14 @@ class PopUp(CTkToplevel):
     buttons: list[CTkButton]
     confirm_call: Callable
 
-    def __init__(self, master, title: str, *args: any, inputs: list[dict], confirm_call: Callable, **kwargs: any) -> None:
+    def __init__(
+            self,
+            master,
+            title: str,
+            *args: any,
+            inputs: list[dict],
+            confirm_call: Callable,
+            **kwargs: any) -> None:
         super().__init__(master, *args, **kwargs)
         self.configure(background=Theme.background1)
 
@@ -68,25 +75,51 @@ class PopUp(CTkToplevel):
                 self.input_elems.append(KEntry(self, _input["label"]))
 
             elif _input["type"] == "OptionMenu":
-                self.input_elems.append(KOptionMenu(self, _input["label"], values=_input["validValues"]))
+                self.input_elems.append(
+                    KOptionMenu(
+                        self,
+                        _input["label"],
+                        values=_input["validValues"]))
 
             elif _input["type"] == "ComboBox":
-                self.input_elems.append(KMenu(self, _input["label"], values=_input["validValues"]))
+                self.input_elems.append(
+                    KMenu(
+                        self,
+                        _input["label"],
+                        values=_input["validValues"]))
 
-        for but, cmd in (["Erstellen", self.confirm], ["Abbrechen", self.close_popup]):
-            self.buttons.append(CTkButton(self, text=but, command=cmd,
-                                          text_font=(Theme.wow_font2, Theme.fontfactor*18)))
+        for but, cmd in (["Erstellen", self.confirm], [
+                         "Abbrechen", self.close_popup]):
+            self.buttons.append(
+                CTkButton(
+                    self,
+                    text=but,
+                    command=cmd,
+                    text_font=(
+                        Theme.wow_font2,
+                        Theme.fontfactor *
+                        18)))
 
         self.grid_widgets()
 
     def grid_widgets(self) -> None:
         for index, input_elem in enumerate(self.input_elems):
-            input_elem.grid(row=index, column=0, columnspan=len(self.buttons), sticky="NSEW")
+            input_elem.grid(
+                row=index, column=0, columnspan=len(
+                    self.buttons), sticky="NSEW")
             self.grid_rowconfigure(index, weight=1)
 
         for index, but in enumerate(self.buttons):
-            but.grid(row=len(self.input_elems), column=index,
-                     padx=(0, 10 if index+1 != len(self.buttons) else 0), sticky="NSEW")
+            but.grid(
+                row=len(
+                    self.input_elems),
+                column=index,
+                padx=(
+                    0,
+                    10 if index +
+                    1 != len(
+                        self.buttons) else 0),
+                sticky="NSEW")
             self.grid_columnconfigure(index, weight=1)
 
     def open_popup(self) -> None:
@@ -115,9 +148,6 @@ ToDo:
 - Difficulty
 
 """
-
-
-
 
 
 """
