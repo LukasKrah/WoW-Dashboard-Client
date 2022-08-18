@@ -12,7 +12,8 @@ from threading import Thread
 from customtkinter import *
 from tkinter import *
 
-from data import Theme, API
+from data import API
+from style import Theme
 
 
 ##################################################

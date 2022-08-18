@@ -11,7 +11,7 @@ Author: Lukas Krahbichler
 from customtkinter import *
 from tkinter import *
 
-from data import Theme
+from style import Theme
 from .menu import TopMenu, LeftMenu
 from .instances import InstanceTable
 from .wowToken import WoWToken
@@ -29,7 +29,7 @@ class Window(CTk):
         super().__init__(*args, **kwargs)
 
         self.title("WoW-Dashboard")
-        self.wm_iconbitmap("images/wow_icon.ico")
+        self.wm_iconbitmap("style/images/wow_icon.ico")
         self.minsize(
             self.winfo_screenwidth() // 2,
             self.winfo_screenheight() // 2)

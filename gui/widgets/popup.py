@@ -61,7 +61,7 @@ class PopUp(CTkToplevel):
         self.input_elems = []
         self.buttons = []
 
-        self.wm_iconbitmap("images/wow_icon.ico")
+        self.wm_iconbitmap("style/images/wow_icon.ico")
 
         for _input in self.inputs:
             if _input["type"] == "InputText":

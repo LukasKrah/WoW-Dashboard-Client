@@ -7,7 +7,6 @@ Author: Lukas Krahbichler
 ##################################################
 #                    Imports                     #
 ##################################################
-from dataclasses import dataclass
 
 from customtkinter import *
 from tkinter import messagebox
@@ -16,9 +15,10 @@ from PIL import Image, ImageTk
 from json import dumps
 
 from gui.widgets import Table, NavBar, ContextMenu
-from style import Theme
+from style import Theme, ImageManager, KImage
 
-from .instanceData import InstanceManager
+from data.settings import InstanceManager
+from data import Settings
 
 ##################################################
 #                 Menu classes                   #
@@ -29,7 +29,7 @@ class InstanceRowHeader(CTkCanvas):
     width: int
     height: int
     text: str
-    image: Image
+    image: KImage | None
 
     def __init__(
             self,
@@ -42,7 +42,7 @@ class InstanceRowHeader(CTkCanvas):
         self.width, self.height = 0, 0
         self.text = text
         if image:
-            self.image = Image.open(image)
+            self.image = ImageManager.get_image(image)
         else:
             self.image = None
 
@@ -57,14 +57,9 @@ class InstanceRowHeader(CTkCanvas):
         # 100, 100
         # 200,
         if self.image:
-            fact = self.width / self.image.size[0]
-            img = ImageTk.PhotoImage(
-                self.image.resize(
-                    (int(
-                        self.width), int(
-                        self.image.size[1] * fact))))
-            self.create_image(self.width / 2, self.height / 2, image=img)
-            self.photo = img
+            self.image.resize(self.width, self.height, "fitx")
+            self.create_image(self.width / 2, self.height / 2, image=self.image)
+            self.photo = self.image
 
         self.create_text(
             self.width / 2,
@@ -365,12 +360,31 @@ class InstanceTable(CTkCanvas):
             colheader=InstanceRowHeader)
         self.table.values = InstanceManager.values
         self.table.reload()
-        self.navBar = NavBar(self, self.set_week)
+        self.navBar = NavBar(self, self.set_week,
+                             new_char_callback=self.add_char,
+                             new_todo_callback=self.add_todo)
 
         self.grid_widgets()
 
+    def add_char(self, name: str, realm: str) -> None:
+        Settings["chars"].append({"characterName": name, "realmSlug": realm})
+        Settings.write()
+        self.table.reload()
+
+    def add_todo(self, name: str, typ: str, diff: str) -> None:
+        if name not in self.table.values:
+            self.table.values[name] = {
+                "type": typ,
+                "image": ImageManager.get_image(name),
+                "difficulty": {
+                    dif: {"chars": {}} for dif in diff.split(", ")
+                }
+            }
+        self.table.reload()
+
     def set_week(self, week: str) -> None:
         InstanceManager.today = week
+        Settings.today = week
         self.table.values = InstanceManager.values
         self.table.reload()
 

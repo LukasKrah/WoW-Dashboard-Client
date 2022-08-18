@@ -13,7 +13,8 @@ from customtkinter import *
 from tkinter import *
 from PIL import Image, ImageTk
 
-from data import Theme
+from style import Theme
+from data import Settings
 
 
 ##################################################
@@ -56,12 +57,19 @@ class Table(CTkCanvas):
 
     def reload(self):
         self.rows = list(self.values.keys())
-        self.columns = []
+        self.columns = [char["characterName"] for char in Settings["chars"]]
         for instance in self.values:
             for diff in self.values[instance]["difficulty"]:
                 for char in self.values[instance]["difficulty"][diff]["chars"]:
                     if char not in self.columns:
                         self.columns.append(char)
+
+        # Delete old elems
+        for widget in self.grid_slaves():
+            self.grid_columnconfigure(widget.grid_info()["column"], weight=0)
+            self.grid_rowconfigure(widget.grid_info()["row"], weight=0)
+            widget.grid_forget()
+            del widget
 
         # Column headers
         for index, col in enumerate(self.columns):

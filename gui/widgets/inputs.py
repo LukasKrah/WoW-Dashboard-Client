@@ -8,6 +8,7 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
+from customtkinter.widgets.dropdown_menu import DropdownMenu
 from customtkinter import *
 from tkinter import *
 
@@ -84,10 +85,10 @@ class KOptionMenu(CTkCanvas):
 
 class KMenu(CTkCanvas):
     label: str
-    menuButton: Menubutton
+    menuButton: CTkOptionMenu
     menu: Menu
     values: list[str]
-    selection: dict
+    selection: dict[str, IntVar]
 
     def __init__(self, master, label: str, values: list[str], *args: any, **kwargs: any) -> None:
         super().__init__(master, *args, **kwargs)
@@ -97,21 +98,31 @@ class KMenu(CTkCanvas):
         self.values = values
 
         self.create_text(10, 10, text=label, font=(Theme.wow_font2, Theme.fontfactor*18), anchor="nw")
-        self.menuButton = Menubutton(self, text=self.label,
-                                     indicatoron=True)
-        self.menu = Menu(self.menuButton, tearoff=False)
-        self.menuButton.configure(menu=self.menu)
+        self.menuButton = CTkOptionMenu(self, values=[self.label], text_font=(Theme.wow_font2, Theme.fontfactor*18))
+        self.menuButton.dropdown_menu.configure(tearoff=False)
 
         self.selection = {}
         for value in self.values:
             self.selection[value] = IntVar(value=0)
-            self.menu.add_checkbutton(label=value, variable=self.selection[value],
-                                      onvalue=1, offvalue=0)
+            self.menuButton.dropdown_menu.add_checkbutton(label=value, variable=self.selection[value],
+                                                          selectcolor="white",
+                                                          onvalue=1, offvalue=0)
+            self.selection[value].trace_add("write", self.set)
 
         self.grid_widgets()
+
+    def set(self, *_args: str) -> None:
+        selection_labels = []
+        for selection in self.selection:
+            if self.selection[selection].get():
+                selection_labels.append(selection)
+
+        self.menuButton.text_label.configure(
+            text=", ".join(selection_labels) if selection_labels != [] else self.label
+        )
 
     def grid_widgets(self) -> None:
         self.menuButton.grid(row=0, column=0, sticky="NSEW", pady=((Theme.fontfactor * 18) + 30, 0))
 
-    def get(self) -> dict:
-        return self.selection
+    def get(self) -> dict | None:
+        return self.menuButton.text_label["text"] if self.menuButton.text_label["text"] != self.label else None

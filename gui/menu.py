@@ -66,7 +66,7 @@ class TopMenu(CTkCanvas):
         super().__init__(*args, **kwargs)
 
         wow = ImageTk.PhotoImage(Image.open(
-            "images/wow_icon.ico").resize((50, 50)))
+            "style/images/wow_icon.ico").resize((50, 50)))
 
         self.can = CTkCanvas(
             self,

@@ -132,3 +132,4 @@ dmypy.json
 .idea/
 
 data/instance_data/*.json
+data/settings/*.json

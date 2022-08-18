@@ -1,2 +1,2 @@
-from .settings import Settings, Theme
+from .settings import Settings
 from .API import API
