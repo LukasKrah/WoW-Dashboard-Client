@@ -58,7 +58,10 @@ class InstanceRowHeader(CTkCanvas):
         # 200,
         if self.image:
             self.image.resize(self.width, self.height, "fitx")
-            self.create_image(self.width / 2, self.height / 2, image=self.image)
+            self.create_image(
+                self.width / 2,
+                self.height / 2,
+                image=self.image)
             self.photo = self.image
 
         self.create_text(

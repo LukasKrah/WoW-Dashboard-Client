@@ -25,24 +25,48 @@ class KEntry(CTkCanvas):
     valid_symbols: str | None
     textvar: StringVar
 
-    def __init__(self, master, label: str, *args: any, valid_symbols: str | None = None, **kwargs: any) -> None:
+    def __init__(
+            self,
+            master,
+            label: str,
+            *args: any,
+            valid_symbols: str | None = None,
+            **kwargs: any) -> None:
         super().__init__(master, *args, **kwargs)
-        self.configure(bd=0, highlightthickness=0, background=Theme.background1)
+        self.configure(
+            bd=0,
+            highlightthickness=0,
+            background=Theme.background1)
 
         self.label = label
         self.valid_symbols = valid_symbols
 
-        self.create_text(10, 10, text=self.label, anchor="nw", font=(Theme.wow_font2, Theme.fontfactor*18))
+        self.create_text(
+            10,
+            10,
+            text=self.label,
+            anchor="nw",
+            font=(
+                Theme.wow_font2,
+                Theme.fontfactor *
+                18))
 
         self.textvar = StringVar()
-        self.entry = CTkEntry(self, text_font=(Theme.wow_font2, Theme.fontfactor*18), width=300,
-                              textvariable=self.textvar)
+        self.entry = CTkEntry(
+            self,
+            text_font=(
+                Theme.wow_font2,
+                Theme.fontfactor * 18),
+            width=300,
+            textvariable=self.textvar)
         self.textvar.trace_add("write", self.__change_text)
 
         self.grid_widgets()
 
     def grid_widgets(self) -> None:
-        self.entry.grid(row=0, column=0, sticky="NSEW", pady=((Theme.fontfactor*18)+30, 0))
+        self.entry.grid(
+            row=0, column=0, sticky="NSEW", pady=(
+                (Theme.fontfactor * 18) + 30, 0))
 
     def __change_text(self, *args) -> None:
         newstring = ""
@@ -63,21 +87,42 @@ class KOptionMenu(CTkCanvas):
     optionMenu: CTkOptionMenu
     values: list[str]
 
-    def __init__(self, master, label: str, values: list[str], *args: any, **kwargs: any) -> None:
+    def __init__(
+            self,
+            master,
+            label: str,
+            values: list[str],
+            *args: any,
+            **kwargs: any) -> None:
         super().__init__(master, *args, **kwargs)
-        self.configure(bd=0, highlightthickness=0, background=Theme.background1)
+        self.configure(
+            bd=0,
+            highlightthickness=0,
+            background=Theme.background1)
 
         self.label = label
         self.values = values
 
-        self.create_text(10, 10, text=label, font=(Theme.wow_font2, Theme.fontfactor*18), anchor="nw")
-        self.optionMenu = CTkOptionMenu(self, values=self.values, text_font=(Theme.wow_font2, Theme.fontfactor*18))
+        self.create_text(
+            10,
+            10,
+            text=label,
+            font=(
+                Theme.wow_font2,
+                Theme.fontfactor *
+                18),
+            anchor="nw")
+        self.optionMenu = CTkOptionMenu(
+            self, values=self.values, text_font=(
+                Theme.wow_font2, Theme.fontfactor * 18))
         self.optionMenu.dropdown_menu.configure(tearoff=False)
 
         self.grid_widgets()
 
     def grid_widgets(self) -> None:
-        self.optionMenu.grid(row=0, column=0, sticky="NSEW", pady=((Theme.fontfactor*18)+30, 0))
+        self.optionMenu.grid(
+            row=0, column=0, sticky="NSEW", pady=(
+                (Theme.fontfactor * 18) + 30, 0))
 
     def get(self) -> str:
         return self.optionMenu.get()
@@ -90,23 +135,50 @@ class KMenu(CTkCanvas):
     values: list[str]
     selection: dict[str, IntVar]
 
-    def __init__(self, master, label: str, values: list[str], *args: any, **kwargs: any) -> None:
+    def __init__(
+            self,
+            master,
+            label: str,
+            values: list[str],
+            *args: any,
+            **kwargs: any) -> None:
         super().__init__(master, *args, **kwargs)
-        self.configure(bd=0, highlightthickness=0, background=Theme.background1)
+        self.configure(
+            bd=0,
+            highlightthickness=0,
+            background=Theme.background1)
 
         self.label = label
         self.values = values
 
-        self.create_text(10, 10, text=label, font=(Theme.wow_font2, Theme.fontfactor*18), anchor="nw")
-        self.menuButton = CTkOptionMenu(self, values=[self.label], text_font=(Theme.wow_font2, Theme.fontfactor*18))
+        self.create_text(
+            10,
+            10,
+            text=label,
+            font=(
+                Theme.wow_font2,
+                Theme.fontfactor *
+                18),
+            anchor="nw")
+        self.menuButton = CTkOptionMenu(
+            self,
+            values=[
+                self.label],
+            text_font=(
+                Theme.wow_font2,
+                Theme.fontfactor *
+                18))
         self.menuButton.dropdown_menu.configure(tearoff=False)
 
         self.selection = {}
         for value in self.values:
             self.selection[value] = IntVar(value=0)
-            self.menuButton.dropdown_menu.add_checkbutton(label=value, variable=self.selection[value],
-                                                          selectcolor="white",
-                                                          onvalue=1, offvalue=0)
+            self.menuButton.dropdown_menu.add_checkbutton(
+                label=value,
+                variable=self.selection[value],
+                selectcolor="white",
+                onvalue=1,
+                offvalue=0)
             self.selection[value].trace_add("write", self.set)
 
         self.grid_widgets()
@@ -117,12 +189,13 @@ class KMenu(CTkCanvas):
             if self.selection[selection].get():
                 selection_labels.append(selection)
 
-        self.menuButton.text_label.configure(
-            text=", ".join(selection_labels) if selection_labels != [] else self.label
-        )
+        self.menuButton.text_label.configure(text=", ".join(
+            selection_labels) if selection_labels != [] else self.label)
 
     def grid_widgets(self) -> None:
-        self.menuButton.grid(row=0, column=0, sticky="NSEW", pady=((Theme.fontfactor * 18) + 30, 0))
+        self.menuButton.grid(
+            row=0, column=0, sticky="NSEW", pady=(
+                (Theme.fontfactor * 18) + 30, 0))
 
     def get(self) -> dict | None:
         return self.menuButton.text_label["text"] if self.menuButton.text_label["text"] != self.label else None

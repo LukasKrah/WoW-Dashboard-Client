@@ -25,7 +25,8 @@ class KImage(ImageTk.PhotoImage):
         super().__init__(img)
         self.img = img
 
-    def resize(self, width: int, height: int, mode: Literal["fitx", "normal"] | None = "normal") -> None:
+    def resize(self, width: int, height: int,
+               mode: Literal["fitx", "normal"] | None = "normal") -> None:
         x, y = 0, 0
         match mode:
             case "fitx":
@@ -54,7 +55,7 @@ class _ImageManager:
         self.path = path
         self.configfilename = configfilename
         self.valid_extenstions = valid_extenstions
-        with open(self.path+self.configfilename, "r") as config:
+        with open(self.path + self.configfilename, "r") as config:
             self.images = loads(config.read())
 
     def __search_image(self, query: str) -> int | None:
@@ -66,7 +67,8 @@ class _ImageManager:
     def get_image(self, query: str) -> KImage | None:
         index = self.__search_image(query)
         if index:
-            return KImage(Image.open(f'{self.path}{self.images[index]["path"]}'))
+            return KImage(
+                Image.open(f'{self.path}{self.images[index]["path"]}'))
         return None
 
 

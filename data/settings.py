@@ -29,7 +29,8 @@ class _SettingsManager:
     path: str
     reset_callback: Callable[[dict], dict] | None
 
-    def __init__(self, path: str | None = "data/instance_data/", reset_callback: Callable[[dict], dict] | None = None) -> None:
+    def __init__(self, path: str | None = "data/instance_data/",
+                 reset_callback: Callable[[dict], dict] | None = None) -> None:
         self.reset_callback = reset_callback
         self.path = path
 
