@@ -41,8 +41,9 @@ class InstanceRowHeader(CTkCanvas):
         super().__init__(master, *args, **kwargs)
         self.width, self.height = 0, 0
         self.text = text
+        print("IMAGE", image)
         if image:
-            self.image = ImageManager.get_image(image)
+            self.image = KImage(image)
         else:
             self.image = None
 
@@ -56,13 +57,13 @@ class InstanceRowHeader(CTkCanvas):
         self.delete("all")
         # 100, 100
         # 200,
+        print(self.image)
         if self.image:
             self.image.resize(self.width, self.height, "fitx")
             self.create_image(
                 self.width / 2,
                 self.height / 2,
-                image=self.image)
-            self.photo = self.image
+                image=self.image.imgTk)
 
         self.create_text(
             self.width / 2,
@@ -381,7 +382,7 @@ class InstanceTable(CTkCanvas):
                 "image": ImageManager.get_image(name),
                 "difficulty": {
                     dif: {"chars": {}} for dif in diff.split(", ")
-                }
+                } if diff else {"": {"chars": {}}}
             }
         self.table.reload()
 

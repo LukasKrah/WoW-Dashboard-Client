@@ -45,30 +45,56 @@ class ContextMenu(Menu):
 
 
 class PopUp(CTkToplevel):
+    master: any
+    name: str
     inputs: list[dict]
+    args: any
+    relx: float
+    rely: float
+    confirm_call: Callable
+    kwargs: any
+
+    width: int
+    height: int
+
     input_elems: list[KEntry | KOptionMenu | KMenu]
     buttons: list[CTkButton]
-    confirm_call: Callable
 
     def __init__(
             self,
             master,
-            title: str,
-            *args: any,
+            name: str,
             inputs: list[dict],
+            *args: any,
+            relx: float | None = 0.25,
+            rely: float | None = 0.25,
             confirm_call: Callable,
             **kwargs: any) -> None:
-        super().__init__(master, *args, **kwargs)
-        self.configure(background=Theme.background1)
+        self.master = master
+        self.name = name
+        self.inputs = inputs
+        self.args = args
+        self.relx = relx
+        self.rely = rely
+        self.confirm_call = confirm_call
+        self.kwargs = kwargs
+
+        CTkToplevel.__init__(self, self.master, *self.args, *self.kwargs)
+
+        self.create(True)
+
+    def create(self, first: bool | None = False) -> None:
+        if not first:
+            CTkToplevel.__init__(self, self.master, *self.args, *self.kwargs)
 
         self.withdraw()
-        self.master = master
-        self.inputs = inputs
-        self.confirm_call = confirm_call
+        self.title(self.name)
+        self.configure(background=Theme.background1)
+        self.attributes("-topmost", True)
+        self.wm_iconbitmap("style/images/wow_icon.ico")
+
         self.input_elems = []
         self.buttons = []
-
-        self.wm_iconbitmap("style/images/wow_icon.ico")
 
         for _input in self.inputs:
             if _input["type"] == "InputText":
@@ -102,6 +128,9 @@ class PopUp(CTkToplevel):
 
         self.grid_widgets()
 
+        self.bind("<FocusOut>", lambda s=self: self.withdraw())
+        self.protocol("WM_DELETE_WINDOW", lambda s=self: self.withdraw())
+
     def grid_widgets(self) -> None:
         for index, input_elem in enumerate(self.input_elems):
             input_elem.grid(
@@ -122,67 +151,34 @@ class PopUp(CTkToplevel):
                 sticky="NSEW")
             self.grid_columnconfigure(index, weight=1)
 
+    def center(self) -> None:
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+
+        self.width = int(screen_width * self.relx)
+        self.height = int(screen_height * self.rely)
+
+        center_x = int(screen_width/2 - self.width/2)
+        center_y = int(screen_height/2 - self.height/2)
+
+        self.resizable(width=False, height=False)
+        self.geometry(f"{self.width}+{self.height}+{center_x}+{center_y}")
+
     def open_popup(self) -> None:
+        if not self.winfo_exists():
+            print("OPEN")
+            self.create()
         self.deiconify()
+        self.center()
 
     def close_popup(self) -> None:
+        if not self.winfo_exists():
+            print("CLOSe")
+            self.create()
         self.withdraw()
 
     def confirm(self) -> None:
         self.close_popup()
         values = [input_elem.get() for input_elem in self.input_elems]
+        [input_elem.reset() for input_elem in self.input_elems]
         self.confirm_call(*values)
-
-
-"""
-- Freier Text
-- OptionMenu
-
-Char:
-- Char
-- Realm
-
-ToDo:
-- Name
-- Typ
-- Difficulty
-
-"""
-
-
-"""
-import tkinter # Tkinter -> tkinter in Python 3
-
-class FancyListbox(tkinter.Listbox):
-    def __init__(self, parent, *args, **kwargs):
-        tkinter.Listbox.__init__(self, parent, *args, **kwargs)
-
-        self.popup_menu = tkinter.Menu(self, tearoff=0)
-        self.popup_menu.add_command(label="Delete",
-                                    command=self.delete_selected)
-        self.popup_menu.add_command(label="Select All",
-                                    command=self.select_all)
-
-        self.bind("<Button-3>", self.popup)  # Button-2 on Aqua
-
-    def popup(self, event):
-        try:
-            self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
-        finally:
-            self.popup_menu.grab_release()
-
-    def delete_selected(self):
-        for i in self.curselection()[::-1]:
-            self.delete(i)
-
-    def select_all(self):
-
-        self.selection_set(0, 'end')
-
-
-root = tkinter.Tk()
-flb = FancyListbox(root, selectmode='single')
-for n in range(10):
-    flb.insert('end', n)
-flb.pack()
-root.mainloop()"""

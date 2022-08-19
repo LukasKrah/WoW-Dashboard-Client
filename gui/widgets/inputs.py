@@ -81,6 +81,9 @@ class KEntry(CTkCanvas):
     def get(self) -> str:
         return self.entry.get()
 
+    def reset(self) -> None:
+        self.entry.delete(0, END)
+
 
 class KOptionMenu(CTkCanvas):
     label: str
@@ -126,6 +129,9 @@ class KOptionMenu(CTkCanvas):
 
     def get(self) -> str:
         return self.optionMenu.get()
+
+    def reset(self) -> None:
+        self.optionMenu.set(self.values[0])
 
 
 class KMenu(CTkCanvas):
@@ -199,3 +205,7 @@ class KMenu(CTkCanvas):
 
     def get(self) -> dict | None:
         return self.menuButton.text_label["text"] if self.menuButton.text_label["text"] != self.label else None
+
+    def reset(self) -> None:
+        for selection in self.selection:
+            self.selection[selection].set(0)

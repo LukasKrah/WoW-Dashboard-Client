@@ -53,7 +53,7 @@ class NavBar(CTkCanvas):
                                              "label": "Realm"}],
                                     confirm_call=self.new_char_callback)
         self.new_ToDo_popup = PopUp(
-            self, "Neuer Char", inputs=[
+            self, "Neues ToDo", inputs=[
                 {
                     "type": "InputText", "label": "Name"}, {
                     "type": "OptionMenu", "label": "Typ", "validValues": [
