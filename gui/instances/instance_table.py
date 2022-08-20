@@ -95,19 +95,22 @@ class InstanceTable(CTkCanvas):
 
     def scroll(self, event: Event | None = None,
                null: bool | None = False) -> None:
+        if Settings.values["view"]["selectedView"] != "scrollable":
+            return
         new_y = self.table.winfo_y() + (event.delta if event else 0)
 
         if new_y > 0 or self.table.winfo_height() < self.table_frame.winfo_height() or null:
             new_y = 0
         elif new_y < (-self.table.winfo_height() + self.table_frame.winfo_height()):
             new_y = -self.table.winfo_height() + self.table_frame.winfo_height()
+        self.table.place_forget()
         self.table.place(
             x=0,
             y=new_y,
             anchor="nw",
             relwidth=1,
-            relheight=len(
-                InstanceManager.values) /
+            relheight=(len(
+                InstanceManager.values)+1) /
             self.relheight)
 
     def _grid_widgets(self) -> None:
@@ -166,6 +169,8 @@ class InstanceTable(CTkCanvas):
             Settings["chars"][charname] = {
                 "characterName": name, "realmSlug": realm, "active": True}
             Settings.write()
+            InstanceManager.write()
+            self.scroll(null=True)
             self.reload_table()
 
     def add_todo_callback(self,
@@ -207,6 +212,7 @@ class InstanceTable(CTkCanvas):
                 "Instanz hinzufügen",
                 "Dieses Instanz existiert bereits!")
 
+        self.scroll(null=True)
         InstanceManager.write()
         self.reload_table()
 
@@ -221,6 +227,5 @@ class InstanceTable(CTkCanvas):
         Settings.today = week
         InstanceManager.today = week
         self.table.topleft.reload()
-        if Settings.values["view"]["selectedView"] != "default":
-            self.scroll(null=True)
+        self.scroll(null=True)
         self.reload_table()
