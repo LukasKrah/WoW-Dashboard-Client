@@ -26,6 +26,8 @@ class KTable(CTkCanvas):
     colheaders: list[any]
     cells: any
 
+    topleft: any
+
     __columns: list
     __rows: list
     __values: dict
@@ -44,7 +46,7 @@ class KTable(CTkCanvas):
         :param master: master widget (e.g: root)
         :param rowheaders: Row-header widgets (will pass master, rowname and header-index as positional arg)
         :param colheaders: Col-header widgets (will pass master, colname and header-index as positional arg)
-        :param cells: Cells widgets (will pass first colname and first rowname as positional args)
+        :param cells: Cells widgets (will pass master, first colname and first rowname as positional args)
         """
         self.master = master
         self.rowheaders = rowheaders
@@ -56,6 +58,8 @@ class KTable(CTkCanvas):
             bd=0,
             highlightthickness=0,
             background=Theme.background3)
+
+        self.topleft = None
 
         self.__rows = []
         self.__columns = []
@@ -74,6 +78,11 @@ class KTable(CTkCanvas):
 
         row_offset = len(self.colheaders)
         col_offset = len(self.rowheaders)
+
+        # TopLeft
+        if self.topleft is not None:
+            print(self.topleft)
+            self.topleft.grid(row=0, column=0, rowspan=row_offset+1, columnspan=col_offset+1, sticky="NSEW")
 
         # Column headers
         for index, col in enumerate(self.__columns):

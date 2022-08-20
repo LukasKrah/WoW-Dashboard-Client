@@ -208,3 +208,62 @@ class KMenu(CTkCanvas):
     def reset(self) -> None:
         for selection in self.selection:
             self.selection[selection].set(0)
+
+
+class KSlider(CTkCanvas):
+    """
+    Custom slider with label
+    """
+
+    master: any
+    label: str
+    range: list[int, int]
+
+    slider: CTkSlider
+
+    def __init__(self, master: any, label: str, range: str, *args: any, **kwargs: any) -> None:
+        """
+        Create custom slider and grid widgets
+
+        :param master: Master widget
+        :param label: Label to display
+        :param range: Slider range in form: "from:to"
+        """
+        self.master = master
+        self.label = label
+        self.range = [int(ran) for ran in range.split(":")]
+
+        super().__init__(self.master, *args, **kwargs)
+
+        self.create_text(
+            10,
+            10,
+            text=self.label,
+            font=(
+                Theme.wow_font,
+                Theme.fontfactor *
+                18),
+            anchor="nw")
+
+        self.slider = CTkSlider(from_=self.range[0], to=self.range[1])
+
+    def grid_widgets(self) -> None:
+        """
+        Grid custom slider widgets
+        """
+        self.slider.grid(
+            row=0, column=0, sticky="NSEW", pady=(
+                (Theme.fontfactor * 18) + 30, 0))
+
+    def get(self) -> float:
+        """
+        Get value of slider
+        :return: Value of slider in float
+        """
+        return self.slider.get()
+
+    def reset(self) -> None:
+        """
+        Reset slider to the from value
+        """
+        self.slider.set(self.range[0])

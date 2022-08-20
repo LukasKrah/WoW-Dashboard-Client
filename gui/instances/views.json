@@ -1,0 +1,17 @@
+{
+  "default": {
+    "name": "Tabelle (Gesamt)",
+    "propertys": {
+    }
+  },
+  "scrollable": {
+    "name": "Tabelle (scrollbar)",
+    "propertys": {
+      "sizing": {
+        "name": "Skalierung",
+        "type": "slider",
+        "valid_values": "1:20"
+      }
+    }
+  }
+}

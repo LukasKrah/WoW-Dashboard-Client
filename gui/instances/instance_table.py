@@ -20,6 +20,8 @@ from data import Settings, InstanceManager
 from .instance_headers import InstanceColHeader, InstanceRowHeader
 from .instance_cells import InstanceCell
 from .instance_navbar import InstanceNavBar
+from .instance_viewmanager import InstanceViewManager
+
 
 ##################################################
 #                 Menu classes                   #
@@ -46,6 +48,23 @@ class InstanceTable(CTkCanvas):
         self.table_frame = CTkFrame(self)
         self.table = KTable(self.table_frame, rowheaders=[InstanceRowHeader, InstanceColHeader], colheaders=[InstanceColHeader],
                             cells=InstanceCell)
+        self.table.topleft = self.table.topleft(self.table, {
+            "default": {
+                "name": "Tabelle (Gesamt)",
+                "propertys": {
+                }
+            },
+            "scrollable": {
+                "name": "Tabelle (scrollbar)",
+                "propertys": {
+                    "sizing": {
+                        "name": "Skalierung",
+                        "type": "slider",
+                        "valid_values": "1:20"
+                    }
+                }
+            }
+        })
 
         self.reload_table()
         self.navBar = InstanceNavBar(self, self.set_week,

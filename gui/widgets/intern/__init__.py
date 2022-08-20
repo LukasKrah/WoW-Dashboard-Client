@@ -1,1 +1,1 @@
-from .inputs import KEntry, KMenu, KOptionMenu
+from .inputs import KEntry, KMenu, KOptionMenu, KSlider
