@@ -8,7 +8,9 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
+from concurrent.futures import ThreadPoolExecutor, Future
 from customtkinter import *
+from threading import Event
 
 from style import Theme
 
@@ -60,7 +62,6 @@ class KTable(CTkCanvas):
             background=Theme.background3)
 
         self.topleft = None
-
         self.__rows = []
         self.__columns = []
         self.__values = {}
@@ -85,8 +86,8 @@ class KTable(CTkCanvas):
             self.topleft.grid(
                 row=0,
                 column=0,
-                rowspan=row_offset + 1,
-                columnspan=col_offset + 1,
+                rowspan=row_offset,
+                columnspan=col_offset,
                 sticky="NSEW")
 
         # Column headers

@@ -7,6 +7,8 @@ Author: Lukas Krahbichler
 ##################################################
 #                    Imports                     #
 ##################################################
+
+from concurrent.futures import ThreadPoolExecutor
 from typing import Literal
 
 from PIL import Image, ImageTk
@@ -21,10 +23,14 @@ class KImage:
     img: Image.open
     imgTk: ImageTk.PhotoImage
 
+    thread: ThreadPoolExecutor
+
     def __init__(self, path: str):
         img = Image.open(path)
         self.img = img
         self.imgTk = ImageTk.PhotoImage(self.img)
+
+        self.thread = ThreadPoolExecutor(max_workers=1)
 
     def resize(self, width: int, height: int,
                mode: Literal["fitx", "normal"] | None = "normal") -> None:
@@ -32,12 +38,6 @@ class KImage:
         img_width, img_height = self.img.size
         match mode:
             case "fitx":
-                # img_width = 20
-                # img_height = 30
-                # width = 10
-                # 10/20
-                # x = 10
-                # y = 15
                 fact = width / img_width
                 x = width
                 y = img_height * fact

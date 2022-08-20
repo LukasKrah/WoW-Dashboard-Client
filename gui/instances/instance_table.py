@@ -35,6 +35,8 @@ class InstanceTable(CTkCanvas):
     table: KTable
     navBar: InstanceNavBar
 
+    relheight: float
+
     def __init__(self, *args: any, **kwargs: any) -> None:
         """
         Create InstanceTable, grid widgets and load in __values
@@ -45,6 +47,8 @@ class InstanceTable(CTkCanvas):
             highlightthickness=0,
             background=Theme.background3)
 
+        self.relheight = 5.0
+
         self.table_frame = CTkFrame(self)
         self.table = KTable(
             self.table_frame,
@@ -53,19 +57,22 @@ class InstanceTable(CTkCanvas):
                 InstanceColHeader],
             colheaders=[InstanceColHeader],
             cells=InstanceCell)
-        self.table.topleft = self.table.topleft(self.table, {
+        self.table.topleft = InstanceViewManager(self.table, {
             "default": {
                 "name": "Tabelle (Gesamt)",
+                "command": lambda view="default": self.set_view(view),
                 "propertys": {
                 }
             },
             "scrollable": {
                 "name": "Tabelle (scrollbar)",
+                "command": lambda view="scrollable": self.set_view(view),
                 "propertys": {
                     "sizing": {
                         "name": "Skalierung",
                         "type": "slider",
-                        "valid_values": "1:20"
+                        "valid_values": "3:12",
+                        "command": self.scale_view
                     }
                 }
             }
@@ -78,7 +85,21 @@ class InstanceTable(CTkCanvas):
 
         self._grid_widgets()
 
-        self.table.bind_all("<MouseWheel>", self.scroll)
+    def scale_view(self, value: float) -> None:
+        self.relheight = value
+        event = Event()
+        event.delta = 0
+        self.scroll(event)
+
+    def set_view(self, view: str) -> None:
+        match view:
+            case "scrollable":
+                self.table.bind_all("<MouseWheel>", self.scroll)
+                self.scale_view(self.relheight)
+
+            case "default":
+                self.table.bind_all("<MouseWheel>", DISABLED)
+                self.table.place(x=0, y=0, anchor="nw", relwidth=1, relheight=1)
 
     def scroll(self, event: Event) -> None:
         new_y = self.table.winfo_y() + event.delta
@@ -87,7 +108,6 @@ class InstanceTable(CTkCanvas):
             new_y = 0
         elif new_y < (-self.table.winfo_height() + self.table_frame.winfo_height()):
             new_y = -self.table.winfo_height() + self.table_frame.winfo_height()
-        print(new_y)
         self.table.place(
             x=0,
             y=new_y,
@@ -95,7 +115,7 @@ class InstanceTable(CTkCanvas):
             relwidth=1,
             relheight=len(
                 InstanceManager.values) /
-            10)
+            self.relheight)
 
     def _grid_widgets(self) -> None:
         """

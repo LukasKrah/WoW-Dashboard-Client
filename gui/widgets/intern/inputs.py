@@ -7,6 +7,7 @@ Author: Lukas Krahbichler
 ##################################################
 #                    Imports                     #
 ##################################################
+from typing import Callable
 
 from customtkinter import *
 from tkinter import *
@@ -217,7 +218,8 @@ class KSlider(CTkCanvas):
 
     master: any
     label: str
-    range: list[int, int]
+    from_to: list[int, int]
+    command: Callable[[float], None]
 
     slider: CTkSlider
 
@@ -225,7 +227,8 @@ class KSlider(CTkCanvas):
             self,
             master: any,
             label: str,
-            range: str,
+            from_to: str,
+            commmand: Callable[[float], None],
             *args: any,
             **kwargs: any) -> None:
         """
@@ -233,33 +236,33 @@ class KSlider(CTkCanvas):
 
         :param master: Master widget
         :param label: Label to display
-        :param range: Slider range in form: "from:to"
+        :param from_to: Slider range in form: "from:to"
+        :param command: Slider callback command (will pass float-value)
         """
         self.master = master
         self.label = label
-        self.range = [int(ran) for ran in range.split(":")]
+        self.command = commmand
+        self.from_to = [int(ran) for ran in from_to.split(":")]
 
         super().__init__(self.master, *args, **kwargs)
 
-        self.create_text(
-            10,
-            10,
-            text=self.label,
-            font=(
-                Theme.wow_font,
-                Theme.fontfactor *
-                18),
-            anchor="nw")
+        self.lab = Label(self, text=self.label, font=(Theme.wow_font, Theme.fontfactor*18),
+                         background=Theme.background3, fg="white")
+        self.slider = CTkSlider(self, from_=self.from_to[0], to=self.from_to[1], bg_color=Theme.background3,
+                                command=self.command, number_of_steps=self.from_to[1]-self.from_to[0])
 
-        self.slider = CTkSlider(from_=self.range[0], to=self.range[1])
+        self.grid_widgets()
 
     def grid_widgets(self) -> None:
         """
         Grid custom slider widgets
         """
-        self.slider.grid(
-            row=0, column=0, sticky="NSEW", pady=(
-                (Theme.fontfactor * 18) + 30, 0))
+        self.lab.grid(row=0, column=0, sticky="NSEW")
+        self.slider.grid(row=1, column=0, sticky="NSEW")
+
+        self.grid_columnconfigure(0, weight=1)
+        for index, weight in enumerate([1, 1]):
+            self.grid_rowconfigure(index, weight=weight)
 
     def get(self) -> float:
         """
@@ -272,4 +275,4 @@ class KSlider(CTkCanvas):
         """
         Reset slider to the from value
         """
-        self.slider.set(self.range[0])
+        self.slider.set(self.from_to[0])

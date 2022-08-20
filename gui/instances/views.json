@@ -2,6 +2,10 @@
   "default": {
     "name": "Tabelle (Gesamt)",
     "propertys": {
+      "sizing": {
+        "name": "Skalierung",
+        "type": "slider",
+        "valid_values": "1:20"
     }
   },
   "scrollable": {
@@ -10,7 +14,7 @@
       "sizing": {
         "name": "Skalierung",
         "type": "slider",
-        "valid_values": "1:20"
+        "valid_values": "1:10"
       }
     }
   }
