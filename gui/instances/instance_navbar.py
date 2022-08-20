@@ -27,19 +27,29 @@ class InstanceNavBar(CTkCanvas):
     """
     Bottom NavBar of the InstanceTable
     """
+    master: any
+    week_call: Callable[[str], None]
+    new_char_callback: Callable[[str, str], None]
+    new_todo_callback: Callable[[str, Literal["daily", "weekly"], str], None]
+
     weeks: dict[str, str]
-    week_call: Callable
+
+    new_char: CTkButton
+    new_todo: CTkButton
     new_char_popup: KPopUp
-    new_ToDo_popup: KPopUp
+    new_todo_popup: KPopUp
+    weekvar = StringVar
+    week: CTkOptionMenu
 
     def __init__(self,
-                 master,
+                 master: any,
                  week_call: Callable[[str], None],
                  new_char_callback: Callable[[str, str], None],
                  new_todo_callback: Callable[[str, Literal["daily", "weekly"], str], None],
                  *args, **kwargs) -> None:
         """
-        Create NavBar and grid widgets
+        Test
+
         :param master: Master widget/frame
         :param week_call: Callback when week selection is changed (will pass week str)
         :param new_char_callback: Callback when new char is created (will pass name + realm)
@@ -75,7 +85,7 @@ class InstanceNavBar(CTkCanvas):
             command=self.new_char_popup.open_popup)
 
         # NewToDo
-        self.new_ToDo_popup = KPopUp(
+        self.new_todo_popup = KPopUp(
             self, "Neues ToDo", inputs=[
                 {
                     "type": "InputText", "label": "Name"}, {
@@ -83,13 +93,13 @@ class InstanceNavBar(CTkCanvas):
                         "Daily", "Weekly"]}, {
                         "type": "ComboBox", "label": "Difficultys", "validValues": [
                             "NHC 10", "NHC 25", "HC 10", "HC 25", "M"]}], confirm_call=self.new_todo_callback)
-        self.new_ToDo = CTkButton(
+        self.new_todo = CTkButton(
             self,
             text="Neues ToDo",
             text_font=(
                 Theme.wow_font,
                 Theme.fontfactor * 18),
-            command=self.new_ToDo_popup.open_popup)
+            command=self.new_todo_popup.open_popup)
 
         # Week Selection
         self.weeks = {}
@@ -111,7 +121,11 @@ class InstanceNavBar(CTkCanvas):
             self,
             values=list(
                 self.weeks.keys()),
-            command=self.week_call)
+            command=self.week_call,
+            text_font=(
+                Theme.wow_font,
+                Theme.fontfactor * 18
+            ))
         self.week.set("Diese Woche")
 
         # Grid widgets
@@ -121,7 +135,7 @@ class InstanceNavBar(CTkCanvas):
         """
         Grid navBar widgets
         """
-        self.new_ToDo.grid(row=0, column=0, sticky="NSEW", padx=(0, 20))
+        self.new_todo.grid(row=0, column=0, sticky="NSEW", padx=(0, 20))
         self.new_char.grid(row=0, column=1, sticky="NSEW")
         self.week.grid(row=0, column=3, sticky="NSEW")
 

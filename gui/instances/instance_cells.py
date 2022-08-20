@@ -266,7 +266,7 @@ class InstanceCell(CTkCanvas):
             text="Erledigt!",
             anchor="center",
             font=(
-                Theme.font,
+                Theme.wow_font,
                 Theme.fontfactor * 18))
 
     # Cancel
@@ -286,7 +286,7 @@ class InstanceCell(CTkCanvas):
             50 else "KEKW!",
             anchor="center",
             font=(
-                Theme.font,
+                Theme.wow_font,
                 Theme.fontfactor *
                 18),
             justify="center")

@@ -56,14 +56,19 @@ class KPopUp(CTkToplevel):
         self.kwargs = kwargs
 
         CTkToplevel.__init__(self, self.master, *self.args, *self.kwargs)
+        self.geometry("1x1+10000+10000")
+        self.update()
 
         self.create(True)
 
     def create(self, first: bool | None = False) -> None:
         if not first:
             CTkToplevel.__init__(self, self.master, *self.args, *self.kwargs)
+            self.geometry("1x1+10000+10000")
+            self.update()
 
         self.withdraw()
+
         self.title(self.name)
         self.configure(background=Theme.background1)
         self.attributes("-topmost", True)
@@ -106,6 +111,7 @@ class KPopUp(CTkToplevel):
 
         self.protocol("WM_DELETE_WINDOW", lambda s=self: self.withdraw())
         self.bind("<Return>", self.confirm)
+        self.bind("<Escape>", self.close_popup)
 
     def grid_widgets(self) -> None:
         for index, input_elem in enumerate(self.input_elems):
@@ -126,27 +132,34 @@ class KPopUp(CTkToplevel):
                         self.buttons) else 0),
                 sticky="NSEW")
             self.grid_columnconfigure(index, weight=1)
-
+        
     def center(self) -> None:
-        screen_width = self.winfo_screenwidth()
+        root: CTk = self.nametowidget(".")
+
+        rootx = root.winfo_rootx()
+        rooty = root.winfo_rooty()
+        root_width = root.winfo_width()
+        root_height = root.winfo_height()
+
+        screen_width = root.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
 
         self.width = int(screen_width * self.relx)
         self.height = int(screen_height * self.rely)
 
-        center_x = int(screen_width / 2 - self.width / 2)
-        center_y = int(screen_height / 2 - self.height / 2)
+        center_x = int((root_width / 2 - self.width / 2))
+        center_y = int((root_height / 2 - self.height / 2))
 
         self.resizable(width=False, height=False)
-        self.geometry(f"{self.width}+{self.height}+{center_x}+{center_y}")
+        self.geometry(f"{self.width}+{self.height}+{rootx+center_x}+{rooty+center_y}")
 
-    def open_popup(self) -> None:
+    def open_popup(self, *_args: any) -> None:
         if not self.winfo_exists():
             self.create()
-        self.deiconify()
         self.center()
+        self.deiconify()
 
-    def close_popup(self) -> None:
+    def close_popup(self, *_args: any) -> None:
         if not self.winfo_exists():
             self.create()
         self.withdraw()

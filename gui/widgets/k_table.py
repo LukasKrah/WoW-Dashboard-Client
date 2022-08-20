@@ -8,9 +8,7 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
-from concurrent.futures import ThreadPoolExecutor, Future
 from customtkinter import *
-from threading import Event
 
 from style import Theme
 
@@ -44,7 +42,6 @@ class KTable(CTkCanvas):
             **kwargs) -> None:
         """
         Create table (call .reload to load table)
-
         :param master: master widget (e.g: root)
         :param rowheaders: Row-header widgets (will pass master, rowname and header-index as positional arg)
         :param colheaders: Col-header widgets (will pass master, colname and header-index as positional arg)
@@ -82,7 +79,6 @@ class KTable(CTkCanvas):
 
         # TopLeft
         if self.topleft is not None:
-            print(self.topleft)
             self.topleft.grid(
                 row=0,
                 column=0,

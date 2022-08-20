@@ -10,10 +10,8 @@ Author: Lukas Krahbichler
 
 from datetime import date, timedelta
 from typing import TextIO, Callable
-from dataclasses import dataclass
 from os import listdir
 
-import pyglet
 import json
 
 
@@ -41,9 +39,10 @@ class _SettingsManager:
                 hours=15)).isocalendar())
         self.values = {}
 
-        pathsplit = self.path.split(".")
         with open(f"{path}default.json", "r") as default:
             self.default = json.loads(default.read())
+
+        self.read()
 
     def __getitem__(self, item: str) -> str:
         try:
@@ -88,7 +87,7 @@ class _SettingsManager:
                     self.values = json.loads(data.read())
                     break
 
-            except (FileNotFoundError, json.decoder.JSONDecodeError):
+            except FileNotFoundError:
                 # Should try last week but not for now
                 with open(f"{self.path}{self.__today[1]}_{self.__today[0]}.json", "w+") as data:
                     youngest: list = []
@@ -124,8 +123,13 @@ def reset_instances(instances: dict) -> dict:
     for instance in instances:
         if instances[instance]["active"]:
             for diff in instances[instance]["difficulty"]:
+                del_chars: list = []
                 for char in instances[instance]["difficulty"][diff]["chars"]:
                     instances[instance]["difficulty"][diff]["chars"][char]["done"] = None
+                    if char not in Settings.values["chars"]:
+                        del_chars.append(char)
+                for del_char in del_chars:
+                    del instances[instance]["difficulty"][diff]["chars"][del_char]
         else:
             del_instances.append(instance)
 
@@ -135,5 +139,17 @@ def reset_instances(instances: dict) -> dict:
     return instances
 
 
+def reset_settings(settings: dict) -> dict:
+    del_chars: list = []
+    for char in settings["chars"]:
+        if not settings["chars"][char]["active"]:
+            del_chars.append(char)
+
+    for del_char in del_chars:
+        del settings["chars"][del_char]
+
+    return settings
+
+
+Settings = _SettingsManager(path="data/settings/", reset_callback=reset_settings)
 InstanceManager = _SettingsManager(reset_callback=reset_instances)
-Settings = _SettingsManager(path="data/settings/")

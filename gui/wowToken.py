@@ -10,7 +10,6 @@ Author: Lukas Krahbichler
 
 from threading import Thread
 from customtkinter import *
-from tkinter import *
 
 from data import API
 from style import Theme
@@ -25,13 +24,15 @@ class WoWToken(CTkCanvas):
         super().__init__(*args, **kwargs)
         self.configure(bg=Theme.background3, bd=0, highlightthickness=0)
 
-        self.price = CTkLabel(self, text="", text_font=Theme.font)
+        self.price = CTkLabel(self, text="", text_font=(Theme.wow_font, Theme.fontfactor*100))
 
         self.grid_widgets()
-        Thread(target=self.getTokenPrive).start()
+        Thread(target=self.get_token_price()).start()
 
-    def getTokenPrive(self) -> None:
-        self.price.configure(text=str(API.getTokenPrice())[:-4] + " Gold")
+    def get_token_price(self) -> None:
+        self.price.configure(text=str(API.get_token_history())[:-4] + " Gold")
 
     def grid_widgets(self) -> None:
         self.price.grid()
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)

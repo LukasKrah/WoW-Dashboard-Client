@@ -74,7 +74,7 @@ class InstanceRowHeader(CTkCanvas):
         self.delete("all")
 
         if self.image:
-            self.image.resize(self.width, self.height, "fitx")
+            self.image.resize(self.width, self.height, "cover")
             self.create_image(
                 self.width / 2,
                 self.height / 2,
@@ -101,11 +101,7 @@ class InstanceRowHeader(CTkCanvas):
                 InstanceManager.values[self.name]["active"] = False
 
             case "col":
-                for instance in InstanceManager.values:
-                    for diff in InstanceManager.values[instance]["difficulty"]:
-                        if self.name in InstanceManager.values[instance]["difficulty"][diff]["chars"]:
-                            del InstanceManager.values[instance]["difficulty"][diff]["chars"][self.name]
-                del Settings.values["chars"][self.name]
+                Settings.values["chars"][self.name]["active"] = False
         self.master.master.master.reload_table()
 
     def _set_states(self, value: bool | str | None) -> None:

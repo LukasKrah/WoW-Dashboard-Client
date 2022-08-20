@@ -233,7 +233,6 @@ class KSlider(CTkCanvas):
             **kwargs: any) -> None:
         """
         Create custom slider and grid widgets
-
         :param master: Master widget
         :param label: Label to display
         :param from_to: Slider range in form: "from:to"
@@ -245,6 +244,8 @@ class KSlider(CTkCanvas):
         self.from_to = [int(ran) for ran in from_to.split(":")]
 
         super().__init__(self.master, *args, **kwargs)
+
+        self.configure(bd=0, highlightthickness=0, background=Theme.background3)
 
         self.lab = Label(self, text=self.label, font=(Theme.wow_font, Theme.fontfactor*18),
                          background=Theme.background3, fg="white")
@@ -258,7 +259,7 @@ class KSlider(CTkCanvas):
         Grid custom slider widgets
         """
         self.lab.grid(row=0, column=0, sticky="NSEW")
-        self.slider.grid(row=1, column=0, sticky="NSEW")
+        self.slider.grid(row=1, column=0, sticky="NSEW", ipady=5)
 
         self.grid_columnconfigure(0, weight=1)
         for index, weight in enumerate([1, 1]):
@@ -271,8 +272,11 @@ class KSlider(CTkCanvas):
         """
         return self.slider.get()
 
+    def set(self, value: float) -> None:
+        self.slider.set(value)
+
     def reset(self) -> None:
         """
-        Reset slider to the from value
+        Reset slider to the left
         """
         self.slider.set(self.from_to[0])

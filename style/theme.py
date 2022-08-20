@@ -28,6 +28,7 @@ class FontFactor:
 
 @dataclass(frozen=True)
 class _DarkTheme:
+    background0: str = "#888888"
     background1: str = "#555555"
     background2: str = "#333333"
     background3: str = "#111111"

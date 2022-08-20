@@ -32,15 +32,22 @@ class InstanceTable(CTkCanvas):
     """
     Instances Table (colums: chars, rows: instances)
     """
+    master: any
+    root: Tk | CTk
+
     table: KTable
     navBar: InstanceNavBar
 
     relheight: float
 
-    def __init__(self, *args: any, **kwargs: any) -> None:
+    def __init__(
+            self,
+            *args: any,
+            **kwargs: any) -> None:
         """
         Create InstanceTable, grid widgets and load in __values
         """
+
         super().__init__(*args, **kwargs)
         self.configure(
             bd=0,
@@ -57,26 +64,9 @@ class InstanceTable(CTkCanvas):
                 InstanceColHeader],
             colheaders=[InstanceColHeader],
             cells=InstanceCell)
-        self.table.topleft = InstanceViewManager(self.table, {
-            "default": {
-                "name": "Tabelle (Gesamt)",
-                "command": lambda view="default": self.set_view(view),
-                "propertys": {
-                }
-            },
-            "scrollable": {
-                "name": "Tabelle (scrollbar)",
-                "command": lambda view="scrollable": self.set_view(view),
-                "propertys": {
-                    "sizing": {
-                        "name": "Skalierung",
-                        "type": "slider",
-                        "valid_values": "3:12",
-                        "command": self.scale_view
-                    }
-                }
-            }
-        })
+        self.table.topleft = InstanceViewManager(self.table,
+                                                 set_view_callback=self.set_view,
+                                                 scale_view_callback=self.scale_view)
 
         self.reload_table()
         self.navBar = InstanceNavBar(self, self.set_week,
@@ -101,10 +91,10 @@ class InstanceTable(CTkCanvas):
                 self.table.bind_all("<MouseWheel>", DISABLED)
                 self.table.place(x=0, y=0, anchor="nw", relwidth=1, relheight=1)
 
-    def scroll(self, event: Event) -> None:
-        new_y = self.table.winfo_y() + event.delta
+    def scroll(self, event: Event | None = None, null: bool | None = False) -> None:
+        new_y = self.table.winfo_y() + (event.delta if event else 0)
 
-        if new_y > 0:
+        if new_y > 0 or self.table.winfo_height() < self.table_frame.winfo_height() or null:
             new_y = 0
         elif new_y < (-self.table.winfo_height() + self.table_frame.winfo_height()):
             new_y = -self.table.winfo_height() + self.table_frame.winfo_height()
@@ -121,14 +111,6 @@ class InstanceTable(CTkCanvas):
         """
         Grid Widgets
         """
-        self.table.place(
-            x=0,
-            y=0,
-            anchor="nw",
-            relwidth=1,
-            relheight=len(
-                InstanceManager.values) /
-            10)
 
         self.table_frame.grid(row=0, column=0, sticky="NSEW")
         self.navBar.grid(row=1, column=0, sticky="NSEW")
@@ -141,8 +123,9 @@ class InstanceTable(CTkCanvas):
         """
         rows = [[instance, ",".join(InstanceManager.values[instance]["difficulty"].keys(
         ))] for instance in InstanceManager.values.keys() if InstanceManager[instance]["active"]]
-        columns = [[f'{Settings["chars"][char]["characterName"].lower()}:{Settings["chars"][char]["realmSlug"].lower()}']
-                   for char in Settings["chars"]]
+        columns = [[f'{Settings["chars"][char]["characterName"].lower()}:'
+                    f'{Settings["chars"][char]["realmSlug"].lower()}']
+                   for char in Settings["chars"] if Settings["chars"][char]["active"]]
 
         self.table.reload(
             rows=rows,
@@ -152,7 +135,6 @@ class InstanceTable(CTkCanvas):
     def add_char_callback(self, name: str, realm: str) -> None:
         """
         Add a char to the settings and reload table
-
         :param name: Name of the char
         :param realm: Realm on which the char is playing
         """
@@ -160,7 +142,18 @@ class InstanceTable(CTkCanvas):
 
         add = True
         for char in Settings["chars"]:
-            if charname == char:
+            if charname == char and not Settings["chars"][char]["active"]:
+                if not messagebox.askyesno(
+                    "Char hinzufügen",
+                    "Dieser Char befindet sich noch im Papierkorb!\n"
+                    "Möchtest du ihn wiederherstellen?"
+                ):
+                    for instance in InstanceManager.values:
+                        for diff in InstanceManager.values[instance]["difficulty"]:
+                            if charname in InstanceManager.values[instance]["difficulty"][diff]["chars"]:
+                                del InstanceManager.values[instance]["difficulty"][diff]["chars"][charname]
+
+            elif charname == char:
                 messagebox.showwarning(
                     "Char hinzufügen",
                     "Dieser Char existiert bereits!")
@@ -168,7 +161,7 @@ class InstanceTable(CTkCanvas):
 
         if add:
             Settings["chars"][charname] = {
-                "characterName": name, "realmSlug": realm}
+                "characterName": name, "realmSlug": realm, "active": True}
             Settings.write()
             self.reload_table()
 
@@ -179,13 +172,25 @@ class InstanceTable(CTkCanvas):
                           diff: str) -> None:
         """
         Add an instance to the InstanceManager __values and reload table
-
         :param name: Name of the Instancce
         :param typ: Whether the instance is daily or weekly
         :param diff: Different difficultys of the instance
         """
-        for index in range(2):
-            if name not in InstanceManager.values or index == 1:
+        if name not in InstanceManager.values:
+            InstanceManager.values[name] = {
+                "type": typ,
+                "image": ImageManager.get_image(name),
+                "active": True,
+                "difficulty": {
+                    dif: {"chars": {}} for dif in diff.split(", ")
+                } if diff else {"": {"chars": {}}}
+            }
+        elif not InstanceManager.values[name]["active"]:
+            InstanceManager.values[name]["active"] = True
+            if not messagebox.askyesno(
+                    "Instanz hinzufügen",
+                    "Diese Instanz befindet sich noch im Papierkorb!\n"
+                    "Möchtest du sie wiederherstellen?"):
                 InstanceManager.values[name] = {
                     "type": typ,
                     "image": ImageManager.get_image(name),
@@ -194,19 +199,10 @@ class InstanceTable(CTkCanvas):
                         dif: {"chars": {}} for dif in diff.split(", ")
                     } if diff else {"": {"chars": {}}}
                 }
-                break
-            elif not InstanceManager.values[name]["active"]:
-                if messagebox.askyesno(
-                    "ToDo hinzufügen",
-                    "Dieses ToDo befindet sich noch im Papierkorb!\n"
-                        "Möchtest du es überschreiben?"):
-                    continue
-                break
-            else:
-                messagebox.showwarning(
-                    "ToDo hinzufügen",
-                    "Dieses ToDo existiert bereits!")
-                break
+        else:
+            messagebox.showwarning(
+                "Instanz hinzufügen",
+                "Dieses Instanz existiert bereits!")
 
         InstanceManager.write()
         self.reload_table()
@@ -214,10 +210,14 @@ class InstanceTable(CTkCanvas):
     def set_week(self, week: str) -> None:
         """
         Set week to display in the table
-
         :param week: File name of the week (week_year.json)
         :return:
         """
-        InstanceManager.today = week
+        Settings.write()
+        InstanceManager.write()
         Settings.today = week
+        InstanceManager.today = week
+        self.table.topleft.reload()
+        if Settings.values["view"]["selectedView"] != "default":
+            self.scroll(null=True)
         self.reload_table()

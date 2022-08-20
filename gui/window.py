@@ -16,6 +16,8 @@ from .menu import TopMenu, LeftMenu
 from .instances import InstanceTable
 from .wowToken import WoWToken
 
+from data import Settings, InstanceManager
+
 
 ##################################################
 #                 Window class                   #
@@ -44,7 +46,7 @@ class Window(CTk):
                                         "WoW-Marke": self.wowToken})
 
         self.bind("<F11>", self.toggle_fullscreen)
-
+        self.protocol("WM_DELETE_WINDOW", self.delete_window)
         self.grid_widgets()
 
     def grid_widgets(self) -> None:
@@ -62,3 +64,9 @@ class Window(CTk):
             self.state("normal")
             return
         self.state("zoomed")
+
+    def delete_window(self, *_args: any) -> None:
+        Settings.write()
+        InstanceManager.write()
+
+        self.destroy()

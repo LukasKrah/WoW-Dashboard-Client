@@ -33,10 +33,23 @@ class KImage:
         self.thread = ThreadPoolExecutor(max_workers=1)
 
     def resize(self, width: int, height: int,
-               mode: Literal["fitx", "normal"] | None = "normal") -> None:
+               mode: Literal["cover", "fitx", "normal"] | None = "normal") -> None:
         x, y = 0, 0
         img_width, img_height = self.img.size
+
         match mode:
+            case "cover" | "contain":
+                factx = width / img_width
+                facty = height / img_height
+
+                if mode == "contain":
+                    fact = min(factx, facty)
+                else:
+                    fact = max(factx, facty)
+
+                x = int(img_width * fact)
+                y = int(img_height * fact)
+
             case "fitx":
                 fact = width / img_width
                 x = width

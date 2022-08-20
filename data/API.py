@@ -10,7 +10,6 @@ Author: Lukas Krahbichler
 
 from requests import Response
 import requests
-import json
 
 from .settings import Settings
 
@@ -27,7 +26,7 @@ class _API:
         self.token = {}
         self.auth()
 
-    def getTokenPrice(self) -> int:
+    def get_token_history(self) -> int:
         return self.request(
             "/data/wow/token/index",
             f'dynamic-{Settings["myAccount"]["region"]}').json()["price"]
