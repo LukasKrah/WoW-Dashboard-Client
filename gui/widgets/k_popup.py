@@ -134,8 +134,8 @@ class KPopUp(CTkToplevel):
         self.width = int(screen_width * self.relx)
         self.height = int(screen_height * self.rely)
 
-        center_x = int(screen_width/2 - self.width/2)
-        center_y = int(screen_height/2 - self.height/2)
+        center_x = int(screen_width / 2 - self.width / 2)
+        center_y = int(screen_height / 2 - self.height / 2)
 
         self.resizable(width=False, height=False)
         self.geometry(f"{self.width}+{self.height}+{center_x}+{center_y}")

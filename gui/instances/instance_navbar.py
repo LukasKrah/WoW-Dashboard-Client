@@ -62,9 +62,9 @@ class InstanceNavBar(CTkCanvas):
         self.new_char_popup = KPopUp(self,
                                      "Neuer Char",
                                      inputs=[{"type": "InputText",
-                                             "label": "Name"},
-                                            {"type": "InputText",
-                                             "label": "Realm"}],
+                                              "label": "Name"},
+                                             {"type": "InputText",
+                                              "label": "Realm"}],
                                      confirm_call=self.new_char_callback)
         self.new_char = CTkButton(
             self,

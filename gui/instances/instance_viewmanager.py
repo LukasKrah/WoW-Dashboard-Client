@@ -27,7 +27,12 @@ class InstanceViewManager(CTkCanvas):
     views: dict
     view_elems: list[any]
 
-    def __init__(self, master: any, views: dict, *args: any, **kwargs: any) -> None:
+    def __init__(
+            self,
+            master: any,
+            views: dict,
+            *args: any,
+            **kwargs: any) -> None:
         """
         Create ViewManager and grid widgets
         :param master: Master widget

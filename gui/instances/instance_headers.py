@@ -59,7 +59,8 @@ class InstanceRowHeader(CTkCanvas):
         self.width, self.height = 0, 0
         self.labels = self.name.split(",") if self.name else []
         if typ == "row":
-            self.image = KImage(InstanceManager[name]["image"]) if InstanceManager[name]["image"] else None
+            self.image = KImage(
+                InstanceManager[name]["image"]) if InstanceManager[name]["image"] else None
         else:
             self.image = None
 
@@ -79,11 +80,11 @@ class InstanceRowHeader(CTkCanvas):
                 self.height / 2,
                 image=self.image.imgTk)
 
-        labels_len = len(self.labels)+1
+        labels_len = len(self.labels) + 1
         for index, label in enumerate(self.labels):
             self.create_text(
                 self.width / 2,
-                (self.height / labels_len) * (index+1),
+                (self.height / labels_len) * (index + 1),
                 text=label,
                 anchor="center",
                 font=(Theme.wow_font, Theme.fontfactor * 18),
@@ -112,11 +113,13 @@ class InstanceRowHeader(CTkCanvas):
             case "row":
                 for diff in InstanceManager.values[self.name]["difficulty"]:
                     if value == "del":
-                        InstanceManager.values[self.name]["difficulty"][diff]["chars"] = {}
+                        InstanceManager.values[self.name]["difficulty"][diff]["chars"] = {
+                        }
                     else:
                         for char in Settings.values["chars"]:
                             if char not in InstanceManager.values[self.name]["difficulty"][diff]["chars"]:
-                                InstanceManager.values[self.name]["difficulty"][diff]["chars"][char] = {"done": value}
+                                InstanceManager.values[self.name]["difficulty"][diff]["chars"][char] = {
+                                    "done": value}
 
             case "col":
                 for instance in InstanceManager.values:
@@ -126,8 +129,8 @@ class InstanceRowHeader(CTkCanvas):
                                 del InstanceManager.values[instance]["difficulty"][diff]["chars"][self.name]
                         else:
                             if value != "del":
-                                InstanceManager.values[instance]["difficulty"][diff]["chars"][self.name] = \
-                                    {"done": value}
+                                InstanceManager.values[instance]["difficulty"][diff]["chars"][self.name] = {
+                                    "done": value}
         self.master.master.master.reload_table()
 
     def activate_whole(self) -> None:

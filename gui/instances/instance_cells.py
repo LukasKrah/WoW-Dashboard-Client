@@ -124,11 +124,13 @@ class InstanceCell(CTkCanvas):
         for index in indexes:
             if self.__states[index] == "disable":
                 self.__states[index] = "neutral"
-                InstanceManager.values[self.row]["difficulty"][self.diffs[index]]["chars"][self.column] = {"done": None}
+                InstanceManager.values[self.row]["difficulty"][self.diffs[index]]["chars"][self.column] = {
+                    "done": None}
                 self.con[index].change_label(0, "Deaktivieren")
             else:
                 self.__states[index] = "disable"
-                del InstanceManager.values[self.row]["difficulty"][self.diffs[index]]["chars"][self.column]
+                del InstanceManager.values[self.row]["difficulty"][self.diffs[index]
+                                                                   ]["chars"][self.column]
                 self.con[index].change_label(0, "Aktivieren")
         self._reload()
         InstanceManager.write()
@@ -195,11 +197,11 @@ class InstanceCell(CTkCanvas):
                 self.__states[index] = "done"
 
                 InstanceManager[self.row]["difficulty"][self.diffs[index]
-                                                           ]["chars"][self.column] = {"done": True}
+                                                        ]["chars"][self.column] = {"done": True}
             else:
                 self.__states[index] = "cancel"
                 InstanceManager[self.row]["difficulty"][self.diffs[index]
-                                                           ]["chars"][self.column] = {"done": False}
+                                                        ]["chars"][self.column] = {"done": False}
             self._reload()
 
     def _neutral(self, **kwargs) -> None:
@@ -245,7 +247,7 @@ class InstanceCell(CTkCanvas):
             for index in indexes:
                 self.__states[index] = "neutral"
                 InstanceManager.values[self.row]["difficulty"][self.diffs[index]
-                                                           ]["chars"][self.column] = {"done": None}
+                                                               ]["chars"][self.column] = {"done": None}
             self._reload()
 
     def _done(self, **kwargs) -> None:

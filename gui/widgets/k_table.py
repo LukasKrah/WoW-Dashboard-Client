@@ -82,25 +82,42 @@ class KTable(CTkCanvas):
         # TopLeft
         if self.topleft is not None:
             print(self.topleft)
-            self.topleft.grid(row=0, column=0, rowspan=row_offset+1, columnspan=col_offset+1, sticky="NSEW")
+            self.topleft.grid(
+                row=0,
+                column=0,
+                rowspan=row_offset + 1,
+                columnspan=col_offset + 1,
+                sticky="NSEW")
 
         # Column headers
         for index, col in enumerate(self.__columns):
             for colindex, colheader in enumerate(self.colheaders):
                 lab = colheader(self, col[colindex], colindex)
-                lab.grid(row=colindex, column=index + col_offset, sticky="NSEW")
+                lab.grid(
+                    row=colindex,
+                    column=index +
+                    col_offset,
+                    sticky="NSEW")
 
         # Row headers
         for index, row in enumerate(self.__rows):
             for rowindex, rowheader in enumerate(self.rowheaders):
                 lab = rowheader(self, row[rowindex], rowindex)
-                lab.grid(row=index + row_offset, column=rowindex, sticky="NSEW")
+                lab.grid(
+                    row=index + row_offset,
+                    column=rowindex,
+                    sticky="NSEW")
 
         # Table
         for rowindex, row in enumerate(self.__rows):
             for colindex, col in enumerate(self.__columns):
                 lab = self.cells(self, col=col[0], row=row[0])
-                lab.grid(row=rowindex + row_offset, column=colindex + col_offset, sticky="NSEW")
+                lab.grid(
+                    row=rowindex +
+                    row_offset,
+                    column=colindex +
+                    col_offset,
+                    sticky="NSEW")
 
         # Weights
         for index in range(len(self.__columns) + col_offset):

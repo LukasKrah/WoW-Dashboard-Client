@@ -46,8 +46,13 @@ class InstanceTable(CTkCanvas):
             background=Theme.background3)
 
         self.table_frame = CTkFrame(self)
-        self.table = KTable(self.table_frame, rowheaders=[InstanceRowHeader, InstanceColHeader], colheaders=[InstanceColHeader],
-                            cells=InstanceCell)
+        self.table = KTable(
+            self.table_frame,
+            rowheaders=[
+                InstanceRowHeader,
+                InstanceColHeader],
+            colheaders=[InstanceColHeader],
+            cells=InstanceCell)
         self.table.topleft = self.table.topleft(self.table, {
             "default": {
                 "name": "Tabelle (Gesamt)",
@@ -80,16 +85,30 @@ class InstanceTable(CTkCanvas):
 
         if new_y > 0:
             new_y = 0
-        elif new_y < (-self.table.winfo_height()+self.table_frame.winfo_height()):
-            new_y = -self.table.winfo_height()+self.table_frame.winfo_height()
+        elif new_y < (-self.table.winfo_height() + self.table_frame.winfo_height()):
+            new_y = -self.table.winfo_height() + self.table_frame.winfo_height()
         print(new_y)
-        self.table.place(x=0, y=new_y, anchor="nw", relwidth=1, relheight=len(InstanceManager.values)/10)
+        self.table.place(
+            x=0,
+            y=new_y,
+            anchor="nw",
+            relwidth=1,
+            relheight=len(
+                InstanceManager.values) /
+            10)
 
     def _grid_widgets(self) -> None:
         """
         Grid Widgets
         """
-        self.table.place(x=0, y=0, anchor="nw", relwidth=1, relheight=len(InstanceManager.values)/10)
+        self.table.place(
+            x=0,
+            y=0,
+            anchor="nw",
+            relwidth=1,
+            relheight=len(
+                InstanceManager.values) /
+            10)
 
         self.table_frame.grid(row=0, column=0, sticky="NSEW")
         self.navBar.grid(row=1, column=0, sticky="NSEW")
@@ -100,12 +119,15 @@ class InstanceTable(CTkCanvas):
         """
         Load rows, columns and __values and relaod table
         """
-        rows = [[instance, ",".join(InstanceManager.values[instance]["difficulty"].keys())]
-                for instance in InstanceManager.values.keys() if InstanceManager[instance]["active"]]
+        rows = [[instance, ",".join(InstanceManager.values[instance]["difficulty"].keys(
+        ))] for instance in InstanceManager.values.keys() if InstanceManager[instance]["active"]]
         columns = [[f'{Settings["chars"][char]["characterName"].lower()}:{Settings["chars"][char]["realmSlug"].lower()}']
                    for char in Settings["chars"]]
 
-        self.table.reload(rows=rows, columns=columns, values=InstanceManager.values)
+        self.table.reload(
+            rows=rows,
+            columns=columns,
+            values=InstanceManager.values)
 
     def add_char_callback(self, name: str, realm: str) -> None:
         """
@@ -119,15 +141,22 @@ class InstanceTable(CTkCanvas):
         add = True
         for char in Settings["chars"]:
             if charname == char:
-                messagebox.showwarning("Char hinzufügen", "Dieser Char existiert bereits!")
+                messagebox.showwarning(
+                    "Char hinzufügen",
+                    "Dieser Char existiert bereits!")
                 add = False
 
         if add:
-            Settings["chars"][charname] = {"characterName": name, "realmSlug": realm}
+            Settings["chars"][charname] = {
+                "characterName": name, "realmSlug": realm}
             Settings.write()
             self.reload_table()
 
-    def add_todo_callback(self, name: str, typ: Literal["daily", "weekly"], diff: str) -> None:
+    def add_todo_callback(self,
+                          name: str,
+                          typ: Literal["daily",
+                                       "weekly"],
+                          diff: str) -> None:
         """
         Add an instance to the InstanceManager __values and reload table
 
@@ -147,12 +176,16 @@ class InstanceTable(CTkCanvas):
                 }
                 break
             elif not InstanceManager.values[name]["active"]:
-                if messagebox.askyesno("ToDo hinzufügen", "Dieses ToDo befindet sich noch im Papierkorb!\n"
-                                                          "Möchtest du es überschreiben?"):
+                if messagebox.askyesno(
+                    "ToDo hinzufügen",
+                    "Dieses ToDo befindet sich noch im Papierkorb!\n"
+                        "Möchtest du es überschreiben?"):
                     continue
                 break
             else:
-                messagebox.showwarning("ToDo hinzufügen", "Dieses ToDo existiert bereits!")
+                messagebox.showwarning(
+                    "ToDo hinzufügen",
+                    "Dieses ToDo existiert bereits!")
                 break
 
         InstanceManager.write()

@@ -221,7 +221,13 @@ class KSlider(CTkCanvas):
 
     slider: CTkSlider
 
-    def __init__(self, master: any, label: str, range: str, *args: any, **kwargs: any) -> None:
+    def __init__(
+            self,
+            master: any,
+            label: str,
+            range: str,
+            *args: any,
+            **kwargs: any) -> None:
         """
         Create custom slider and grid widgets
 
