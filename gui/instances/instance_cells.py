@@ -1,5 +1,5 @@
 """
-gui/instances.py
+gui/instances/instance_cells.py
 
 Author: Lukas Krahbichler
 """
@@ -11,72 +11,17 @@ Author: Lukas Krahbichler
 from customtkinter import *
 from tkinter import messagebox
 from tkinter import *
-from PIL import Image, ImageTk
 from json import dumps
 
-from gui.widgets import Table, NavBar, ContextMenu
-from style import Theme, ImageManager, KImage
 
-from data.settings import InstanceManager
-from data import Settings
+from gui.widgets import KContextMenu, KTable
+from style import Theme
+from data import InstanceManager
+
 
 ##################################################
-#                 Menu classes                   #
+#                     Code                       #
 ##################################################
-
-
-class InstanceRowHeader(CTkCanvas):
-    width: int
-    height: int
-    text: str
-    image: KImage | None
-
-    def __init__(
-            self,
-            master: Table,
-            text: str,
-            image: str,
-            *args: any,
-            **kwargs: any) -> None:
-        super().__init__(master, *args, **kwargs)
-        self.width, self.height = 0, 0
-        self.text = text
-        print("IMAGE", image)
-        if image:
-            self.image = KImage(image)
-        else:
-            self.image = None
-
-        self.configure(
-            bd=5,
-            highlightthickness=0,
-            background=Theme.background3)
-        self.bind("<Configure>", self.__resize)
-
-    def _reload(self) -> None:
-        self.delete("all")
-        # 100, 100
-        # 200,
-        print(self.image)
-        if self.image:
-            self.image.resize(self.width, self.height, "fitx")
-            self.create_image(
-                self.width / 2,
-                self.height / 2,
-                image=self.image.imgTk)
-
-        self.create_text(
-            self.width / 2,
-            self.height / 2,
-            text=self.text,
-            anchor="center",
-            font=Theme.wow_font,
-            fill="white")
-
-    def __resize(self, event: Event) -> None:
-        self.width, self.height = event.width, event.height
-        self._reload()
-
 
 class InstanceCell(CTkCanvas):
     width: int
@@ -88,14 +33,14 @@ class InstanceCell(CTkCanvas):
     column: str
     row: str
 
-    con: list[ContextMenu]
+    con: list[KContextMenu]
     __states: list[str]
     diffs: list[str]
     index: int
 
     def __init__(
             self,
-            master: Table,
+            master: KTable,
             col: str,
             row: str,
             *args: any,
@@ -105,18 +50,18 @@ class InstanceCell(CTkCanvas):
         self.click_x, self.click_y = 0, 0
         self.rclick_y = 0
         self.column, self.row = col, row
-        self.diffs = list(self.master.values[self.row]["difficulty"].keys())
+        self.diffs = list(InstanceManager[self.row]["difficulty"].keys())
         self.index = 0
 
-        self.con = [ContextMenu(
-            self, [{"label": "Aktivieren", "command": self.toggle}]) for diff in self.diffs]
+        self.con = [KContextMenu(
+            self, [{"label": "Aktivieren", "command": self.toggle}]) for _diff in self.diffs]
 
-        self.__states = ["disable" for diff in self.diffs]
+        self.__states = ["disable" for _diff in self.diffs]
         for index, diff in enumerate(self.diffs):
             try:
-                if self.column in self.master.values[self.row]["difficulty"][diff]["chars"]:
+                if self.column in InstanceManager[self.row]["difficulty"][diff]["chars"]:
                     self.con[index].change_label(0, "Deaktivieren")
-                    match self.master.values[self.row]["difficulty"][diff]["chars"][self.column]["done"]:
+                    match InstanceManager[self.row]["difficulty"][diff]["chars"][self.column]["done"]:
                         case True:
                             self.__states[index] = "done"
                         case False:
@@ -126,7 +71,6 @@ class InstanceCell(CTkCanvas):
                     self._reload()
             except KeyError:
                 ...
-        print(self.__states)
 
         self.configure(
             bd=5,
@@ -180,13 +124,11 @@ class InstanceCell(CTkCanvas):
         for index in indexes:
             if self.__states[index] == "disable":
                 self.__states[index] = "neutral"
-                self.master.values[self.row]["difficulty"][self.diffs[index]
-                                                           ]["chars"][self.column] = {"done": None}
+                InstanceManager.values[self.row]["difficulty"][self.diffs[index]]["chars"][self.column] = {"done": None}
                 self.con[index].change_label(0, "Deaktivieren")
             else:
                 self.__states[index] = "disable"
-                del self.master.values[self.row]["difficulty"][self.diffs[index]
-                                                               ]["chars"][self.column]
+                del InstanceManager.values[self.row]["difficulty"][self.diffs[index]]["chars"][self.column]
                 self.con[index].change_label(0, "Aktivieren")
         self._reload()
         InstanceManager.write()
@@ -252,12 +194,11 @@ class InstanceCell(CTkCanvas):
             if self.click_x < self.width / 2:
                 self.__states[index] = "done"
 
-                print(self.diffs)
-                self.master.values[self.row]["difficulty"][self.diffs[index]
+                InstanceManager[self.row]["difficulty"][self.diffs[index]
                                                            ]["chars"][self.column] = {"done": True}
             else:
                 self.__states[index] = "cancel"
-                self.master.values[self.row]["difficulty"][self.diffs[index]
+                InstanceManager[self.row]["difficulty"][self.diffs[index]
                                                            ]["chars"][self.column] = {"done": False}
             self._reload()
 
@@ -303,7 +244,7 @@ class InstanceCell(CTkCanvas):
                 "Sicher das du dieses Feld zurücksetzen willst?"):
             for index in indexes:
                 self.__states[index] = "neutral"
-                self.master.values[self.row]["difficulty"][self.diffs[index]
+                InstanceManager.values[self.row]["difficulty"][self.diffs[index]
                                                            ]["chars"][self.column] = {"done": None}
             self._reload()
 
@@ -347,53 +288,3 @@ class InstanceCell(CTkCanvas):
                 Theme.fontfactor *
                 18),
             justify="center")
-
-
-class InstanceTable(CTkCanvas):
-    def __init__(self, *args: any, **kwargs: any) -> None:
-        super().__init__(*args, **kwargs)
-        self.configure(
-            bd=0,
-            highlightthickness=0,
-            background=Theme.background3)
-
-        self.table = Table(
-            self,
-            cells=InstanceCell,
-            rowheader=InstanceRowHeader,
-            colheader=InstanceRowHeader)
-        self.table.values = InstanceManager.values
-        self.table.reload()
-        self.navBar = NavBar(self, self.set_week,
-                             new_char_callback=self.add_char,
-                             new_todo_callback=self.add_todo)
-
-        self.grid_widgets()
-
-    def add_char(self, name: str, realm: str) -> None:
-        Settings["chars"].append({"characterName": name, "realmSlug": realm})
-        Settings.write()
-        self.table.reload()
-
-    def add_todo(self, name: str, typ: str, diff: str) -> None:
-        if name not in self.table.values:
-            self.table.values[name] = {
-                "type": typ,
-                "image": ImageManager.get_image(name),
-                "difficulty": {
-                    dif: {"chars": {}} for dif in diff.split(", ")
-                } if diff else {"": {"chars": {}}}
-            }
-        self.table.reload()
-
-    def set_week(self, week: str) -> None:
-        InstanceManager.today = week
-        Settings.today = week
-        self.table.values = InstanceManager.values
-        self.table.reload()
-
-    def grid_widgets(self) -> None:
-        self.table.grid(row=0, column=0, sticky="NSEW")
-        self.navBar.grid(row=1, column=0, sticky="NSEW")
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)

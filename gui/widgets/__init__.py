@@ -1,3 +1,3 @@
-from .table import Table
-from .navBar import NavBar
-from .popup import ContextMenu
+from .k_contextmenu import KContextMenu
+from .k_popup import KPopUp
+from .k_table import KTable

@@ -1,5 +1,5 @@
 """
-.py
+widgets/k_navbar.py
 
 Author: Lukas Krahbichler
 """
@@ -9,50 +9,73 @@ Author: Lukas Krahbichler
 ##################################################
 
 from datetime import date, timedelta
-from typing import Callable, Union
+from typing import Callable, Literal
 from customtkinter import *
 from os import listdir
 from tkinter import *
 
 from style import Theme
 
-from .popup import PopUp
+from gui.widgets.k_popup import KPopUp
 
 ##################################################
 #                     Code                       #
 ##################################################
 
 
-class NavBar(CTkCanvas):
+class InstanceNavBar(CTkCanvas):
+    """
+    Bottom NavBar of the InstanceTable
+    """
     weeks: dict[str, str]
     week_call: Callable
-    new_char_popup: PopUp
-    new_ToDo_popup: PopUp
+    new_char_popup: KPopUp
+    new_ToDo_popup: KPopUp
 
-    def __init__(self, master, week_call: Callable,
+    def __init__(self,
+                 master,
+                 week_call: Callable[[str], None],
                  new_char_callback: Callable[[str, str], None],
-                 new_todo_callback: Callable[[str, str, str], None],
+                 new_todo_callback: Callable[[str, Literal["daily", "weekly"], str], None],
                  *args, **kwargs) -> None:
-        super().__init__(master, *args, **kwargs)
+        """
+        Create NavBar and grid widgets
+        :param master: Master widget/frame
+        :param week_call: Callback when week selection is changed (will pass week str)
+        :param new_char_callback: Callback when new char is created (will pass name + realm)
+        :param new_todo_callback: Callback when new isntance is created (will pass name + type + diff)
+        """
+        self.master = master
+        self.week_call = week_call
         self.new_char_callback = new_char_callback
         self.new_todo_callback = new_todo_callback
+
+        super().__init__(master, *args, **kwargs)
 
         self.configure(
             bd=0,
             highlightthickness=0,
             background=Theme.background1,
             height=50)
-        self.master = master
-        self.week_call = week_call
 
-        self.new_char_popup = PopUp(self,
-                                    "Neuer Char",
-                                    inputs=[{"type": "InputText",
+        # NewChar
+        self.new_char_popup = KPopUp(self,
+                                     "Neuer Char",
+                                     inputs=[{"type": "InputText",
                                              "label": "Name"},
                                             {"type": "InputText",
                                              "label": "Realm"}],
-                                    confirm_call=self.new_char_callback)
-        self.new_ToDo_popup = PopUp(
+                                     confirm_call=self.new_char_callback)
+        self.new_char = CTkButton(
+            self,
+            text="Neuer Char",
+            text_font=(
+                Theme.wow_font,
+                Theme.fontfactor * 18),
+            command=self.new_char_popup.open_popup)
+
+        # NewToDo
+        self.new_ToDo_popup = KPopUp(
             self, "Neues ToDo", inputs=[
                 {
                     "type": "InputText", "label": "Name"}, {
@@ -64,17 +87,11 @@ class NavBar(CTkCanvas):
             self,
             text="Neues ToDo",
             text_font=(
-                Theme.wow_font2,
+                Theme.wow_font,
                 Theme.fontfactor * 18),
             command=self.new_ToDo_popup.open_popup)
-        self.new_char = CTkButton(
-            self,
-            text="Neuer Char",
-            text_font=(
-                Theme.wow_font2,
-                Theme.fontfactor * 18),
-            command=self.new_char_popup.open_popup)
 
+        # Week Selection
         self.weeks = {}
         today = list(
             (date.today() +
@@ -97,9 +114,13 @@ class NavBar(CTkCanvas):
             command=self.week_call)
         self.week.set("Diese Woche")
 
+        # Grid widgets
         self.grid_widgets()
 
     def grid_widgets(self) -> None:
+        """
+        Grid navBar widgets
+        """
         self.new_ToDo.grid(row=0, column=0, sticky="NSEW", padx=(0, 20))
         self.new_char.grid(row=0, column=1, sticky="NSEW")
         self.week.grid(row=0, column=3, sticky="NSEW")

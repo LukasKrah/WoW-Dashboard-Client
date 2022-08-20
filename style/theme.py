@@ -34,10 +34,8 @@ class _DarkTheme:
 
     fontfactor: float = 1
     font: str = "Arial"
-    wow_font: str = "WoW-plexus"
-    wow_font2: str = "LifeCraft"
+    wow_font: str = "LifeCraft"
 
 
-pyglet.font.add_file("style/WoW-plexus.ttf")
 pyglet.font.add_file("style/LifeCraft_Font.ttf")
 Theme = _DarkTheme()

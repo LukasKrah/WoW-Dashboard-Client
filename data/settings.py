@@ -23,7 +23,7 @@ import json
 
 class _SettingsManager:
     __today: list
-    __values: dict
+    values: dict
     __path: str
     __default: dict[str, str]
     path: str
@@ -39,18 +39,16 @@ class _SettingsManager:
              timedelta(
                 days=5,
                 hours=15)).isocalendar())
-        self.__values = {}
+        self.values = {}
 
         pathsplit = self.path.split(".")
         with open(f"{path}default.json", "r") as default:
             self.default = json.loads(default.read())
-        print("DEFAULT", self.default)
 
     def __getitem__(self, item: str) -> str:
         try:
             return self.values[item]
         except KeyError:
-            print("KEY")
             self.values[item] = self.default[item]
             return self.values[item]
 
@@ -83,16 +81,11 @@ class _SettingsManager:
                     day=1).isocalendar())
         self.read()
 
-    @property
-    def values(self) -> dict:
-        self.read()
-        return self.__values
-
     def read(self) -> None:
         for index in range(2):
             try:
                 with open(f"{self.path}{self.__today[1]}_{self.__today[0]}.json", "r") as data:
-                    self.__values = json.loads(data.read())
+                    self.values = json.loads(data.read())
                     break
 
             except (FileNotFoundError, json.decoder.JSONDecodeError):
@@ -115,24 +108,30 @@ class _SettingsManager:
                     if youngest:
                         with open(f"{self.path}{youngest[0]}_{youngest[1]}.json", "r") as lastdata:
                             last = json.loads(lastdata.read())
-                            print(last)
                             if self.reset_callback:
                                 last = self.reset_callback(last)
                             data.write(json.dumps(last, indent=4))
                     else:
                         self._reset(data)
-                        print("RESET", self.default)
 
     def write(self) -> None:
         with open(f"{self.path}{self.__today[1]}_{self.__today[0]}.json", "w+") as data:
-            data.write(json.dumps(self.__values, indent=2))
+            data.write(json.dumps(self.values, indent=2))
 
 
 def reset_instances(instances: dict) -> dict:
+    del_instances: list = []
     for instance in instances:
-        for diff in instances[instance]["difficulty"]:
-            for char in instances[instance]["difficulty"][diff]["chars"]:
-                instances[instance]["difficulty"][diff]["chars"][char]["done"] = None
+        if instances[instance]["active"]:
+            for diff in instances[instance]["difficulty"]:
+                for char in instances[instance]["difficulty"][diff]["chars"]:
+                    instances[instance]["difficulty"][diff]["chars"][char]["done"] = None
+        else:
+            del_instances.append(instance)
+
+    for del_instance in del_instances:
+        del instances[del_instance]
+
     return instances
 
 

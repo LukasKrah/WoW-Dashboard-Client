@@ -1,1 +1,1 @@
-from .instances import InstanceTable
+from .instance_table import InstanceTable

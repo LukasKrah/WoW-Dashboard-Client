@@ -8,7 +8,6 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
-from customtkinter.widgets.dropdown_menu import DropdownMenu
 from customtkinter import *
 from tkinter import *
 
@@ -47,7 +46,7 @@ class KEntry(CTkCanvas):
             text=self.label,
             anchor="nw",
             font=(
-                Theme.wow_font2,
+                Theme.wow_font,
                 Theme.fontfactor *
                 18))
 
@@ -55,7 +54,7 @@ class KEntry(CTkCanvas):
         self.entry = CTkEntry(
             self,
             text_font=(
-                Theme.wow_font2,
+                Theme.wow_font,
                 Theme.fontfactor * 18),
             width=300,
             textvariable=self.textvar)
@@ -68,7 +67,7 @@ class KEntry(CTkCanvas):
             row=0, column=0, sticky="NSEW", pady=(
                 (Theme.fontfactor * 18) + 30, 0))
 
-    def __change_text(self, *args) -> None:
+    def __change_text(self, *_args) -> None:
         newstring = ""
         for let in self.textvar.get():
             if self.valid_symbols:
@@ -111,13 +110,13 @@ class KOptionMenu(CTkCanvas):
             10,
             text=label,
             font=(
-                Theme.wow_font2,
+                Theme.wow_font,
                 Theme.fontfactor *
                 18),
             anchor="nw")
         self.optionMenu = CTkOptionMenu(
             self, values=self.values, text_font=(
-                Theme.wow_font2, Theme.fontfactor * 18))
+                Theme.wow_font, Theme.fontfactor * 18))
         self.optionMenu.dropdown_menu.configure(tearoff=False)
 
         self.grid_widgets()
@@ -162,7 +161,7 @@ class KMenu(CTkCanvas):
             10,
             text=label,
             font=(
-                Theme.wow_font2,
+                Theme.wow_font,
                 Theme.fontfactor *
                 18),
             anchor="nw")
@@ -171,7 +170,7 @@ class KMenu(CTkCanvas):
             values=[
                 self.label],
             text_font=(
-                Theme.wow_font2,
+                Theme.wow_font,
                 Theme.fontfactor *
                 18))
         self.menuButton.dropdown_menu.configure(tearoff=False)

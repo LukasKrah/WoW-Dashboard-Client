@@ -44,7 +44,7 @@ class LeftMenu(CTkCanvas):
                 self,
                 text=window,
                 text_font=(
-                    Theme.wow_font2,
+                    Theme.wow_font,
                     Theme.fontfactor *
                     22),
                 command=lambda win=windows[window]: self.change_to_frame(win))
@@ -84,7 +84,7 @@ class TopMenu(CTkCanvas):
             text=f"Willkommen  im  WoW-Dashboard  {Settings['myAccount']['characterName']}",
             anchor="w",
             font=(
-                Theme.wow_font2,
+                Theme.wow_font,
                 Theme.fontfactor *
                 22))
 

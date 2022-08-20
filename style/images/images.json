@@ -20,7 +20,7 @@
   {
     "path": "icecrown.png",
     "keywords": [
-      "unbesiegbar", "eiskrone", "zitadelle", "eiskronenzitadelle"
+      "unbesiegbar", "eiskrone", "eiskronenzitadelle"
     ]
   },
   {
@@ -38,7 +38,55 @@
   {
     "path": "shaofanger.jpg",
     "keywords": [
-      "sha des zorns", "himmlisch", "onyxwolkenschlange8"
+      "sha des zorns", "himmlisch", "onyxwolkenschlange"
+    ]
+  },
+  {
+    "path": "antorus.jpg",
+    "keywords": [
+      "antorus der brennende thron"
+    ]
+  },
+  {
+    "path": "hellfire_citadel.jpg",
+    "keywords": [
+      "höllenfeuerzitadelle", "zitadelle"
+    ]
+  },
+  {
+    "path": "blackrock_foundry.jpg",
+    "keywords": [
+      "schwarzfelsgießerei", "schwarzfels"
+    ]
+  },
+  {
+    "path": "thron_of_thunder.jpg",
+    "keywords": [
+      "thron des donners", "donner", "zandalari"
+    ]
+  },
+  {
+    "path": "nalak.jpg",
+    "keywords": [
+      "nalak"
+    ]
+  },
+  {
+    "path": "oondasta.jpg",
+    "keywords": [
+      "lucker", "oondasta"
+    ]
+  },
+  {
+    "path": "ashes_of_alar.jpg",
+    "keywords": [
+      "alar", "asche"
+    ]
+  },
+  {
+    "path": "karazhan.jpg",
+    "keywords": [
+      "karazhan", "altes karazhan"
     ]
   }
 ]

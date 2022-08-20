@@ -133,3 +133,5 @@ dmypy.json
 
 data/instance_data/*.json
 data/settings/*.json
+!data/instance_data/default.json
+!data/settings/default.json

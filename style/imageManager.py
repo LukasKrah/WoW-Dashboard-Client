@@ -29,16 +29,21 @@ class KImage:
     def resize(self, width: int, height: int,
                mode: Literal["fitx", "normal"] | None = "normal") -> None:
         x, y = 0, 0
+        img_width, img_height = self.img.size
         match mode:
             case "fitx":
-                fact = width / self.img.size[0]
+                # img_width = 20
+                # img_height = 30
+                # width = 10
+                # 10/20
+                # x = 10
+                # y = 15
+                fact = width / img_width
                 x = width
-                y = height * fact
+                y = img_height * fact
             case "normal":
                 x, y = width, height
-        orig_img = self.img
         self.imgTk = ImageTk.PhotoImage(self.img.resize(size=(int(x), int(y))))
-        self.img = orig_img
 
 
 class _ImageManager:
@@ -76,7 +81,6 @@ class _ImageManager:
     def get_image(self, query: str) -> str | None:
         index = self.__search_image(query)
         if index is not None:
-            print("RETURN", self.images[index]["path"])
             return f'{self.path}{self.images[index]["path"]}'
         return None
 

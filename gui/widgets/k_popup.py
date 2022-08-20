@@ -1,5 +1,5 @@
 """
-.py
+widgets/k_popup.py
 
 Author: Lukas Krahbichler
 """
@@ -10,41 +10,17 @@ Author: Lukas Krahbichler
 
 from typing import Callable
 from customtkinter import *
-from tkinter import *
 
 from style import Theme
-from .inputs import KEntry, KOptionMenu, KMenu
+
+from .intern import KEntry, KOptionMenu, KMenu
 
 
 ##################################################
 #                     Code                       #
 ##################################################
 
-class ContextMenu(Menu):
-    menu: list
-
-    def __init__(self, master, menu: list, *args: any, **kwargs: any) -> None:
-        super().__init__(master, tearoff=0, *args, **kwargs)
-        self.menu = menu
-
-        for menupoint in menu:
-            self.add_command(label=menupoint["label"],
-                             command=menupoint["command"])
-
-    def change_label(self, index: int, newtext: str) -> None:
-        self.delete(index)
-        self.menu[index]["label"] = newtext
-        self.insert_command(index, label=self.menu[index]["label"],
-                            command=self.menu[index]["command"])
-
-    def popup(self, event: Event) -> None:
-        try:
-            self.tk_popup(event.x_root, event.y_root, 0)
-        finally:
-            self.grab_release()
-
-
-class PopUp(CTkToplevel):
+class KPopUp(CTkToplevel):
     master: any
     name: str
     inputs: list[dict]
@@ -122,14 +98,14 @@ class PopUp(CTkToplevel):
                     text=but,
                     command=cmd,
                     text_font=(
-                        Theme.wow_font2,
+                        Theme.wow_font,
                         Theme.fontfactor *
                         18)))
 
         self.grid_widgets()
 
-        self.bind("<FocusOut>", lambda s=self: self.withdraw())
         self.protocol("WM_DELETE_WINDOW", lambda s=self: self.withdraw())
+        self.bind("<Return>", self.confirm)
 
     def grid_widgets(self) -> None:
         for index, input_elem in enumerate(self.input_elems):
@@ -166,18 +142,16 @@ class PopUp(CTkToplevel):
 
     def open_popup(self) -> None:
         if not self.winfo_exists():
-            print("OPEN")
             self.create()
         self.deiconify()
         self.center()
 
     def close_popup(self) -> None:
         if not self.winfo_exists():
-            print("CLOSe")
             self.create()
         self.withdraw()
 
-    def confirm(self) -> None:
+    def confirm(self, *_args: any) -> None:
         self.close_popup()
         values = [input_elem.get() for input_elem in self.input_elems]
         [input_elem.reset() for input_elem in self.input_elems]
