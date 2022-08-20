@@ -36,8 +36,12 @@ class KContextMenu(Menu):
         self.menu = menu
 
         for menupoint in menu:
-            self.add_command(label=menupoint["label"],
-                             command=menupoint["command"], font=(Theme.wow_font, Theme.fontfactor*18))
+            self.add_command(
+                label=menupoint["label"],
+                command=menupoint["command"],
+                font=(
+                    Theme.wow_font,
+                    Theme.fontfactor * 18))
 
     def change_label(self, index: int, newtext: str) -> None:
         """
@@ -51,7 +55,7 @@ class KContextMenu(Menu):
         self.menu[index]["label"] = newtext
         self.insert_command(index, label=self.menu[index]["label"],
                             command=self.menu[index]["command"],
-                            font=(Theme.wow_font, Theme.fontfactor*18))
+                            font=(Theme.wow_font, Theme.fontfactor * 18))
 
     def popup(self, event: Event) -> None:
         """

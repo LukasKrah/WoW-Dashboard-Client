@@ -32,8 +32,12 @@ class KImage:
 
         self.thread = ThreadPoolExecutor(max_workers=1)
 
-    def resize(self, width: int, height: int,
-               mode: Literal["cover", "fitx", "normal"] | None = "normal") -> None:
+    def resize(self,
+               width: int,
+               height: int,
+               mode: Literal["cover",
+                             "fitx",
+                             "normal"] | None = "normal") -> None:
         x, y = 0, 0
         img_width, img_height = self.img.size
 

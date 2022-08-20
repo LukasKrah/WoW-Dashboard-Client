@@ -24,7 +24,9 @@ class WoWToken(CTkCanvas):
         super().__init__(*args, **kwargs)
         self.configure(bg=Theme.background3, bd=0, highlightthickness=0)
 
-        self.price = CTkLabel(self, text="", text_font=(Theme.wow_font, Theme.fontfactor*100))
+        self.price = CTkLabel(
+            self, text="", text_font=(
+                Theme.wow_font, Theme.fontfactor * 100))
 
         self.grid_widgets()
         Thread(target=self.get_token_price()).start()

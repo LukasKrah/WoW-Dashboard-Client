@@ -55,8 +55,9 @@ class InstanceViewManager(KCanvas):
 
         super().__init__(master, *args, **kwargs)
 
-        self.con = KContextMenu(self, [{"label": "Diese Ansicht für alle Wochen übernehmen",
-                                        "command": self.set_view_all}])
+        self.con = KContextMenu(self,
+                                [{"label": "Diese Ansicht für alle Wochen übernehmen",
+                                  "command": self.set_view_all}])
 
         self.configure(bd=0, highlightthickness=0,
                        background=Theme.background3)
@@ -66,12 +67,18 @@ class InstanceViewManager(KCanvas):
     def reload(self) -> None:
         self.view_elems = {}
         for view in Settings["view"]["views"]:
-            self.view_elems[view] = {"but": CTkButton(self, text=Settings["view"]["views"][view]["name"],
-                                                      command=lambda v=view: self.set_view(v),
-                                                      text_font=(Theme.wow_font, Theme.fontfactor * 18)),
-                                     "propertys": {}}
+            self.view_elems[view] = {
+                "but": CTkButton(
+                    self,
+                    text=Settings["view"]["views"][view]["name"],
+                    command=lambda v=view: self.set_view(v),
+                    text_font=(
+                        Theme.wow_font,
+                        Theme.fontfactor * 18)),
+                "propertys": {}}
 
-            for index, prop in enumerate(Settings["view"]["views"][view]["propertys"]):
+            for index, prop in enumerate(
+                    Settings["view"]["views"][view]["propertys"]):
                 match Settings["view"]["views"][view]["propertys"][prop]["type"]:
                     case "slider":
                         self.view_elems[view]["propertys"][prop] = KSlider(
@@ -90,17 +97,20 @@ class InstanceViewManager(KCanvas):
         for index, prop in enumerate(self.view_elems[view]["propertys"]):
             Settings["view"]["views"][view]["propertys"][prop]["value"] = \
                 self.view_elems[view]["propertys"][prop].get()
-            values.append(Settings["view"]["views"][view]["propertys"][prop]["value"])
+            values.append(Settings["view"]["views"][view]
+                          ["propertys"][prop]["value"])
 
         try:
-            self.scale_view_callback(*values) if self.scale_view_callback else None
+            self.scale_view_callback(
+                *values) if self.scale_view_callback else None
         except TypeError:
             ...
 
     def grid_widgets(self) -> None:
         self.grid_rowconfigure(0, weight=1)
         for index, view in enumerate(self.view_elems):
-            self.view_elems[view]["but"].grid(row=0, column=index, sticky="NSEW")
+            self.view_elems[view]["but"].grid(
+                row=0, column=index, sticky="NSEW")
             self.grid_columnconfigure(index, weight=1)
 
     def set_view(self, view: str) -> None:
@@ -114,14 +124,18 @@ class InstanceViewManager(KCanvas):
 
         for propindex, prop in enumerate(self.view_elems[view]["propertys"]):
             self.view_elems[view]["propertys"][prop].grid(
-                row=propindex + 1, column=0, columnspan=len(Settings["view"]["views"][view]), sticky="NSEW")
+                row=propindex + 1,
+                column=0,
+                columnspan=len(
+                    Settings["view"]["views"][view]),
+                sticky="NSEW")
             self.grid_rowconfigure(propindex + 1, weight=1)
         self.set_view_callback(view) if self.set_view_callback else None
         self.set(view)
 
         self.bind_all_widgets("<Button-3>", self.con.popup)
 
-    def set_view_all(self) -> None: # noqa
+    def set_view_all(self) -> None:  # noqa
         for file in listdir("data/settings"):
             if file.endswith(".json") and file != "default.json":
                 with open(f"data/settings/{file}", "r") as data:

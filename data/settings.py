@@ -151,5 +151,7 @@ def reset_settings(settings: dict) -> dict:
     return settings
 
 
-Settings = _SettingsManager(path="data/settings/", reset_callback=reset_settings)
+Settings = _SettingsManager(
+    path="data/settings/",
+    reset_callback=reset_settings)
 InstanceManager = _SettingsManager(reset_callback=reset_instances)

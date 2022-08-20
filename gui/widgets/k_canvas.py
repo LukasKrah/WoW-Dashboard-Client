@@ -21,6 +21,7 @@ class KCanvas(CTkCanvas):
     """
     CTKCanvas with small additions
     """
+
     def __init__(self, master, *args, **kwargs) -> None:
         """
         Create CTKCanvas
@@ -29,9 +30,8 @@ class KCanvas(CTkCanvas):
         """
         super().__init__(master, *args, **kwargs)
 
-    def bind_all_widgets(
-            self: Widget, sequence: str | None = ..., func: Callable[[any], any] | None = ..., add: bool | None = ...
-    ) -> None:
+    def bind_all_widgets(self: Widget, sequence: str | None = ..., func: Callable[[
+            any], any] | None = ..., add: bool | None = ...) -> None:
         """
         Recursive widget bind function
 
@@ -42,5 +42,3 @@ class KCanvas(CTkCanvas):
         for widget in self.grid_slaves():
             KCanvas.bind_all_widgets(widget, sequence, func, add)
             widget.bind(sequence, func, add)
-
-

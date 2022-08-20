@@ -64,9 +64,10 @@ class InstanceTable(CTkCanvas):
                 InstanceColHeader],
             colheaders=[InstanceColHeader],
             cells=InstanceCell)
-        self.table.topleft = InstanceViewManager(self.table,
-                                                 set_view_callback=self.set_view,
-                                                 scale_view_callback=self.scale_view)
+        self.table.topleft = InstanceViewManager(
+            self.table,
+            set_view_callback=self.set_view,
+            scale_view_callback=self.scale_view)
 
         self.reload_table()
         self.navBar = InstanceNavBar(self, self.set_week,
@@ -89,9 +90,11 @@ class InstanceTable(CTkCanvas):
 
             case "default":
                 self.table.bind_all("<MouseWheel>", DISABLED)
-                self.table.place(x=0, y=0, anchor="nw", relwidth=1, relheight=1)
+                self.table.place(
+                    x=0, y=0, anchor="nw", relwidth=1, relheight=1)
 
-    def scroll(self, event: Event | None = None, null: bool | None = False) -> None:
+    def scroll(self, event: Event | None = None,
+               null: bool | None = False) -> None:
         new_y = self.table.winfo_y() + (event.delta if event else 0)
 
         if new_y > 0 or self.table.winfo_height() < self.table_frame.winfo_height() or null:

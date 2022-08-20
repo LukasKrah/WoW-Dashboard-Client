@@ -245,12 +245,27 @@ class KSlider(CTkCanvas):
 
         super().__init__(self.master, *args, **kwargs)
 
-        self.configure(bd=0, highlightthickness=0, background=Theme.background3)
+        self.configure(
+            bd=0,
+            highlightthickness=0,
+            background=Theme.background3)
 
-        self.lab = Label(self, text=self.label, font=(Theme.wow_font, Theme.fontfactor*18),
-                         background=Theme.background3, fg="white")
-        self.slider = CTkSlider(self, from_=self.from_to[0], to=self.from_to[1], bg_color=Theme.background3,
-                                command=self.command, number_of_steps=self.from_to[1]-self.from_to[0])
+        self.lab = Label(
+            self,
+            text=self.label,
+            font=(
+                Theme.wow_font,
+                Theme.fontfactor * 18),
+            background=Theme.background3,
+            fg="white")
+        self.slider = CTkSlider(
+            self,
+            from_=self.from_to[0],
+            to=self.from_to[1],
+            bg_color=Theme.background3,
+            command=self.command,
+            number_of_steps=self.from_to[1] -
+            self.from_to[0])
 
         self.grid_widgets()
 

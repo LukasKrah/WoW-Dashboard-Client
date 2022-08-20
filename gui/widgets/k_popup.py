@@ -132,7 +132,7 @@ class KPopUp(CTkToplevel):
                         self.buttons) else 0),
                 sticky="NSEW")
             self.grid_columnconfigure(index, weight=1)
-        
+
     def center(self) -> None:
         root: CTk = self.nametowidget(".")
 
@@ -151,7 +151,8 @@ class KPopUp(CTkToplevel):
         center_y = int((root_height / 2 - self.height / 2))
 
         self.resizable(width=False, height=False)
-        self.geometry(f"{self.width}+{self.height}+{rootx+center_x}+{rooty+center_y}")
+        self.geometry(
+            f"{self.width}+{self.height}+{rootx+center_x}+{rooty+center_y}")
 
     def open_popup(self, *_args: any) -> None:
         if not self.winfo_exists():
