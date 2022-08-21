@@ -57,7 +57,10 @@ class InstanceTable(CTkCanvas):
         self.relheight = 5.0
 
         self.table_frame = CTkCanvas(self)
-        self.table_frame.configure(background=Theme.background1, bd=0, highlightthickness=0)
+        self.table_frame.configure(
+            background=Theme.background1,
+            bd=0,
+            highlightthickness=0)
         self.table = KTable(
             self.table_frame,
             rowheaders=[
