@@ -1,0 +1,297 @@
+"""
+gui/widgets/inputs.py
+
+Author: Lukas Krahbichler
+"""
+
+##################################################
+#                    Imports                     #
+##################################################
+from typing import Callable
+
+from customtkinter import *
+from tkinter import *
+
+from style import Theme
+
+
+##################################################
+#                     Code                       #
+##################################################
+
+class KEntry(CTkCanvas):
+    label: str
+    entry: CTkEntry
+    valid_symbols: str | None
+    textvar: StringVar
+
+    def __init__(
+            self,
+            master,
+            label: str,
+            *args: any,
+            valid_symbols: str | None = None,
+            **kwargs: any) -> None:
+        super().__init__(master, *args, **kwargs)
+        self.configure(
+            bd=0,
+            highlightthickness=0,
+            background=Theme.background1)
+
+        self.label = label
+        self.valid_symbols = valid_symbols
+
+        self.create_text(
+            10,
+            10,
+            text=self.label,
+            anchor="nw",
+            font=(
+                Theme.wow_font,
+                Theme.fontfactor *
+                18))
+
+        self.textvar = StringVar()
+        self.entry = CTkEntry(
+            self,
+            text_font=(
+                Theme.wow_font,
+                Theme.fontfactor * 18),
+            width=300,
+            textvariable=self.textvar)
+        self.textvar.trace_add("write", self.__change_text)
+
+        self.grid_widgets()
+
+    def grid_widgets(self) -> None:
+        self.entry.grid(
+            row=0, column=0, sticky="NSEW", pady=(
+                (Theme.fontfactor * 18) + 30, 0))
+
+    def __change_text(self, *_args) -> None:
+        newstring = ""
+        for let in self.textvar.get():
+            if self.valid_symbols:
+                if let in self.valid_symbols:
+                    newstring += let
+            else:
+                newstring += let
+        self.textvar.set(newstring)
+
+    def get(self) -> str:
+        return self.entry.get()
+
+    def reset(self) -> None:
+        self.entry.delete(0, END)
+
+
+class KOptionMenu(CTkCanvas):
+    label: str
+    optionMenu: CTkOptionMenu
+    values: list[str]
+
+    def __init__(
+            self,
+            master,
+            label: str,
+            values: list[str],
+            *args: any,
+            **kwargs: any) -> None:
+        super().__init__(master, *args, **kwargs)
+        self.configure(
+            bd=0,
+            highlightthickness=0,
+            background=Theme.background1)
+
+        self.label = label
+        self.values = values
+
+        self.create_text(
+            10,
+            10,
+            text=label,
+            font=(
+                Theme.wow_font,
+                Theme.fontfactor *
+                18),
+            anchor="nw")
+        self.optionMenu = CTkOptionMenu(
+            self, values=self.values, text_font=(
+                Theme.wow_font, Theme.fontfactor * 18))
+        self.optionMenu.dropdown_menu.configure(tearoff=False)
+
+        self.grid_widgets()
+
+    def grid_widgets(self) -> None:
+        self.optionMenu.grid(
+            row=0, column=0, sticky="NSEW", pady=(
+                (Theme.fontfactor * 18) + 30, 0))
+
+    def get(self) -> str:
+        return self.optionMenu.get()
+
+    def reset(self) -> None:
+        self.optionMenu.set(self.values[0])
+
+
+class KMenu(CTkCanvas):
+    label: str
+    menuButton: CTkOptionMenu
+    menu: Menu
+    values: list[str]
+    selection: dict[str, IntVar]
+
+    def __init__(
+            self,
+            master,
+            label: str,
+            values: list[str],
+            *args: any,
+            **kwargs: any) -> None:
+        super().__init__(master, *args, **kwargs)
+        self.configure(
+            bd=0,
+            highlightthickness=0,
+            background=Theme.background1)
+
+        self.label = label
+        self.values = values
+
+        self.create_text(
+            10,
+            10,
+            text=label,
+            font=(
+                Theme.wow_font,
+                Theme.fontfactor *
+                18),
+            anchor="nw")
+        self.menuButton = CTkOptionMenu(
+            self,
+            values=[
+                self.label],
+            text_font=(
+                Theme.wow_font,
+                Theme.fontfactor *
+                18))
+        self.menuButton.dropdown_menu.configure(tearoff=False)
+
+        self.selection = {}
+        for value in self.values:
+            self.selection[value] = IntVar(value=0)
+            self.menuButton.dropdown_menu.add_checkbutton(
+                label=value,
+                variable=self.selection[value],
+                selectcolor="white",
+                onvalue=1,
+                offvalue=0)
+            self.selection[value].trace_add("write", self.set)
+
+        self.grid_widgets()
+
+    def set(self, *_args: str) -> None:
+        selection_labels = []
+        for selection in self.selection:
+            if self.selection[selection].get():
+                selection_labels.append(selection)
+
+        self.menuButton.text_label.configure(text=", ".join(
+            selection_labels) if selection_labels != [] else self.label)
+
+    def grid_widgets(self) -> None:
+        self.menuButton.grid(
+            row=0, column=0, sticky="NSEW", pady=(
+                (Theme.fontfactor * 18) + 30, 0))
+
+    def get(self) -> dict | None:
+        return self.menuButton.text_label["text"] if self.menuButton.text_label["text"] != self.label else None
+
+    def reset(self) -> None:
+        for selection in self.selection:
+            self.selection[selection].set(0)
+
+
+class KSlider(CTkCanvas):
+    """
+    Custom slider with label
+    """
+
+    master: any
+    label: str
+    from_to: list[int, int]
+    command: Callable[[float], None]
+
+    slider: CTkSlider
+
+    def __init__(
+            self,
+            master: any,
+            label: str,
+            from_to: str,
+            commmand: Callable[[float], None],
+            *args: any,
+            **kwargs: any) -> None:
+        """
+        Create custom slider and grid widgets
+        :param master: Master widget
+        :param label: Label to display
+        :param from_to: Slider range in form: "from:to"
+        :param command: Slider callback command (will pass float-value)
+        """
+        self.master = master
+        self.label = label
+        self.command = commmand
+        self.from_to = [int(ran) for ran in from_to.split(":")]
+
+        super().__init__(self.master, *args, **kwargs)
+
+        self.configure(
+            bd=0,
+            highlightthickness=0,
+            background=Theme.background3)
+
+        self.lab = Label(
+            self,
+            text=self.label,
+            font=(
+                Theme.wow_font,
+                Theme.fontfactor * 18),
+            background=Theme.background3,
+            fg="white")
+        self.slider = CTkSlider(
+            self,
+            from_=self.from_to[0],
+            to=self.from_to[1],
+            bg_color=Theme.background3,
+            command=self.command,
+            number_of_steps=self.from_to[1] -
+            self.from_to[0])
+
+        self.grid_widgets()
+
+    def grid_widgets(self) -> None:
+        """
+        Grid custom slider widgets
+        """
+        self.lab.grid(row=0, column=0, sticky="NSEW")
+        self.slider.grid(row=1, column=0, sticky="NSEW", ipady=5)
+
+        self.grid_columnconfigure(0, weight=1)
+        for index, weight in enumerate([1, 1]):
+            self.grid_rowconfigure(index, weight=weight)
+
+    def get(self) -> float:
+        """
+        Get value of slider
+        :return: Value of slider in float
+        """
+        return self.slider.get()
+
+    def set(self, value: float) -> None:
+        self.slider.set(value)
+
+    def reset(self) -> None:
+        """
+        Reset slider to the left
+        """
+        self.slider.set(self.from_to[0])

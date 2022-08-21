@@ -1,0 +1,5 @@
+customtkinter
+future
+Pillow
+requests
+pyglet

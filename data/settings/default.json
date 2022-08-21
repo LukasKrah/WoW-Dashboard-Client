@@ -1,0 +1,39 @@
+{
+  "API": {
+    "URL": "https://us.battle.net/oauth/token",
+    "data": {
+      "grant_type": "client_credentials"
+    },
+    "auth": ["f34246c0c509489e8231d340185a0920", "ZKvfQllQPILTgOzoVrAQabx0DiQTN5DJ"]
+  },
+  "myAccount": {
+    "region": "eu",
+    "realmSlug": "alleria",
+    "characterName": "",
+    "namespace": "profile-eu",
+    "locale": "de_DE"
+  },
+  "friends": {},
+  "chars": {},
+  "view": {
+    "selectedView": "default",
+    "views":
+    {
+      "default": {
+        "name": "Tabelle",
+        "propertys": {}
+      },
+      "scrollable": {
+        "name": "Tabelle skalierbar",
+        "propertys": {
+          "sizing": {
+            "name": "Skalierung",
+            "type": "slider",
+            "valid_values": "3:16",
+            "value": 6.0
+          }
+        }
+      }
+    }
+  }
+}
