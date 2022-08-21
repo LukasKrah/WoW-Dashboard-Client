@@ -117,6 +117,9 @@ class InstanceViewManager(KCanvas):
         Settings.values["view"]["selectedView"] = view
         Settings.write()
         for widget in self.grid_slaves():
+            gridinfos = widget.grid_info()
+            self.grid_rowconfigure(gridinfos["row"], weight=0)
+            self.grid_columnconfigure(gridinfos["column"], weight=0)
             widget.grid_forget()
             del widget
 

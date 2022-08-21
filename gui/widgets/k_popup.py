@@ -56,7 +56,7 @@ class KPopUp(CTkToplevel):
         self.kwargs = kwargs
 
         CTkToplevel.__init__(self, self.master, *self.args, *self.kwargs)
-        self.geometry("1x1+10000+10000")
+        self.geometry("+10000+10000")
         self.update()
 
         self.create(True)
@@ -64,7 +64,7 @@ class KPopUp(CTkToplevel):
     def create(self, first: bool | None = False) -> None:
         if not first:
             CTkToplevel.__init__(self, self.master, *self.args, *self.kwargs)
-            self.geometry("1x1+10000+10000")
+            self.geometry("+10000+10000")
             self.update()
 
         self.withdraw()
@@ -141,18 +141,21 @@ class KPopUp(CTkToplevel):
         root_width = root.winfo_width()
         root_height = root.winfo_height()
 
-        screen_width = root.winfo_screenwidth()
+        screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
 
-        self.width = int(screen_width * self.relx)
-        self.height = int(screen_height * self.rely)
+        self.width = self.winfo_width()
+        self.height = self.winfo_height()
 
         center_x = int((root_width / 2 - self.width / 2))
         center_y = int((root_height / 2 - self.height / 2))
 
+        posx = rootx+center_x
+        posy = rooty+center_y
         self.resizable(width=False, height=False)
+        print(f"+{posx}+{posy}")
         self.geometry(
-            f"{self.width}+{self.height}+{rootx+center_x}+{rooty+center_y}")
+            f"+{posx}+{posy}")
 
     def open_popup(self, *_args: any) -> None:
         if not self.winfo_exists():

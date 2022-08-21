@@ -1,0 +1,1 @@
+pyinstaller -y -F -w -n "WoW-Dashboard" -i "style/images/wow_icon.ico"  "main.py" --add-data "C:/users/lukas/appdata/roaming/python/python310/site-packages/customtkinter;customtkinter/"
