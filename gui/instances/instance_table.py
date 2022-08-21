@@ -111,7 +111,7 @@ class InstanceTable(CTkCanvas):
             anchor="nw",
             relwidth=1,
             relheight=(len(
-                InstanceManager.values)+1) /
+                InstanceManager.values) + 1) /
             self.relheight)
 
     def _grid_widgets(self) -> None:
