@@ -89,26 +89,26 @@ class KTable(CTkCanvas):
         # Column headers
         for index, col in enumerate(self.__columns):
             for colindex, colheader in enumerate(self.colheaders):
-                lab = colheader(self, col[colindex], colindex)
+                lab = colheader(self, col["headers"][colindex], colindex)
                 lab.grid(
                     row=colindex,
-                    column=index +
+                    column=col["column"] +
                     col_offset,
                     sticky="NSEW")
 
         # Row headers
         for index, row in enumerate(self.__rows):
             for rowindex, rowheader in enumerate(self.rowheaders):
-                lab = rowheader(self, row[rowindex], rowindex)
+                lab = rowheader(self, row["headers"][rowindex], rowindex)
                 lab.grid(
-                    row=index + row_offset,
+                    row=row["row"] + row_offset,
                     column=rowindex,
                     sticky="NSEW")
 
         # Table
         for rowindex, row in enumerate(self.__rows):
             for colindex, col in enumerate(self.__columns):
-                lab = self.cells(self, col[0], row[0])
+                lab = self.cells(self, col["headers"][0], row["headers"][0])
                 lab.grid(
                     row=rowindex +
                     row_offset,

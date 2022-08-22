@@ -131,12 +131,18 @@ class InstanceTable(CTkCanvas):
         """
         Load rows, columns and __values and relaod table
         """
-        rows = [[instance, ",".join(InstanceManager.values[instance]["difficulty"].keys(
-        ))] for instance in InstanceManager.values.keys() if InstanceManager[instance]["active"]]
-        columns = [[f'{Settings["chars"][char]["characterName"].lower()}:'
-                    f'{Settings["chars"][char]["realmSlug"].lower()}']
-                   for char in Settings["chars"] if Settings["chars"][char]["active"]]
+        # rows = [{"row": 0, "headers": []}]
 
+        rows = [{"row": InstanceManager.values[instance]["row"],
+                 "headers": [instance, ",".join(InstanceManager.values[instance]["difficulty"].keys(
+                  ))]} for instance in InstanceManager.values.keys() if InstanceManager[instance]["active"]]
+
+        columns = [{"column": Settings["chars"][char]["column"],
+                    "headers": [f'{Settings["chars"][char]["characterName"].lower()}:'
+                                f'{Settings["chars"][char]["realmSlug"].lower()}']}
+                   for char in Settings["chars"] if Settings["chars"][char]["active"]]
+        print("ROWS", rows)
+        print("COLS", columns)
         self.table.reload(
             rows=rows,
             columns=columns,
@@ -151,6 +157,7 @@ class InstanceTable(CTkCanvas):
         charname = f"{name}:{realm}".lower()
 
         add = True
+        column = len(Settings["chars"])
         for char in Settings["chars"]:
             if charname == char and not Settings["chars"][char]["active"]:
                 if not messagebox.askyesno(
@@ -162,6 +169,8 @@ class InstanceTable(CTkCanvas):
                         for diff in InstanceManager.values[instance]["difficulty"]:
                             if charname in InstanceManager.values[instance]["difficulty"][diff]["chars"]:
                                 del InstanceManager.values[instance]["difficulty"][diff]["chars"][charname]
+                else:
+                    column = Settings["chars"][char]["column"]
 
             elif charname == char:
                 messagebox.showwarning(
@@ -171,7 +180,7 @@ class InstanceTable(CTkCanvas):
 
         if add:
             Settings["chars"][charname] = {
-                "characterName": name, "realmSlug": realm, "active": True}
+                "characterName": name, "realmSlug": realm, "active": True, "column": column}
             Settings.write()
             InstanceManager.write()
             self.scroll(null=True)
@@ -191,6 +200,7 @@ class InstanceTable(CTkCanvas):
         if name not in InstanceManager.values:
             InstanceManager.values[name] = {
                 "type": typ,
+                "row": len(InstanceManager.values),
                 "image": ImageManager.get_image(name),
                 "active": True,
                 "difficulty": {
@@ -205,12 +215,15 @@ class InstanceTable(CTkCanvas):
                     "Möchtest du sie wiederherstellen?"):
                 InstanceManager.values[name] = {
                     "type": typ,
+                    "row": len(InstanceManager.values),
                     "image": ImageManager.get_image(name),
                     "active": True,
                     "difficulty": {
                         dif: {"chars": {}} for dif in diff.split(", ")
                     } if diff else {"": {"chars": {}}}
                 }
+            else:
+                InstanceManager.values[name]["active"] = True
         else:
             messagebox.showwarning(
                 "Instanz hinzufügen",

@@ -85,10 +85,10 @@ class InstanceRowHeader(CTkCanvas):
             self.create_text(
                 self.width / 2,
                 (self.height / labels_len) * (index + 1),
-                text=label,
+                text=label if self.typ == "row" else label.split(":")[0],
                 anchor="center",
                 font=(Theme.wow_font, Theme.fontfactor * 18),
-                fill=Theme.text_color
+                fill=Theme.text_color_light if self.image else Theme.text_color
             )
 
     def __resize(self, event: Event) -> None:
