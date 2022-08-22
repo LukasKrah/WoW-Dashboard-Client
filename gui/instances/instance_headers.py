@@ -88,7 +88,7 @@ class InstanceRowHeader(CTkCanvas):
                 text=label,
                 anchor="center",
                 font=(Theme.wow_font, Theme.fontfactor * 18),
-                fill="white"
+                fill=Theme.text_color
             )
 
     def __resize(self, event: Event) -> None:

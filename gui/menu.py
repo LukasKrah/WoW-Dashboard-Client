@@ -14,6 +14,7 @@ from PIL import Image, ImageTk
 
 from data import Settings
 from style import Theme
+from gui.widgets import KButtonGroup
 
 
 ##################################################
@@ -22,12 +23,13 @@ from style import Theme
 
 class LeftMenu(CTkCanvas):
     master: Tk
-    windows: dict[str, CTkCanvas | CTkFrame]
+    windows: dict
+
+    butgroup: KButtonGroup
 
     def __init__(self,
                  master: Tk,
-                 windows: dict[str,
-                               CTkCanvas | CTkFrame],
+                 windows: dict,
                  *args: any,
                  **kwargs: any) -> None:
         super().__init__(master, *args, **kwargs)
@@ -39,26 +41,16 @@ class LeftMenu(CTkCanvas):
             highlightthickness=0,
             background=Theme.background2)
 
-        for index, window in enumerate(windows):
-            but = CTkButton(
-                self,
-                text=window,
-                text_font=(
-                    Theme.wow_font,
-                    Theme.fontfactor *
-                    22),
-                command=lambda win=windows[window]: self.change_to_frame(win))
-            but.grid(row=index, column=0, sticky="EW")
-
+        self.butgroup = KButtonGroup(self, self.windows)
         self.grid_widgets()
 
-    def change_to_frame(self, frame: CTkCanvas | CTkFrame) -> None:
-        for window in self.windows:
-            self.windows[window].grid_forget()
-        frame.grid(row=1, column=1, sticky="NSEW")
-
     def grid_widgets(self) -> None:
-        ...
+        self.grid_columnconfigure(0, weight=1)
+        for index, but in enumerate(self.butgroup.buttons):
+            but.grid(row=index, column=0, sticky="NSEW")
+        self.update_idletasks()
+        for but in self.butgroup.buttons:
+            but.grid_rowconfigure(0, minsize=but.winfo_height())
 
 
 class TopMenu(CTkCanvas):
@@ -83,6 +75,7 @@ class TopMenu(CTkCanvas):
             25,
             text=f"Willkommen  im  WoW-Dashboard  {Settings['myAccount']['characterName']}",
             anchor="w",
+            fill=Theme.text_color,
             font=(
                 Theme.wow_font,
                 Theme.fontfactor *

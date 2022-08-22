@@ -79,6 +79,9 @@ class InstanceNavBar(CTkCanvas):
         self.new_char = CTkButton(
             self,
             text="Neuer Char",
+            fg_color=Theme.primary_middle,
+            hover_color=Theme.primary_light,
+            text_color=Theme.text_color,
             text_font=(
                 Theme.wow_font,
                 Theme.fontfactor * 18),
@@ -92,10 +95,13 @@ class InstanceNavBar(CTkCanvas):
                     "type": "OptionMenu", "label": "Typ", "validValues": [
                         "Daily", "Weekly"]}, {
                         "type": "ComboBox", "label": "Difficultys", "validValues": [
-                            "NHC 10", "NHC 25", "HC 10", "HC 25", "M"]}], confirm_call=self.new_todo_callback)
+                            "Normal 10", "Normal 25", "Heroisch 10", "Heroisch 25", "Mythisch"]}], confirm_call=self.new_todo_callback)
         self.new_todo = CTkButton(
             self,
             text="Neues ToDo",
+            fg_color=Theme.primary_middle,
+            hover_color=Theme.primary_light,
+            text_color=Theme.text_color,
             text_font=(
                 Theme.wow_font,
                 Theme.fontfactor * 18),
@@ -119,6 +125,10 @@ class InstanceNavBar(CTkCanvas):
         self.weekvar = StringVar()
         self.week = CTkOptionMenu(
             self,
+            fg_color=Theme.primary_dark,
+            button_color=Theme.primary_middle,
+            button_hover_color=Theme.primary_light,
+            text_color=Theme.text_color,
             values=list(
                 self.weeks.keys()),
             command=self.week_call,

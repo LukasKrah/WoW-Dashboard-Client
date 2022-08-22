@@ -108,7 +108,7 @@ class KTable(CTkCanvas):
         # Table
         for rowindex, row in enumerate(self.__rows):
             for colindex, col in enumerate(self.__columns):
-                lab = self.cells(self, col=col[0], row=row[0])
+                lab = self.cells(self, col[0], row[0])
                 lab.grid(
                     row=rowindex +
                     row_offset,

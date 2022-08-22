@@ -13,7 +13,6 @@ from tkinter import messagebox
 from tkinter import *
 from json import dumps
 
-
 from gui.widgets import KContextMenu, KTable
 from style import Theme
 from data import InstanceManager
@@ -24,35 +23,78 @@ from data import InstanceManager
 ##################################################
 
 class InstanceCell(CTkCanvas):
+    """
+    Instance Cell widget for Instance table
+    """
+    master: KTable
+    column: str
+    row: str
+
+    positive_bg: str
+    positive_text_color: str
+    negative_bg: str
+    negative_text_color: str
+    disabled_bg: str
+    disabled_text_color: str
+
     width: int
     height: int
     click_x: int
     click_y: int
     rclick_y: int
+    index: int
 
-    column: str
-    row: str
-
+    diffs: list[str]
     con: list[KContextMenu]
     __states: list[str]
-    diffs: list[str]
-    index: int
 
     def __init__(
             self,
             master: KTable,
-            col: str,
+            column: str,
             row: str,
             *args: any,
+            positive_bg: str | None = Theme.positive_color,
+            positive_text_color: str | None = Theme.positve_text,
+            negative_bg: str | None = Theme.negative_color,
+            negative_text_color: str | None = Theme.negative_text,
+            disabled_bg: str | None = Theme.background1,
+            disabled_text_color: str | None = Theme.text_color_reverse,
             **kwargs: any) -> None:
+        """
+        Create instance cell widget for instance table
+
+        :param master: Master widget (Table)
+        :param column: Column name
+        :param row: Row name
+        :param positive_bg: "YES" selection background
+        :param positive_text_color: "YES" selection textcolor
+        :param negative_bg: "NO" selection background
+        :param negative_text_color: "YES" selection textcolor
+        :param disabled_bg: Disabled state background
+        :param disabled_text_color: Disabled state background
+        """
+        # Params
+        self.master = master
+        self.column = column
+        self.row = row
+
+        self.positive_bg = positive_bg
+        self.positive_text_color = positive_text_color
+        self.negative_bg = negative_bg
+        self.negative_text_color = negative_text_color
+        self.disabled_bg = disabled_bg
+        self.disabled_text_color = disabled_text_color
+
         super().__init__(master, *args, **kwargs)
+
+        # Other vars
         self.width, self.height = 0, 0
         self.click_x, self.click_y = 0, 0
         self.rclick_y = 0
-        self.column, self.row = col, row
-        self.diffs = list(InstanceManager[self.row]["difficulty"].keys())
         self.index = 0
 
+        self.diffs = list(InstanceManager[self.row]["difficulty"].keys())
         self.con = [KContextMenu(
             self, [{"label": "Aktivieren", "command": self.toggle}]) for _diff in self.diffs]
 
@@ -72,6 +114,7 @@ class InstanceCell(CTkCanvas):
             except KeyError:
                 ...
 
+        # Configuration
         self.configure(
             bd=5,
             highlightthickness=0,
@@ -80,6 +123,7 @@ class InstanceCell(CTkCanvas):
         self.bind("<Button-1>", self.__click)
         self.bind("<Button-3>", self._popup)
 
+    # Index and height helping funcs
     def _get_index(self, cord_y: int | None = None) -> int:
         if cord_y is None:
             cord_y = self.rclick_y
@@ -108,15 +152,6 @@ class InstanceCell(CTkCanvas):
         self.rclick_y = event.y
         self.con[self._get_index()].popup(event)
 
-    @property
-    def states(self) -> list[str]:
-        return self.__states
-
-    @states.setter
-    def states(self, value: list[str]) -> None:
-        self.__states = value
-        self._reload()
-
     def toggle(self) -> None:
         indexes = [self._get_index()]
         if self._all_equal() and self.__states[0] not in ["neutral"]:
@@ -142,6 +177,7 @@ class InstanceCell(CTkCanvas):
                 all_equal = False
         return all_equal
 
+    # --- State funcs --- #
     def _reload(self) -> None:
         self.delete("all")
 
@@ -157,7 +193,7 @@ class InstanceCell(CTkCanvas):
         self.width, self.height = event.width, event.height
         self._reload()
 
-    def __click(self, event) -> None:
+    def __click(self, event: Event) -> None:
         self.click_x, self.click_y = event.x, event.y
 
         if self._all_equal() and self.__states[0] not in ["neutral"]:
@@ -167,6 +203,9 @@ class InstanceCell(CTkCanvas):
             index = self._get_index(self.click_y)
             eval(f"self._{self.__states[index]}_click([{index}])")
         InstanceManager.write()
+
+    def __hover(self, event: Event) -> None:
+        ...
 
     # --- Different states --- #
     # Disable

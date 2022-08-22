@@ -102,6 +102,9 @@ class KPopUp(CTkToplevel):
                     self,
                     text=but,
                     command=cmd,
+                    text_color=Theme.text_color,
+                    fg_color=Theme.primary_middle,
+                    hover_color=Theme.primary_light,
                     text_font=(
                         Theme.wow_font,
                         Theme.fontfactor *
@@ -125,6 +128,7 @@ class KPopUp(CTkToplevel):
                 row=len(
                     self.input_elems),
                 column=index,
+                pady=(20, 0),
                 padx=(
                     0,
                     10 if index +
