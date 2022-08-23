@@ -5,13 +5,19 @@ changelog:
   categories:
     - title: Exciting New Features 🎉
       labels:
-        - enhancment
+        - enhancement
     - title: Changes 🛠
       labels:
         - change
     - title: Bugs? No more! 🐞
       labels:
         - bug
+    - title: Unreadable code? Should be better now 📝
+      labels:
+        - documentation
     - title: Other Changes 🛠
       labels:
+        - "*"
+    - title: Milestones
+      milestones:
         - "*"
