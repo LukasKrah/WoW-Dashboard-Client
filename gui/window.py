@@ -8,6 +8,7 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
+from os import kill, getpid
 from customtkinter import *
 from tkinter import *
 
@@ -60,6 +61,11 @@ class Window(CTk):
     def change_to_frame(self, framename: str) -> None:
         for window in self.windows:
             self.windows[window].grid_forget()
+
+        match framename:
+            case "wowToken":
+                self.windows[framename].force_reload = True
+
         self.windows[framename].grid(row=1, column=1, sticky="NSEW")
 
     def grid_widgets(self) -> None:
@@ -85,3 +91,4 @@ class Window(CTk):
         InstanceManager.write()
 
         self.destroy()
+        kill(getpid(), 9)

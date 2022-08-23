@@ -157,7 +157,6 @@ class KPopUp(CTkToplevel):
         posx = rootx + center_x
         posy = rooty + center_y
         self.resizable(width=False, height=False)
-        print(f"+{posx}+{posy}")
         self.geometry(
             f"+{posx}+{posy}")
 

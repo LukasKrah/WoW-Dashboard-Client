@@ -41,10 +41,12 @@ class _DarkTheme:
     primary_middle: str = "#02057A"
     primary_dark: str = "#000137"
 
-    positive_color: str = "#00FF00"
-    positve_text: str = "#00CC00"
-    negative_color: str = "#FF0000"
-    negative_text: str = "#CC0000"
+    positive_color: str = "#00DD00"
+    positive_color_light: str = "#00FF00"
+    positive_text: str = "#005500"
+    negative_color: str = "#DD0000"
+    negative_color_light: str = "#FF0000"
+    negative_text: str = "#550000"
 
     fontfactor: float = 1
     font: str = "Arial"

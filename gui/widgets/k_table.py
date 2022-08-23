@@ -26,11 +26,17 @@ class KTable(CTkCanvas):
     colheaders: list[any]
     cells: any
 
+    row_weight: int
+    col_weight: int
+
     topleft: any
 
     __columns: list
     __rows: list
     __values: dict
+
+    column_headerwidgets: list
+    row_headerwidgets: list
 
     def __init__(
             self,
@@ -39,18 +45,23 @@ class KTable(CTkCanvas):
             colheaders: list[any],
             cells: any,
             *args,
+            row_weight: int | None = 10,
+            col_weight: int | None = 10,
             **kwargs) -> None:
         """
         Create table (call .reload to load table)
         :param master: master widget (e.g: root)
-        :param rowheaders: Row-header widgets (will pass master, rowname and header-index as positional arg)
-        :param colheaders: Col-header widgets (will pass master, colname and header-index as positional arg)
+        :param rowheaders: Row-header widgets (will pass master, rowname, rowindex and header-index as positional arg)
+        :param colheaders: Col-header widgets (will pass master, colname, colindex amd header-index as positional arg)
         :param cells: Cells widgets (will pass master, first colname and first rowname as positional args)
         """
         self.master = master
         self.rowheaders = rowheaders
         self.colheaders = colheaders
         self.cells = cells
+
+        self.row_weight = row_weight
+        self.col_weight = col_weight
 
         super().__init__(master, *args, **kwargs)
         self.configure(
@@ -63,6 +74,9 @@ class KTable(CTkCanvas):
         self.__columns = []
         self.__values = {}
 
+        self.column_headerwidgets = []
+        self.row_headerwidgets = []
+
     def __reload(self) -> None:
         """
         Relaod table rowheaders, columnheaders and cells
@@ -73,6 +87,8 @@ class KTable(CTkCanvas):
             self.grid_rowconfigure(widget.grid_info()["row"], weight=0)
             widget.grid_forget()
             del widget
+        self.row_headerwidgets = []
+        self.column_headerwidgets = []
 
         row_offset = len(self.colheaders)
         col_offset = len(self.rowheaders)
@@ -87,41 +103,66 @@ class KTable(CTkCanvas):
                 sticky="NSEW")
 
         # Column headers
+        self.grid_rowconfigure(0, weight=self.row_weight)
+        self.grid_columnconfigure(0, weight=self.col_weight)
+
+        try:
+            for index in range(max([col["column"] for col in self.__columns])+1):
+                self.column_headerwidgets.append([])
+        except ValueError:
+            ...
+
         for index, col in enumerate(self.__columns):
+            self.column_headerwidgets.append([])
             for colindex, colheader in enumerate(self.colheaders):
-                lab = colheader(self, col["headers"][colindex], colindex)
-                lab.grid(
+                self.column_headerwidgets[col["column"]].append(colheader(self, col["headers"][colindex]["label"],
+                                                                col["column"], colindex))
+                self.column_headerwidgets[col["column"]][colindex].grid(
                     row=colindex,
                     column=col["column"] +
                     col_offset,
                     sticky="NSEW")
+                self.grid_rowconfigure(
+                    colindex,
+                    weight=col["headers"][colindex]["weight"] if "weight" in col["headers"][colindex]
+                    else self.col_weight)
 
         # Row headers
+        try:
+            for index in range(max([row["row"] for row in self.__rows])+1):
+                self.row_headerwidgets.append([])
+        except ValueError:
+            ...
+
         for index, row in enumerate(self.__rows):
             for rowindex, rowheader in enumerate(self.rowheaders):
-                lab = rowheader(self, row["headers"][rowindex], rowindex)
-                lab.grid(
+                self.row_headerwidgets[row["row"]].append(rowheader(self, row["headers"][rowindex]["label"],
+                                                                    row["row"], rowindex))
+                self.row_headerwidgets[row["row"]][rowindex].grid(
                     row=row["row"] + row_offset,
                     column=rowindex,
                     sticky="NSEW")
+                self.grid_columnconfigure(
+                    rowindex,
+                    weight=row["headers"][rowindex]["weight"] if "weight" in row["headers"][rowindex]
+                    else self.row_weight)
 
         # Table
         for rowindex, row in enumerate(self.__rows):
             for colindex, col in enumerate(self.__columns):
-                lab = self.cells(self, col["headers"][0], row["headers"][0])
+                lab = self.cells(self, col["headers"][0]["label"], row["headers"][0]["label"])
                 lab.grid(
-                    row=rowindex +
+                    row=row["row"] +
                     row_offset,
-                    column=colindex +
+                    column=col["column"] +
                     col_offset,
                     sticky="NSEW")
 
         # Weights
-        for index in range(len(self.__columns) + col_offset):
-            self.grid_columnconfigure(index, weight=1)
-
-        for index in range(len(self.__rows) + row_offset):
-            self.grid_rowconfigure(index, weight=1)
+        for row in self.__rows:
+            self.grid_rowconfigure(row["row"]+row_offset, weight=self.row_weight)
+        for column in self.__columns:
+            self.grid_columnconfigure(column["column"]+col_offset, weight=self.col_weight)
 
     def reload(
             self,
