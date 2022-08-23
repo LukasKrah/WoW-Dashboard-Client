@@ -14,7 +14,7 @@ from customtkinter import *
 from os import listdir
 
 from gui.widgets.intern import KSlider
-from gui.widgets import KContextMenu, KCanvas
+from gui.widgets import KContextMenu, KCanvas, KButtonGroup
 from style import Theme
 from data import Settings
 
@@ -32,6 +32,7 @@ class InstanceViewManager(KCanvas):
     scale_view_callback: Callable
 
     view_elems: dict[str, any]
+    butgroup: KButtonGroup
 
     con: KContextMenu
 
@@ -55,6 +56,8 @@ class InstanceViewManager(KCanvas):
 
         super().__init__(master, *args, **kwargs)
 
+        self.butgroup = KButtonGroup(self, {})
+
         self.con = KContextMenu(self,
                                 [{"label": "Diese Ansicht für alle Wochen übernehmen",
                                   "command": self.set_view_all}])
@@ -66,15 +69,14 @@ class InstanceViewManager(KCanvas):
 
     def reload(self) -> None:
         self.view_elems = {}
-        for view in Settings["view"]["views"]:
+        for index, view in enumerate(Settings["view"]["views"]):
+            self.butgroup.add_button(
+                view,
+                Settings["view"]["views"][view]["name"],
+                lambda v=view: self.set_view(v),
+                Settings.values["view"]["selectedView"] == view)
             self.view_elems[view] = {
-                "but": CTkButton(
-                    self,
-                    text=Settings["view"]["views"][view]["name"],
-                    command=lambda v=view: self.set_view(v),
-                    text_font=(
-                        Theme.wow_font,
-                        Theme.fontfactor * 18)),
+                "but": self.butgroup.buttons[index],
                 "propertys": {}}
 
             for index, prop in enumerate(

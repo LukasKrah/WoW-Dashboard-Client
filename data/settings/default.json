@@ -24,7 +24,7 @@
         "propertys": {}
       },
       "scrollable": {
-        "name": "Tabelle skalierbar",
+        "name": "Skalierbar",
         "propertys": {
           "sizing": {
             "name": "Skalierung",
@@ -35,5 +35,11 @@
         }
       }
     }
+  },
+  "add_char": {
+    "last_realm": "Alleria"
+  },
+  "add_todo": {
+    "last_typ": "Daily"
   }
 }

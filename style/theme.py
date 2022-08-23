@@ -8,7 +8,7 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
-from dataclasses import dataclass
+from json import loads
 import pyglet
 
 
@@ -26,17 +26,23 @@ class FontFactor:
         return int(other * self.value)
 
 
-@dataclass(frozen=True)
-class _DarkTheme:
-    background0: str = "#888888"
-    background1: str = "#555555"
-    background2: str = "#333333"
-    background3: str = "#111111"
+class _Theme:
+    path: str
 
-    fontfactor: float = 1
-    font: str = "Arial"
-    wow_font: str = "LifeCraft"
+    def __init__(self, path: str) -> None:
+        self.path = path
+
+        self.read()
+
+    def read(self) -> None:
+        with open(self.path, "r") as data:
+            readdata = loads(data.read())
+            for value in readdata:
+                if isinstance(readdata[value], int):
+                    self.__dict__[value] = FontFactor(readdata[value])
+                else:
+                    self.__dict__[value] = readdata[value]
 
 
 pyglet.font.add_file("style/LifeCraft_Font.ttf")
-Theme = _DarkTheme()
+Theme = _Theme("style/themes/dark_theme.json")

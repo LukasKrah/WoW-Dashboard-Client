@@ -1,0 +1,25 @@
+{
+  "background0": "#888888",
+  "background1": "#555555",
+  "background2": "#333333",
+  "background3": "#222222",
+
+  "text_color_light": "#FFFFFF",
+  "text_color": "#CCCCCC",
+  "text_color_reverse": "#222222",
+
+  "primary_light": "#253DA1",
+  "primary_middle": "#02057A",
+  "primary_dark": "#000137",
+
+  "positive_color": "#00DD00",
+  "positive_color_light": "#00FF00",
+  "positive_text": "#005500",
+  "negative_color": "#DD0000",
+  "negative_color_light": "#FF0000",
+  "negative_text": "#550000",
+
+  "fontfactor": 1,
+  "font": "Arial",
+  "wow_font": "LifeCraft"
+}

@@ -79,14 +79,19 @@ class KPopUp(CTkToplevel):
 
         for _input in self.inputs:
             if _input["type"] == "InputText":
-                self.input_elems.append(KEntry(self, _input["label"]))
+                self.input_elems.append(
+                    KEntry(
+                        self,
+                        _input["label"],
+                        value=_input["value"] if "value" in _input else None))
 
             elif _input["type"] == "OptionMenu":
                 self.input_elems.append(
                     KOptionMenu(
                         self,
                         _input["label"],
-                        values=_input["validValues"]))
+                        values=_input["validValues"],
+                        value=_input["value"] if "value" in _input else None))
 
             elif _input["type"] == "ComboBox":
                 self.input_elems.append(
@@ -102,6 +107,9 @@ class KPopUp(CTkToplevel):
                     self,
                     text=but,
                     command=cmd,
+                    text_color=Theme.text_color,
+                    fg_color=Theme.primary_middle,
+                    hover_color=Theme.primary_light,
                     text_font=(
                         Theme.wow_font,
                         Theme.fontfactor *
@@ -125,6 +133,7 @@ class KPopUp(CTkToplevel):
                 row=len(
                     self.input_elems),
                 column=index,
+                pady=(20, 0),
                 padx=(
                     0,
                     10 if index +
@@ -153,7 +162,6 @@ class KPopUp(CTkToplevel):
         posx = rootx + center_x
         posy = rooty + center_y
         self.resizable(width=False, height=False)
-        print(f"+{posx}+{posy}")
         self.geometry(
             f"+{posx}+{posy}")
 

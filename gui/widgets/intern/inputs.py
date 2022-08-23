@@ -22,6 +22,7 @@ from style import Theme
 class KEntry(CTkCanvas):
     label: str
     entry: CTkEntry
+    value: str
     valid_symbols: str | None
     textvar: StringVar
 
@@ -30,8 +31,11 @@ class KEntry(CTkCanvas):
             master,
             label: str,
             *args: any,
+            value: str | None = None,
             valid_symbols: str | None = None,
             **kwargs: any) -> None:
+        self.value = value
+
         super().__init__(master, *args, **kwargs)
         self.configure(
             bd=0,
@@ -46,6 +50,7 @@ class KEntry(CTkCanvas):
             10,
             text=self.label,
             anchor="nw",
+            fill=Theme.text_color,
             font=(
                 Theme.wow_font,
                 Theme.fontfactor *
@@ -58,10 +63,19 @@ class KEntry(CTkCanvas):
                 Theme.wow_font,
                 Theme.fontfactor * 18),
             width=300,
+            fg_color=Theme.background2,
+            text_color=Theme.text_color,
             textvariable=self.textvar)
+
         self.textvar.trace_add("write", self.__change_text)
 
         self.grid_widgets()
+
+        self.bind("<Expose>", self.default_value)
+
+    def default_value(self, _event: Event) -> None:
+        self.entry.delete(0, END)
+        self.entry.insert(0, self.value) if self.value else ...
 
     def grid_widgets(self) -> None:
         self.entry.grid(
@@ -79,16 +93,41 @@ class KEntry(CTkCanvas):
         self.textvar.set(newstring)
 
     def get(self) -> str:
-        return self.entry.get()
+        value = self.entry.get()
+        if self.value is not None:
+
+            print(value)
+            self.value = value
+        return value
 
     def reset(self) -> None:
         self.entry.delete(0, END)
+
+
+class KButtonGroupInput(CTkCanvas):
+    master: any
+    buttons: dict
+
+    def __init__(
+            self,
+            master: any,
+            buttons: dict,
+            *args: any,
+            **kwargs: any):
+        self.master = master
+        self.buttons = buttons
+
+        super().__init__(master, *args, **kwargs)
+
+    def grid_widgets(self) -> None:
+        ...
 
 
 class KOptionMenu(CTkCanvas):
     label: str
     optionMenu: CTkOptionMenu
     values: list[str]
+    value: str
 
     def __init__(
             self,
@@ -96,7 +135,10 @@ class KOptionMenu(CTkCanvas):
             label: str,
             values: list[str],
             *args: any,
+            value: str | None = None,
             **kwargs: any) -> None:
+        self.value = value
+
         super().__init__(master, *args, **kwargs)
         self.configure(
             bd=0,
@@ -110,17 +152,35 @@ class KOptionMenu(CTkCanvas):
             10,
             10,
             text=label,
+            fill=Theme.text_color,
             font=(
                 Theme.wow_font,
                 Theme.fontfactor *
                 18),
             anchor="nw")
         self.optionMenu = CTkOptionMenu(
-            self, values=self.values, text_font=(
-                Theme.wow_font, Theme.fontfactor * 18))
-        self.optionMenu.dropdown_menu.configure(tearoff=False)
-
+            self,
+            values=self.values,
+            fg_color=Theme.primary_dark,
+            button_color=Theme.primary_middle,
+            button_hover_color=Theme.primary_light,
+            text_color=Theme.text_color,
+            text_font=(
+                Theme.wow_font,
+                Theme.fontfactor * 18))
+        self.optionMenu.dropdown_menu.configure(
+            tearoff=False,
+            bg=Theme.background2,
+            text_color="white",
+            hover_color=Theme.background1,
+            activeforeground="white")
+        self.optionMenu.set(value) if value else ...
         self.grid_widgets()
+
+        self.bind("<Expose>", self.default_value)
+
+    def default_value(self, _event: Event) -> None:
+        self.optionMenu.set(self.value) if self.value else ...
 
     def grid_widgets(self) -> None:
         self.optionMenu.grid(
@@ -128,7 +188,10 @@ class KOptionMenu(CTkCanvas):
                 (Theme.fontfactor * 18) + 30, 0))
 
     def get(self) -> str:
-        return self.optionMenu.get()
+        value = self.optionMenu.get()
+        if self.value is not None:
+            self.value = value
+        return value
 
     def reset(self) -> None:
         self.optionMenu.set(self.values[0])
@@ -161,6 +224,7 @@ class KMenu(CTkCanvas):
             10,
             10,
             text=label,
+            fill=Theme.text_color,
             font=(
                 Theme.wow_font,
                 Theme.fontfactor *
@@ -168,13 +232,22 @@ class KMenu(CTkCanvas):
             anchor="nw")
         self.menuButton = CTkOptionMenu(
             self,
+            text_color=Theme.text_color,
+            fg_color=Theme.primary_dark,
+            button_color=Theme.primary_middle,
+            button_hover_color=Theme.primary_light,
             values=[
                 self.label],
             text_font=(
                 Theme.wow_font,
                 Theme.fontfactor *
                 18))
-        self.menuButton.dropdown_menu.configure(tearoff=False)
+        self.menuButton.dropdown_menu.configure(
+            tearoff=False,
+            bg=Theme.background2,
+            text_color=Theme.text_color,
+            hover_color=Theme.background1,
+            activeforeground=Theme.text_color)
 
         self.selection = {}
         for value in self.values:
@@ -182,7 +255,7 @@ class KMenu(CTkCanvas):
             self.menuButton.dropdown_menu.add_checkbutton(
                 label=value,
                 variable=self.selection[value],
-                selectcolor="white",
+                selectcolor=Theme.text_color,
                 onvalue=1,
                 offvalue=0)
             self.selection[value].trace_add("write", self.set)
@@ -257,12 +330,16 @@ class KSlider(CTkCanvas):
                 Theme.wow_font,
                 Theme.fontfactor * 18),
             background=Theme.background3,
-            fg="white")
+            fg=Theme.text_color)
         self.slider = CTkSlider(
             self,
             from_=self.from_to[0],
             to=self.from_to[1],
             bg_color=Theme.background3,
+            button_color=Theme.primary_middle,
+            button_hover_color=Theme.primary_light,
+            progress_color=Theme.background0,
+            fg_color=Theme.background2,
             command=self.command,
             number_of_steps=self.from_to[1] -
             self.from_to[0])

@@ -14,7 +14,7 @@ from tkinter import *
 from typing import Literal
 
 from gui.widgets import KTable
-from style import Theme, ImageManager
+from style import Theme, ImageManager, KImage
 from data import Settings, InstanceManager
 
 from .instance_headers import InstanceColHeader, InstanceRowHeader
@@ -57,6 +57,10 @@ class InstanceTable(CTkCanvas):
         self.relheight = 5.0
 
         self.table_frame = CTkCanvas(self)
+        photo = KImage("style/images/shadowlands.jpg")
+        photo.resize(self.winfo_screenwidth() // 11 * 10, 1, "cover")
+        self.table_frame.create_image(0, 0, image=photo.imgTk, anchor="nw")
+        self.table_frame.photo = photo.imgTk
         self.table_frame.configure(
             background=Theme.background1,
             bd=0,
@@ -107,14 +111,13 @@ class InstanceTable(CTkCanvas):
             new_y = 0
         elif new_y < (-self.table.winfo_height() + self.table_frame.winfo_height()):
             new_y = -self.table.winfo_height() + self.table_frame.winfo_height()
-        self.table.place_forget()
         self.table.place(
             x=0,
             y=new_y,
             anchor="nw",
             relwidth=1,
-            relheight=(len(
-                InstanceManager.values) + 1) /
+            relheight=(len([instance for instance in InstanceManager.values
+                            if InstanceManager.values[instance]["active"]]) + 1) /
             self.relheight)
 
     def _grid_widgets(self) -> None:
@@ -131,12 +134,19 @@ class InstanceTable(CTkCanvas):
         """
         Load rows, columns and __values and relaod table
         """
-        rows = [[instance, ",".join(InstanceManager.values[instance]["difficulty"].keys(
-        ))] for instance in InstanceManager.values.keys() if InstanceManager[instance]["active"]]
-        columns = [[f'{Settings["chars"][char]["characterName"].lower()}:'
-                    f'{Settings["chars"][char]["realmSlug"].lower()}']
+        # rows = [{"row": 0, "headers": []}]
+
+        rows = [{"row": InstanceManager.values[instance]["row"],
+                 "headers": [{"label": instance},
+                             {"label": ','.join(InstanceManager.values[instance]["difficulty"].keys())}]
+                 } for instance in InstanceManager.values.keys() if InstanceManager[instance]["active"]]
+
+        columns = [{"column": Settings["chars"][char]["column"],
+                    "headers": [{'label': f'{Settings["chars"][char]["characterName"].lower()}:'
+                                          f'{Settings["chars"][char]["realmSlug"].lower()}'}]}
                    for char in Settings["chars"] if Settings["chars"][char]["active"]]
 
+        self.scroll()
         self.table.reload(
             rows=rows,
             columns=columns,
@@ -148,6 +158,8 @@ class InstanceTable(CTkCanvas):
         :param name: Name of the char
         :param realm: Realm on which the char is playing
         """
+        Settings.values["add_char"]["last_realm"] = realm
+
         charname = f"{name}:{realm}".lower()
 
         add = True
@@ -171,7 +183,11 @@ class InstanceTable(CTkCanvas):
 
         if add:
             Settings["chars"][charname] = {
-                "characterName": name, "realmSlug": realm, "active": True}
+                "characterName": name,
+                "realmSlug": realm,
+                "active": True,
+                "column": max([Settings.values["chars"][char]["column"] for char in Settings.values["chars"]
+                               if "column" in Settings.values["chars"][char]]) + 1}
             Settings.write()
             InstanceManager.write()
             self.scroll(null=True)
@@ -179,8 +195,8 @@ class InstanceTable(CTkCanvas):
 
     def add_todo_callback(self,
                           name: str,
-                          typ: Literal["daily",
-                                       "weekly"],
+                          typ: Literal["Daily",
+                                       "Weekly"],
                           diff: str) -> None:
         """
         Add an instance to the InstanceManager __values and reload table
@@ -188,9 +204,13 @@ class InstanceTable(CTkCanvas):
         :param typ: Whether the instance is daily or weekly
         :param diff: Different difficultys of the instance
         """
+        Settings.values["add_todo"]["last_typ"] = typ
+
         if name not in InstanceManager.values:
             InstanceManager.values[name] = {
                 "type": typ,
+                "row": max([InstanceManager.values[instance]["row"] for instance in InstanceManager.values
+                            if "row" in InstanceManager.values[instance]]) + 1,
                 "image": ImageManager.get_image(name),
                 "active": True,
                 "difficulty": {
@@ -205,12 +225,19 @@ class InstanceTable(CTkCanvas):
                     "Möchtest du sie wiederherstellen?"):
                 InstanceManager.values[name] = {
                     "type": typ,
+                    "row": max([InstanceManager.values[instance]["row"] for instance in InstanceManager.values
+                                if "row" in InstanceManager.values[instance]]) + 1,
                     "image": ImageManager.get_image(name),
                     "active": True,
                     "difficulty": {
                         dif: {"chars": {}} for dif in diff.split(", ")
                     } if diff else {"": {"chars": {}}}
                 }
+            else:
+                InstanceManager.values[name]["active"] = True
+                InstanceManager.values[name]["row"] = max([InstanceManager.values[instance]["row"]
+                                                           for instance in InstanceManager.values
+                                                           if "row" in InstanceManager.values[instance]]) + 1
         else:
             messagebox.showwarning(
                 "Instanz hinzufügen",

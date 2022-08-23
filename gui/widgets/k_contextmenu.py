@@ -32,7 +32,10 @@ class KContextMenu(Menu):
         :param menu: Command List
         """
         super().__init__(master, tearoff=0, *args, **kwargs)
-        self.configure(background=Theme.background0, activebackground="red")
+        self.configure(
+            background=Theme.background3,
+            activebackground="red",
+            foreground=Theme.text_color)
         self.menu = menu
 
         for menupoint in menu:
