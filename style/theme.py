@@ -8,7 +8,7 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
-from dataclasses import dataclass
+from json import loads
 import pyglet
 
 
@@ -26,32 +26,23 @@ class FontFactor:
         return int(other * self.value)
 
 
-@dataclass(frozen=True)
-class _DarkTheme:
-    background0: str = "#888888"
-    background1: str = "#555555"
-    background2: str = "#333333"
-    background3: str = "#222222"
+class _Theme:
+    path: str
 
-    text_color_light: str = "#FFFFFF"
-    text_color: str = "#CCCCCC"
-    text_color_reverse: str = background3
+    def __init__(self, path: str) -> None:
+        self.path = path
 
-    primary_light: str = "#253DA1"
-    primary_middle: str = "#02057A"
-    primary_dark: str = "#000137"
+        self.read()
 
-    positive_color: str = "#00DD00"
-    positive_color_light: str = "#00FF00"
-    positive_text: str = "#005500"
-    negative_color: str = "#DD0000"
-    negative_color_light: str = "#FF0000"
-    negative_text: str = "#550000"
-
-    fontfactor: float = FontFactor(1)
-    font: str = "Arial"
-    wow_font: str = "LifeCraft"
+    def read(self) -> None:
+        with open(self.path, "r") as data:
+            readdata = loads(data.read())
+            for value in readdata:
+                if type(readdata[value]) == int:
+                    self.__dict__[value] = FontFactor(readdata[value])
+                else:
+                    self.__dict__[value] = readdata[value]
 
 
 pyglet.font.add_file("style/LifeCraft_Font.ttf")
-Theme = _DarkTheme()
+Theme = _Theme("style/themes/dark_theme.json")
