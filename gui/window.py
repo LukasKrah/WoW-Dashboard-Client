@@ -40,7 +40,9 @@ class Window(CTk):
         self.state("zoomed")
         self.option_add("*font", Theme.font)
 
-        self.windows = {"instanceTable": InstanceTable(self), "wowToken": WoWToken(self)}
+        self.windows = {
+            "instanceTable": InstanceTable(self),
+            "wowToken": WoWToken(self)}
 
         self.topMenu = TopMenu(self)
         self.leftMenu = LeftMenu(
@@ -74,11 +76,12 @@ class Window(CTk):
         self.windows["instanceTable"].grid(row=1, column=1, sticky="NSEW")
 
         for column, weight in enumerate([1]):
-            self.grid_columnconfigure(column+1, weight=weight)
+            self.grid_columnconfigure(column + 1, weight=weight)
         for row, weight in enumerate([1]):
-            self.grid_rowconfigure(row+1, weight=weight)
+            self.grid_rowconfigure(row + 1, weight=weight)
         self.update_idletasks()
-        self.leftMenu.grid_columnconfigure(0, minsize=self.leftMenu.winfo_width())
+        self.leftMenu.grid_columnconfigure(
+            0, minsize=self.leftMenu.winfo_width())
 
     def toggle_fullscreen(self, _event: Event) -> None:
         if self.state() == "zoomed":

@@ -107,7 +107,8 @@ class KTable(CTkCanvas):
         self.grid_columnconfigure(0, weight=self.col_weight)
 
         try:
-            for index in range(max([col["column"] for col in self.__columns])+1):
+            for index in range(max([col["column"]
+                                    for col in self.__columns]) + 1):
                 self.column_headerwidgets.append([])
         except ValueError:
             ...
@@ -115,8 +116,8 @@ class KTable(CTkCanvas):
         for index, col in enumerate(self.__columns):
             self.column_headerwidgets.append([])
             for colindex, colheader in enumerate(self.colheaders):
-                self.column_headerwidgets[col["column"]].append(colheader(self, col["headers"][colindex]["label"],
-                                                                col["column"], colindex))
+                self.column_headerwidgets[col["column"]].append(colheader(
+                    self, col["headers"][colindex]["label"], col["column"], colindex))
                 self.column_headerwidgets[col["column"]][colindex].grid(
                     row=colindex,
                     column=col["column"] +
@@ -129,15 +130,15 @@ class KTable(CTkCanvas):
 
         # Row headers
         try:
-            for index in range(max([row["row"] for row in self.__rows])+1):
+            for index in range(max([row["row"] for row in self.__rows]) + 1):
                 self.row_headerwidgets.append([])
         except ValueError:
             ...
 
         for index, row in enumerate(self.__rows):
             for rowindex, rowheader in enumerate(self.rowheaders):
-                self.row_headerwidgets[row["row"]].append(rowheader(self, row["headers"][rowindex]["label"],
-                                                                    row["row"], rowindex))
+                self.row_headerwidgets[row["row"]].append(rowheader(
+                    self, row["headers"][rowindex]["label"], row["row"], rowindex))
                 self.row_headerwidgets[row["row"]][rowindex].grid(
                     row=row["row"] + row_offset,
                     column=rowindex,
@@ -150,7 +151,10 @@ class KTable(CTkCanvas):
         # Table
         for rowindex, row in enumerate(self.__rows):
             for colindex, col in enumerate(self.__columns):
-                lab = self.cells(self, col["headers"][0]["label"], row["headers"][0]["label"])
+                lab = self.cells(
+                    self,
+                    col["headers"][0]["label"],
+                    row["headers"][0]["label"])
                 lab.grid(
                     row=row["row"] +
                     row_offset,
@@ -160,9 +164,13 @@ class KTable(CTkCanvas):
 
         # Weights
         for row in self.__rows:
-            self.grid_rowconfigure(row["row"]+row_offset, weight=self.row_weight)
+            self.grid_rowconfigure(
+                row["row"] + row_offset,
+                weight=self.row_weight)
         for column in self.__columns:
-            self.grid_columnconfigure(column["column"]+col_offset, weight=self.col_weight)
+            self.grid_columnconfigure(
+                column["column"] + col_offset,
+                weight=self.col_weight)
 
     def reload(
             self,

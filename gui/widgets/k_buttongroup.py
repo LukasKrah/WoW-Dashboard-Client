@@ -68,19 +68,25 @@ class KButtonGroup:
 
         self.__buttons = {}
         for but in buttons:
-            self.add_button(but, buttons[but]["label"], buttons[but]["command"],
-                            buttons[but]["selected"] if "selected" in buttons[but] else None)
+            self.add_button(
+                but,
+                buttons[but]["label"],
+                buttons[but]["command"],
+                buttons[but]["selected"] if "selected" in buttons[but] else None)
 
     def hover_on(self, but: str) -> None:
         self.__buttons[but]["hover"] = True
         match self.__buttons[but]["but"].fg_color:
             case self.bg | self.bg_hover:
-                self.__buttons[but]["but"].configure(fg_color=self.bg_hover, text_color=self.fg_hover)
+                self.__buttons[but]["but"].configure(
+                    fg_color=self.bg_hover, text_color=self.fg_hover)
                 self.__buttons[but]["but"].text_label.configure(
-                    font=(Theme.wow_font, Theme.fontfactor*self.fontsize_hover))
+                    font=(Theme.wow_font, Theme.fontfactor * self.fontsize_hover))
 
             case self.bg_selected | self.bg_selected_hover:
-                self.__buttons[but]["but"].configure(fg_color=self.bg_selected_hover, text_color=self.fg_selected_hover)
+                self.__buttons[but]["but"].configure(
+                    fg_color=self.bg_selected_hover,
+                    text_color=self.fg_selected_hover)
                 self.__buttons[but]["but"].text_label.configure(
                     font=(Theme.wow_font, Theme.fontfactor * self.fontsize_selected_hover))
 
@@ -88,11 +94,13 @@ class KButtonGroup:
         self.__buttons[but]["hover"] = False
         match self.__buttons[but]["but"].fg_color:
             case self.bg_hover | self.bg:
-                self.__buttons[but]["but"].configure(fg_color=self.bg, text_color=self.fg)
+                self.__buttons[but]["but"].configure(
+                    fg_color=self.bg, text_color=self.fg)
                 self.__buttons[but]["but"].text_label.configure(
                     font=(Theme.wow_font, Theme.fontfactor * self.fontsize))
             case self.bg_selected_hover | self.bg_selected:
-                self.__buttons[but]["but"].configure(fg_color=self.bg_selected, text_color=self.fg_selected)
+                self.__buttons[but]["but"].configure(
+                    fg_color=self.bg_selected, text_color=self.fg_selected)
                 self.__buttons[but]["but"].text_label.configure(
                     font=(Theme.wow_font, Theme.fontfactor * self.fontsize_selected))
 
@@ -100,8 +108,16 @@ class KButtonGroup:
     def buttons(self) -> list[CTkButton]:
         return [self.__buttons[but]["but"] for but in self.__buttons]
 
-    def add_button(self, name: str, label: str, command: Callable, selected: bool | None = False) -> None:
-        self.__buttons[name] = {"label": label, "command": command, "selected": selected}
+    def add_button(
+            self,
+            name: str,
+            label: str,
+            command: Callable,
+            selected: bool | None = False) -> None:
+        self.__buttons[name] = {
+            "label": label,
+            "command": command,
+            "selected": selected}
         self.__buttons[name]["but"] = KButton(
             self.master, text=label,
             fg_color=self.bg_selected if selected else self.bg, hover=False,
@@ -109,18 +125,22 @@ class KButtonGroup:
             command=lambda b=name: self.cmd(b)
         )
         self.__buttons[name]["hover"] = False
-        self.__buttons[name]["but"].bind_all_widgets("<Enter>",
-                                                     lambda e=..., b=name: self.hover_on(b))
-        self.__buttons[name]["but"].bind_all_widgets("<Leave>",
-                                                     lambda e=..., b=name: self.hover_off(b))
+        self.__buttons[name]["but"].bind_all_widgets(
+            "<Enter>", lambda e=..., b=name: self.hover_on(b))
+        self.__buttons[name]["but"].bind_all_widgets(
+            "<Leave>", lambda e=..., b=name: self.hover_off(b))
         self.hover_off(name)
 
     def cmd(self, key: str) -> None:
         for but in self.__buttons:
             if but == key:
-                CTkButton.configure(self.__buttons[but]["but"], fg_color=self.bg_selected)
+                CTkButton.configure(
+                    self.__buttons[but]["but"],
+                    fg_color=self.bg_selected)
             else:
-                CTkButton.configure(self.__buttons[but]["but"], fg_color=self.bg)
-            self.hover_on(but) if self.__buttons[but]["hover"] else self.hover_off(but)
+                CTkButton.configure(
+                    self.__buttons[but]["but"],
+                    fg_color=self.bg)
+            self.hover_on(
+                but) if self.__buttons[but]["hover"] else self.hover_off(but)
         self.__buttons[key]["command"]()
-

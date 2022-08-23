@@ -38,7 +38,7 @@ class _Theme:
         with open(self.path, "r") as data:
             readdata = loads(data.read())
             for value in readdata:
-                if type(readdata[value]) == int:
+                if isinstance(readdata[value], int):
                     self.__dict__[value] = FontFactor(readdata[value])
                 else:
                     self.__dict__[value] = readdata[value]

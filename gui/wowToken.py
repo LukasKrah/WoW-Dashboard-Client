@@ -40,8 +40,8 @@ class WoWToken(CTkCanvas):
 
         self.token_photo = KImage("style/images/wow_token.jpg")
         self.img = self.create_image(
-            self.width/2,
-            self.height/2,
+            self.width / 2,
+            self.height / 2,
             image=self.token_photo.imgTk,
             anchor="center")
         self.photo = self.token_photo
@@ -59,8 +59,8 @@ class WoWToken(CTkCanvas):
         self.bind("<Configure>", self.__resize)
 
     def reload(self) -> None:
-        self.coords(self.price, self.width/2, self.height/2)
-        self.coords(self.img, self.width/2, self.height/2)
+        self.coords(self.price, self.width / 2, self.height / 2)
+        self.coords(self.img, self.width / 2, self.height / 2)
 
     def __resize(self, event: Event) -> None:
         self.width, self.height = event.width, event.height
@@ -73,7 +73,10 @@ class WoWToken(CTkCanvas):
 
     def get_token_price(self) -> None:
         while True:
-            self.itemconfigure(self.price, text=str(API.get_token_history())[:-4] + " Gold")
+            self.itemconfigure(
+                self.price, text=str(
+                    API.get_token_history())[
+                    :-4] + " Gold")
             for index in range(20):
                 sleep(1)
                 if self.force_reload:

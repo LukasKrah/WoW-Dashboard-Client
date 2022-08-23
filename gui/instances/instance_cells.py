@@ -75,7 +75,7 @@ class InstanceCell(CTkCanvas):
             positive_fg_hover: str | None = Theme.positive_color_light,
             positive_text_color: str | None = Theme.positive_text,
             positive_text_color_hover: str | None = Theme.positive_text,
-            positive_font: tuple[str, int] | None = (Theme.wow_font, Theme.fontfactor*18),
+            positive_font: tuple[str, int] | None = (Theme.wow_font, Theme.fontfactor * 18),
             positive_font_hover: tuple[str, int] | None = (Theme.wow_font, Theme.fontfactor * 16),
 
             negative_fg: str | None = Theme.negative_color,
@@ -152,7 +152,8 @@ class InstanceCell(CTkCanvas):
         self.rclick_y = 0
         self.index = 0
 
-        self.diffs = list(InstanceManager.values[self.row]["difficulty"].keys())
+        self.diffs = list(
+            InstanceManager.values[self.row]["difficulty"].keys())
         self.con = [KContextMenu(
             self, [{"label": "Aktivieren", "command": self.toggle}]) for _diff in self.diffs]
 
@@ -195,7 +196,8 @@ class InstanceCell(CTkCanvas):
             cord_y = self.rclick_y
         return int(cord_y / self.height * len(self.diffs))
 
-    def _get_index_x(self, cord_x: int | None = None, len_xelems: int | None = 2) -> int:
+    def _get_index_x(self, cord_x: int | None = None,
+                     len_xelems: int | None = 2) -> int:
         if cord_x is None:
             cord_x = self.hover_x
         return int(cord_x / self.width * len_xelems)
@@ -287,11 +289,13 @@ class InstanceCell(CTkCanvas):
         self.delete("all")
 
         if self._all_equal() and self.__states[0] not in ["neutral"]:
-            eval(f"{prefix_eval}{self.__states[0]}{suffix_eval}(index=0, all_len=1)")
+            eval(
+                f"{prefix_eval}{self.__states[0]}{suffix_eval}(index=0, all_len=1)")
         else:
             for index in range(len(self.diffs)):
                 self.index = index
-                eval(f"{prefix_eval}{self.__states[index]}{suffix_eval if index in suffix_indexes else ''}()")
+                eval(
+                    f"{prefix_eval}{self.__states[index]}{suffix_eval if index in suffix_indexes else ''}()")
         InstanceManager.write()
 
     def __resize(self, event: Event) -> None:
@@ -302,7 +306,8 @@ class InstanceCell(CTkCanvas):
         self.click_x, self.click_y = event.x, event.y
 
         if self._all_equal() and self.__states[0] not in ["neutral"]:
-            eval(f"self._{self.__states[0]}_click({dumps([index for index in range(len(self.diffs))])})")
+            eval(
+                f"self._{self.__states[0]}_click({dumps([index for index in range(len(self.diffs))])})")
         else:
             self.index = self._get_index_y(self.click_y)
             eval(f"self._{self.__states[self.index]}_click([{self.index}])")
@@ -311,7 +316,11 @@ class InstanceCell(CTkCanvas):
 
     def __hover(self, event: Event) -> None:
         self.hover_x, self.hover_y = event.x, event.y
-        self._reload(suffix_eval="_hover", suffix_indexes=[self._get_index_y(event.y)])
+        self._reload(
+            suffix_eval="_hover",
+            suffix_indexes=[
+                self._get_index_y(
+                    event.y)])
 
     # --- Different states --- #
     # Disable

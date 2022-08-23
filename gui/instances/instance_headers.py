@@ -104,12 +104,28 @@ class InstanceRowHeader(CTkCanvas):
         if not self.image:
             self.configure(bg=Theme.background2)
         else:
-            self.create_line(0, 0, self.width, self.height, fill=Theme.text_color, width=20, tags=["dragndrop"])
-            self.create_line(0, self.height, self.width, 0, fill=Theme.text_color, width=20, tags=["dragndrop"])
+            self.create_line(
+                0,
+                0,
+                self.width,
+                self.height,
+                fill=Theme.text_color,
+                width=20,
+                tags=["dragndrop"])
+            self.create_line(
+                0,
+                self.height,
+                self.width,
+                0,
+                fill=Theme.text_color,
+                width=20,
+                tags=["dragndrop"])
         modify = 0.5 if eventcoord >= 0 else -0.5
-        self.dragindex = int(((eventcoord / size)+modify))+self.colrow_index
+        self.dragindex = int(
+            ((eventcoord / size) + modify)) + self.colrow_index
         try:
-            self.headerwidgets[self.dragindex-1][self.index].draw_pre() if self.dragindex > 0 else None
+            self.headerwidgets[self.dragindex -
+                               1][self.index].draw_pre() if self.dragindex > 0 else None
         except IndexError:
             ...
         try:
@@ -117,19 +133,23 @@ class InstanceRowHeader(CTkCanvas):
         except IndexError:
             ...
         self.dragindex = 0 if self.dragindex < 0 else self.dragindex
-        self.dragindex = len(self.headerwidgets) if self.dragindex > len(self.headerwidgets) else self.dragindex
+        self.dragindex = len(
+            self.headerwidgets) if self.dragindex > len(
+            self.headerwidgets) else self.dragindex
 
     def drag_up(self, event: Event) -> None:
         self.delete_in_all_headers()
         self.configure(bg=Theme.background3)
 
-        self.dragindex += (-1 if self.colrow_index <= self.dragindex-1 else 0)
+        self.dragindex += (-1 if self.colrow_index <=
+                           self.dragindex - 1 else 0)
         match self.typ:
             case "row":
                 if self.dragindex != InstanceManager.values[self.name]["row"]:
                     for instance in InstanceManager.values:
                         if instance != self.name and InstanceManager.values[instance]["active"]:
-                            if self.colrow_index < InstanceManager.values[instance]["row"] < self.dragindex+1:
+                            if self.colrow_index < InstanceManager.values[
+                                    instance]["row"] < self.dragindex + 1:
                                 InstanceManager.values[instance]["row"] -= 1
                             elif self.colrow_index >= InstanceManager.values[instance]["row"] >= self.dragindex:
                                 InstanceManager.values[instance]["row"] += 1
@@ -139,7 +159,7 @@ class InstanceRowHeader(CTkCanvas):
                 if self.dragindex != Settings["chars"][self.name]["column"]:
                     for user in Settings.values["chars"]:
                         if user != self.name and Settings.values["chars"][user]["active"]:
-                            if self.colrow_index < Settings.values["chars"][user]["column"] < self.dragindex+1:
+                            if self.colrow_index < Settings.values["chars"][user]["column"] < self.dragindex + 1:
                                 Settings.values["chars"][user]["column"] -= 1
                             elif self.colrow_index >= Settings.values["chars"][user]["column"] >= self.dragindex:
                                 Settings.values["chars"][user]["column"] += 1
@@ -152,16 +172,44 @@ class InstanceRowHeader(CTkCanvas):
     def draw_after(self) -> None:
         match self.typ:
             case "col":
-                self.create_line(0, 0, 0, self.height, fill="blue", width=20, tags=["dragndrop"])
+                self.create_line(
+                    0,
+                    0,
+                    0,
+                    self.height,
+                    fill="blue",
+                    width=20,
+                    tags=["dragndrop"])
             case "row":
-                self.create_line(0, 0, self.width, 0, fill="blue", width=20, tags=["dragndrop"])
+                self.create_line(
+                    0,
+                    0,
+                    self.width,
+                    0,
+                    fill="blue",
+                    width=20,
+                    tags=["dragndrop"])
 
     def draw_pre(self) -> None:
         match self.typ:
             case "col":
-                self.create_line(self.width, 0, self.width, self.height, fill="blue", width=20, tags=["dragndrop"])
+                self.create_line(
+                    self.width,
+                    0,
+                    self.width,
+                    self.height,
+                    fill="blue",
+                    width=20,
+                    tags=["dragndrop"])
             case "row":
-                self.create_line(0, self.height, self.width, self.height, fill="blue", width=20, tags=["dragndrop"])
+                self.create_line(
+                    0,
+                    self.height,
+                    self.width,
+                    self.height,
+                    fill="blue",
+                    width=20,
+                    tags=["dragndrop"])
 
     def reload(self) -> None:
         self.delete("all")

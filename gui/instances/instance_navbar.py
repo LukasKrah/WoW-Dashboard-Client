@@ -90,18 +90,23 @@ class InstanceNavBar(CTkCanvas):
             command=self.new_char_popup.open_popup)
 
         # NewToDo
-        self.new_todo_popup = KPopUp(
-            self, "Neues ToDo", inputs=[
-                {
-                    "type": "InputText", "label": "Name"},
-                {
-                    "type": "OptionMenu", "label": "Typ",
-                    "value": Settings.values["add_todo"]["last_typ"],
-                    "validValues": ["Daily", "Weekly"]},
-                {
-                        "type": "ComboBox", "label": "Difficultys", "validValues": [
-                            "Normal 10", "Normal 25", "Heroisch 10", "Heroisch 25", "Mythisch"]}],
-            confirm_call=self.new_todo_callback)
+        self.new_todo_popup = KPopUp(self,
+                                     "Neues ToDo",
+                                     inputs=[{"type": "InputText",
+                                              "label": "Name"},
+                                             {"type": "OptionMenu",
+                                              "label": "Typ",
+                                              "value": Settings.values["add_todo"]["last_typ"],
+                                              "validValues": ["Daily",
+                                                              "Weekly"]},
+                                             {"type": "ComboBox",
+                                              "label": "Difficultys",
+                                              "validValues": ["Normal 10",
+                                                              "Normal 25",
+                                                              "Heroisch 10",
+                                                              "Heroisch 25",
+                                                              "Mythisch"]}],
+                                     confirm_call=self.new_todo_callback)
         self.new_todo = CTkButton(
             self,
             text="Neues ToDo",

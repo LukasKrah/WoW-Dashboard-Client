@@ -70,8 +70,11 @@ class InstanceViewManager(KCanvas):
     def reload(self) -> None:
         self.view_elems = {}
         for index, view in enumerate(Settings["view"]["views"]):
-            self.butgroup.add_button(view, Settings["view"]["views"][view]["name"], lambda v=view: self.set_view(v),
-                                     Settings.values["view"]["selectedView"] == view)
+            self.butgroup.add_button(
+                view,
+                Settings["view"]["views"][view]["name"],
+                lambda v=view: self.set_view(v),
+                Settings.values["view"]["selectedView"] == view)
             self.view_elems[view] = {
                 "but": self.butgroup.buttons[index],
                 "propertys": {}}

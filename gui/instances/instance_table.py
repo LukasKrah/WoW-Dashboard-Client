@@ -58,7 +58,7 @@ class InstanceTable(CTkCanvas):
 
         self.table_frame = CTkCanvas(self)
         photo = KImage("style/images/shadowlands.jpg")
-        photo.resize(self.winfo_screenwidth()//11*10, 1, "cover")
+        photo.resize(self.winfo_screenwidth() // 11 * 10, 1, "cover")
         self.table_frame.create_image(0, 0, image=photo.imgTk, anchor="nw")
         self.table_frame.photo = photo.imgTk
         self.table_frame.configure(
@@ -117,7 +117,7 @@ class InstanceTable(CTkCanvas):
             anchor="nw",
             relwidth=1,
             relheight=(len([instance for instance in InstanceManager.values
-                            if InstanceManager.values[instance]["active"]])+1) /
+                            if InstanceManager.values[instance]["active"]]) + 1) /
             self.relheight)
 
     def _grid_widgets(self) -> None:
@@ -187,7 +187,7 @@ class InstanceTable(CTkCanvas):
                 "realmSlug": realm,
                 "active": True,
                 "column": max([Settings.values["chars"][char]["column"] for char in Settings.values["chars"]
-                              if "column" in Settings.values["chars"][char]]) + 1}
+                               if "column" in Settings.values["chars"][char]]) + 1}
             Settings.write()
             InstanceManager.write()
             self.scroll(null=True)
@@ -210,7 +210,7 @@ class InstanceTable(CTkCanvas):
             InstanceManager.values[name] = {
                 "type": typ,
                 "row": max([InstanceManager.values[instance]["row"] for instance in InstanceManager.values
-                            if "row" in InstanceManager.values[instance]])+1,
+                            if "row" in InstanceManager.values[instance]]) + 1,
                 "image": ImageManager.get_image(name),
                 "active": True,
                 "difficulty": {
@@ -226,7 +226,7 @@ class InstanceTable(CTkCanvas):
                 InstanceManager.values[name] = {
                     "type": typ,
                     "row": max([InstanceManager.values[instance]["row"] for instance in InstanceManager.values
-                               if "row" in InstanceManager.values[instance]])+1,
+                                if "row" in InstanceManager.values[instance]]) + 1,
                     "image": ImageManager.get_image(name),
                     "active": True,
                     "difficulty": {
@@ -237,7 +237,7 @@ class InstanceTable(CTkCanvas):
                 InstanceManager.values[name]["active"] = True
                 InstanceManager.values[name]["row"] = max([InstanceManager.values[instance]["row"]
                                                            for instance in InstanceManager.values
-                                                           if "row" in InstanceManager.values[instance]])+1
+                                                           if "row" in InstanceManager.values[instance]]) + 1
         else:
             messagebox.showwarning(
                 "Instanz hinzufügen",

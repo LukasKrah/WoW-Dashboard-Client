@@ -159,11 +159,21 @@ class KOptionMenu(CTkCanvas):
                 18),
             anchor="nw")
         self.optionMenu = CTkOptionMenu(
-            self, values=self.values, fg_color=Theme.primary_dark, button_color=Theme.primary_middle,
-            button_hover_color=Theme.primary_light, text_color=Theme.text_color, text_font=(
-                Theme.wow_font, Theme.fontfactor * 18))
-        self.optionMenu.dropdown_menu.configure(tearoff=False, bg=Theme.background2, text_color="white",
-                                                hover_color=Theme.background1, activeforeground="white")
+            self,
+            values=self.values,
+            fg_color=Theme.primary_dark,
+            button_color=Theme.primary_middle,
+            button_hover_color=Theme.primary_light,
+            text_color=Theme.text_color,
+            text_font=(
+                Theme.wow_font,
+                Theme.fontfactor * 18))
+        self.optionMenu.dropdown_menu.configure(
+            tearoff=False,
+            bg=Theme.background2,
+            text_color="white",
+            hover_color=Theme.background1,
+            activeforeground="white")
         self.optionMenu.set(value) if value else ...
         self.grid_widgets()
 
@@ -232,8 +242,12 @@ class KMenu(CTkCanvas):
                 Theme.wow_font,
                 Theme.fontfactor *
                 18))
-        self.menuButton.dropdown_menu.configure(tearoff=False, bg=Theme.background2, text_color=Theme.text_color,
-                                                hover_color=Theme.background1, activeforeground=Theme.text_color)
+        self.menuButton.dropdown_menu.configure(
+            tearoff=False,
+            bg=Theme.background2,
+            text_color=Theme.text_color,
+            hover_color=Theme.background1,
+            activeforeground=Theme.text_color)
 
         self.selection = {}
         for value in self.values:
