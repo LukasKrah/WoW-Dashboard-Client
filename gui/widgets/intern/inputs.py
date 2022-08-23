@@ -96,7 +96,6 @@ class KEntry(CTkCanvas):
         value = self.entry.get()
         if self.value is not None:
 
-            print(value)
             self.value = value
         return value
 

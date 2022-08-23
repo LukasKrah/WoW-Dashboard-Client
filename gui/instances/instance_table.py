@@ -182,12 +182,16 @@ class InstanceTable(CTkCanvas):
                 add = False
 
         if add:
+            try:
+                column = max([Settings.values["chars"][char]["column"] for char in Settings.values["chars"]
+                             if "column" in Settings.values["chars"][char]]) + 1
+            except ValueError:
+                column = 0
             Settings["chars"][charname] = {
                 "characterName": name,
                 "realmSlug": realm,
                 "active": True,
-                "column": max([Settings.values["chars"][char]["column"] for char in Settings.values["chars"]
-                               if "column" in Settings.values["chars"][char]]) + 1}
+                "column": column}
             Settings.write()
             InstanceManager.write()
             self.scroll(null=True)
@@ -205,12 +209,16 @@ class InstanceTable(CTkCanvas):
         :param diff: Different difficultys of the instance
         """
         Settings.values["add_todo"]["last_typ"] = typ
+        try:
+            row = max([InstanceManager.values[instance]["row"] for instance in InstanceManager.values
+                      if "row" in InstanceManager.values[instance]]) + 1
+        except ValueError:
+            row = 0
 
         if name not in InstanceManager.values:
             InstanceManager.values[name] = {
                 "type": typ,
-                "row": max([InstanceManager.values[instance]["row"] for instance in InstanceManager.values
-                            if "row" in InstanceManager.values[instance]]) + 1,
+                "row": row,
                 "image": ImageManager.get_image(name),
                 "active": True,
                 "difficulty": {
@@ -223,10 +231,14 @@ class InstanceTable(CTkCanvas):
                     "Instanz hinzufügen",
                     "Diese Instanz befindet sich noch im Papierkorb!\n"
                     "Möchtest du sie wiederherstellen?"):
+                try:
+                    row = max([InstanceManager.values[instance]["row"] for instance in InstanceManager.values
+                              if "row" in InstanceManager.values[instance]]) + 1
+                except ValueError:
+                    row = 0
                 InstanceManager.values[name] = {
                     "type": typ,
-                    "row": max([InstanceManager.values[instance]["row"] for instance in InstanceManager.values
-                                if "row" in InstanceManager.values[instance]]) + 1,
+                    "row": row,
                     "image": ImageManager.get_image(name),
                     "active": True,
                     "difficulty": {
