@@ -33,7 +33,7 @@ class Window(CTk):
         super().__init__(*args, **kwargs)
 
         self.title("WoW-Dashboard")
-        self.wm_iconbitmap("style/images/wow_icon.ico")
+        self.wm_iconbitmap("style/images/wow.ico")
         self.minsize(
             self.winfo_screenwidth() // 2,
             self.winfo_screenheight() // 2)

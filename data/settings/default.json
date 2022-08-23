@@ -35,5 +35,11 @@
         }
       }
     }
+  },
+  "add_char": {
+    "last_realm": "Alleria"
+  },
+  "add_todo": {
+    "last_typ": "Daily"
   }
 }

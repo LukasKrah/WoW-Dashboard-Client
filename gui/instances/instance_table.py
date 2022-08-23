@@ -14,7 +14,7 @@ from tkinter import *
 from typing import Literal
 
 from gui.widgets import KTable
-from style import Theme, ImageManager
+from style import Theme, ImageManager, KImage
 from data import Settings, InstanceManager
 
 from .instance_headers import InstanceColHeader, InstanceRowHeader
@@ -57,6 +57,10 @@ class InstanceTable(CTkCanvas):
         self.relheight = 5.0
 
         self.table_frame = CTkCanvas(self)
+        photo = KImage("style/images/shadowlands.jpg")
+        photo.resize(self.winfo_screenwidth()//11*10, 1, "cover")
+        self.table_frame.create_image(0, 0, image=photo.imgTk, anchor="nw")
+        self.table_frame.photo = photo.imgTk
         self.table_frame.configure(
             background=Theme.background1,
             bd=0,
@@ -154,6 +158,8 @@ class InstanceTable(CTkCanvas):
         :param name: Name of the char
         :param realm: Realm on which the char is playing
         """
+        Settings.values["add_char"]["last_realm"] = realm
+
         charname = f"{name}:{realm}".lower()
 
         add = True
@@ -189,8 +195,8 @@ class InstanceTable(CTkCanvas):
 
     def add_todo_callback(self,
                           name: str,
-                          typ: Literal["daily",
-                                       "weekly"],
+                          typ: Literal["Daily",
+                                       "Weekly"],
                           diff: str) -> None:
         """
         Add an instance to the InstanceManager __values and reload table
@@ -198,10 +204,13 @@ class InstanceTable(CTkCanvas):
         :param typ: Whether the instance is daily or weekly
         :param diff: Different difficultys of the instance
         """
+        Settings.values["add_todo"]["last_typ"] = typ
+
         if name not in InstanceManager.values:
             InstanceManager.values[name] = {
                 "type": typ,
-                "row": len(InstanceManager.values),
+                "row": max([InstanceManager.values[instance]["row"] for instance in InstanceManager.values
+                            if "row" in InstanceManager.values[instance]])+1,
                 "image": ImageManager.get_image(name),
                 "active": True,
                 "difficulty": {

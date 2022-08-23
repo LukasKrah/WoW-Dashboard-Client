@@ -79,14 +79,16 @@ class KPopUp(CTkToplevel):
 
         for _input in self.inputs:
             if _input["type"] == "InputText":
-                self.input_elems.append(KEntry(self, _input["label"]))
+                self.input_elems.append(
+                    KEntry(self, _input["label"], value=_input["value"] if "value" in _input else None))
 
             elif _input["type"] == "OptionMenu":
                 self.input_elems.append(
                     KOptionMenu(
                         self,
                         _input["label"],
-                        values=_input["validValues"]))
+                        values=_input["validValues"],
+                        value=_input["value"] if "value" in _input else None))
 
             elif _input["type"] == "ComboBox":
                 self.input_elems.append(

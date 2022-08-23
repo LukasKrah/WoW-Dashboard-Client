@@ -14,6 +14,7 @@ from customtkinter import *
 from os import listdir
 from tkinter import *
 
+from data import Settings
 from style import Theme
 
 from gui.widgets.k_popup import KPopUp
@@ -74,7 +75,8 @@ class InstanceNavBar(CTkCanvas):
                                      inputs=[{"type": "InputText",
                                               "label": "Name"},
                                              {"type": "InputText",
-                                              "label": "Realm"}],
+                                              "label": "Realm",
+                                              "value": Settings.values["add_char"]["last_realm"]}],
                                      confirm_call=self.new_char_callback)
         self.new_char = CTkButton(
             self,
@@ -91,11 +93,15 @@ class InstanceNavBar(CTkCanvas):
         self.new_todo_popup = KPopUp(
             self, "Neues ToDo", inputs=[
                 {
-                    "type": "InputText", "label": "Name"}, {
-                    "type": "OptionMenu", "label": "Typ", "validValues": [
-                        "Daily", "Weekly"]}, {
+                    "type": "InputText", "label": "Name"},
+                {
+                    "type": "OptionMenu", "label": "Typ",
+                    "value": Settings.values["add_todo"]["last_typ"],
+                    "validValues": ["Daily", "Weekly"]},
+                {
                         "type": "ComboBox", "label": "Difficultys", "validValues": [
-                            "Normal 10", "Normal 25", "Heroisch 10", "Heroisch 25", "Mythisch"]}], confirm_call=self.new_todo_callback)
+                            "Normal 10", "Normal 25", "Heroisch 10", "Heroisch 25", "Mythisch"]}],
+            confirm_call=self.new_todo_callback)
         self.new_todo = CTkButton(
             self,
             text="Neues ToDo",

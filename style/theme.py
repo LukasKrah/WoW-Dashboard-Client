@@ -48,7 +48,7 @@ class _DarkTheme:
     negative_color_light: str = "#FF0000"
     negative_text: str = "#550000"
 
-    fontfactor: float = 1
+    fontfactor: float = FontFactor(1)
     font: str = "Arial"
     wow_font: str = "LifeCraft"
 
