@@ -1,5 +1,5 @@
 """
-gui/instances/k_table.py
+gui/instances/instance_table.py
 
 Author: Lukas Krahbichler
 """
@@ -131,8 +131,6 @@ class InstanceTable(KCanvas):
         """
         Load rows, columns and __values and relaod table
         """
-        # rows = [{"row": 0, "headers": []}]
-
         rows = [{"row": InstanceManager.values[instance]["row"],
                  "headers": [{"label": instance},
                              {"label": ','.join(InstanceManager.values[instance]["difficulty"].keys())}]
@@ -189,6 +187,11 @@ class InstanceTable(KCanvas):
                 "realmSlug": realm,
                 "active": True,
                 "column": column}
+
+            for instance in InstanceManager.values:
+                for diff in InstanceManager.values[instance]["difficulty"]:
+                    InstanceManager.values[instance]["difficulty"][diff]["chars"][charname] = {"done": None}
+
             Settings.write()
             InstanceManager.write()
             self.scroll(null=True)
@@ -219,8 +222,12 @@ class InstanceTable(KCanvas):
                 "image": ImageManager.get_image(name),
                 "active": True,
                 "difficulty": {
-                    dif: {"chars": {}} for dif in diff.split(", ")
-                } if diff else {"": {"chars": {}}}
+                    dif: {"chars": {
+                        char: {"done": None} for char in Settings.values["chars"]
+                    }} for dif in diff.split(", ")
+                } if diff else {"": {"chars": {
+                    char: {"done": None} for char in Settings.values["chars"]
+                }}}
             }
         elif not InstanceManager.values[name]["active"]:
             InstanceManager.values[name]["active"] = True
@@ -239,8 +246,12 @@ class InstanceTable(KCanvas):
                     "image": ImageManager.get_image(name),
                     "active": True,
                     "difficulty": {
-                        dif: {"chars": {}} for dif in diff.split(", ")
-                    } if diff else {"": {"chars": {}}}
+                        dif: {"chars": {
+                            char: {"done": None} for char in Settings.values["chars"]
+                        }} for dif in diff.split(", ")
+                    } if diff else {"": {"chars": {
+                        char: {"done": None} for char in Settings.values["chars"]
+                    }}}
                 }
             else:
                 InstanceManager.values[name]["active"] = True
@@ -254,7 +265,7 @@ class InstanceTable(KCanvas):
             messagebox.showwarning(
                 "Instanz hinzufügen",
                 "Dieses Instanz existiert bereits!")
-
+        print(InstanceManager.values)
         self.scroll(null=True)
         InstanceManager.write()
         self.reload_table()

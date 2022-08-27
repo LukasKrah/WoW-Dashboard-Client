@@ -29,6 +29,8 @@ class Window(CTk):
     leftMenu: LeftMenu
     windows: dict
 
+    current_window: str
+
     def __init__(self, *args: any, **kwargs: any) -> None:
         super().__init__(*args, **kwargs)
 
@@ -39,6 +41,8 @@ class Window(CTk):
             self.winfo_screenheight() // 2)
         self.state("zoomed")
         self.option_add("*font", Theme.font)
+
+        self.current_window = "instanceTable"
 
         self.windows = {
             "instanceTable": InstanceTable(self),
@@ -61,6 +65,8 @@ class Window(CTk):
         self.grid_widgets()
 
     def change_to_frame(self, framename: str) -> None:
+        self.current_window = framename
+
         for window in self.windows:
             self.windows[window].grid_forget()
 
@@ -73,7 +79,7 @@ class Window(CTk):
     def grid_widgets(self) -> None:
         self.topMenu.grid(row=0, column=0, sticky="NSEW", columnspan=2)
         self.leftMenu.grid(row=1, column=0, sticky="NSEW")
-        self.windows["instanceTable"].grid(row=1, column=1, sticky="NSEW")
+        self.windows[self.current_window].grid(row=1, column=1, sticky="NSEW")
 
         for column, weight in enumerate([1]):
             self.grid_columnconfigure(column + 1, weight=weight)

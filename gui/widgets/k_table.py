@@ -7,9 +7,6 @@ Author: Lukas Krahbichler
 ##################################################
 #                    Imports                     #
 ##################################################
-
-from customtkinter import *
-
 from style import Theme
 
 from .k_canvas import KCanvas
@@ -195,26 +192,32 @@ class KTable(KCanvas):
                     self.col_offset,
                     sticky="NSEW")
 
-        print("NEW")
         # Weights
         for row in range(self.row_offset):
-            print("ROW", row, self.row_weight)
             self.grid_rowconfigure(row, weight=self.row_weight)
 
         for col in range(self.col_offset):
-            print("COL", col, self.col_weight)
             self.grid_columnconfigure(col, weight=self.col_weight)
 
         for row in self.__rows:
-            print("ROW", row["row"] + self.row_offset, self.row_weight)
             self.grid_rowconfigure(
                 row["row"] + self.row_offset,
                 weight=self.row_weight)
+        try:
+            self.grid_rowconfigure(max([row["row"]+self.row_offset for row in self.__rows])+1,
+                                   weight=0)
+        except ValueError:
+            ...
+
         for column in self.__columns:
-            print("COL", column["column"] + self.col_offset, self.col_weight)
             self.grid_columnconfigure(
                 column["column"] + self.col_offset,
                 weight=self.col_weight)
+        try:
+            self.grid_columnconfigure(max([column["column"] + self.col_offset for column in self.__columns])+1,
+                                      weight=0)
+        except ValueError:
+            ...
 
     def reload(
             self,

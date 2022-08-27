@@ -73,12 +73,6 @@ class KEntry(KCanvas):
 
         self.grid_widgets()
 
-        self.bind("<Expose>", self.default_value)
-
-    def default_value(self, _event: Event) -> None:
-        self.entry.delete(0, END)
-        self.entry.insert(0, self.value) if self.value else ...
-
     def grid_widgets(self) -> None:
         self.entry.grid(
             row=0, column=0, sticky="NSEW", pady=(
@@ -103,6 +97,7 @@ class KEntry(KCanvas):
 
     def reset(self) -> None:
         self.entry.delete(0, END)
+        self.entry.insert(0, self.value) if self.value else ...
 
 
 class KButtonGroupInput(KCanvas):

@@ -12,10 +12,17 @@
   "primary_middle": "#02057A",
   "primary_dark": "#000137",
 
-  "positive_color": "#00DD00",
+  "done_color": "#0000DD",
+  "done_color_light": "#0000FF",
+  "done_text": "#000022",
+  "cancel_color": "#EE8800",
+  "cancel_color_light": "#FFAA00",
+  "cancel_text": "#554400",
+
+  "positive_color": "#00CC00",
   "positive_color_light": "#00FF00",
   "positive_text": "#005500",
-  "negative_color": "#DD0000",
+  "negative_color": "#CC0000",
   "negative_color_light": "#FF0000",
   "negative_text": "#550000",
 

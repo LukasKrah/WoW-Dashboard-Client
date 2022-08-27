@@ -75,7 +75,12 @@ class InstanceRowHeader(KCanvas):
             self.bind("<ButtonRelease-1>", self.drag_up)
 
         self.width, self.height = 0, 0
-        self.labels = self.name.split(",") if self.name else []
+
+        if self.index == 0 and typ == "col":
+            self.labels = [Settings["chars"][self.name]["characterName"]]
+        else:
+            self.labels = self.name.split(",") if self.name else []
+
         if typ == "row":
             self.image = KImage(
                 InstanceManager[name]["image"]) if InstanceManager[name]["image"] else None
@@ -105,22 +110,8 @@ class InstanceRowHeader(KCanvas):
         if not self.image:
             self.configure(bg=Theme.background2)
         else:
-            self.create_line(
-                0,
-                0,
-                self.width,
-                self.height,
-                fill=Theme.text_color,
-                width=20,
-                tags=["dragndrop"])
-            self.create_line(
-                0,
-                self.height,
-                self.width,
-                0,
-                fill=Theme.text_color,
-                width=20,
-                tags=["dragndrop"])
+            self.reload(grey_out=True)
+
         modify = 0.5 if eventcoord >= 0 else -0.5
         self.dragindex = int(
             ((eventcoord / size) + modify)) + self.colrow_index
@@ -138,12 +129,13 @@ class InstanceRowHeader(KCanvas):
             self.headerwidgets_by_index[self.dragindex][self.index].draw_after()
         except (IndexError, KeyError):
             ...
+
         self.dragindex = 0 if self.dragindex < 0 else self.dragindex
         self.dragindex = len(
             self.headerwidgets) if self.dragindex > len(
             self.headerwidgets) else self.dragindex
 
-    def drag_up(self, event: Event) -> None:
+    def drag_up(self, _event: Event) -> None:
         self.delete_in_all_headers()
         self.configure(bg=Theme.background3)
 
@@ -171,6 +163,7 @@ class InstanceRowHeader(KCanvas):
                                 Settings.values["chars"][user]["column"] += 1
                     Settings.values["chars"][self.name]["column"] = self.dragindex
 
+        self.reload()
         Settings.write()
         InstanceManager.write()
         self.master.master.master.reload_table()
@@ -220,7 +213,7 @@ class InstanceRowHeader(KCanvas):
     def set_index(self, value: int) -> None:
         self.colrow_index = value
 
-    def reload(self) -> None:
+    def reload(self, grey_out: bool | None = False) -> None:
         self.delete("all")
 
         if self.image:
@@ -228,14 +221,14 @@ class InstanceRowHeader(KCanvas):
             self.create_image(
                 self.width / 2,
                 self.height / 2,
-                image=self.image.imgTk)
+                image=self.image.imgTk_greyout if grey_out else self.image.imgTk)
 
         labels_len = len(self.labels) + 1
         for index, label in enumerate(self.labels):
             self.create_text(
                 self.width / 2,
                 (self.height / labels_len) * (index + 1),
-                text=label if self.typ == "row" else label.split(":")[0],
+                text=label,
                 anchor="center",
                 font=(Theme.wow_font, Theme.fontfactor * 18),
                 fill=Theme.text_color_light if self.image else Theme.text_color
