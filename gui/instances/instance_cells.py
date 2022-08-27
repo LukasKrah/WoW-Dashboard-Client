@@ -13,7 +13,7 @@ from tkinter import messagebox
 from tkinter import *
 from json import dumps
 
-from gui.widgets import KContextMenu, KTable
+from gui.widgets import KContextMenu, KTable, KCanvas
 from style import Theme
 from data import InstanceManager
 
@@ -22,13 +22,27 @@ from data import InstanceManager
 #                     Code                       #
 ##################################################
 
-class InstanceCell(CTkCanvas):
+class InstanceCell(KCanvas):
     """
     Instance Cell widget for Instance table
     """
     master: KTable
     column: str
     row: str
+
+    done_fg: str
+    done_fg_hover: str
+    done_text_color: str
+    done_text_color_hover: str
+    done_font: tuple[str, int]
+    done_font_hover: tuple[str, int]
+
+    cancel_fg: str
+    cancel_fg_hover: str
+    cancel_text_color: str
+    cancel_text_color_hover: str
+    cancel_font: tuple[str, int]
+    cancel_font_hover: tuple[str, int]
 
     positive_fg: str
     positive_fg_hover: str
@@ -70,6 +84,20 @@ class InstanceCell(CTkCanvas):
             column: str,
             row: str,
             *args: any,
+
+            done_fg: str | None = Theme.done_color,
+            done_fg_hover: str | None = Theme.done_color_light,
+            done_text_color: str | None = Theme.done_text,
+            done_text_color_hover: str | None = Theme.done_text,
+            done_font: tuple[str, int] | None = (Theme.wow_font, Theme.fontfactor * 18),
+            done_font_hover: tuple[str, int] | None = (Theme.wow_font, Theme.fontfactor * 16),
+
+            cancel_fg: str | None = Theme.cancel_color,
+            cancel_fg_hover: str | None = Theme.cancel_color_light,
+            cancel_text_color: str | None = Theme.cancel_text,
+            cancel_text_color_hover: str | None = Theme.cancel_text,
+            cancel_font: tuple[str, int] | None = (Theme.wow_font, Theme.fontfactor * 18),
+            cancel_font_hover: tuple[str, int] | None = (Theme.wow_font, Theme.fontfactor * 16),
 
             positive_fg: str | None = Theme.positive_color,
             positive_fg_hover: str | None = Theme.positive_color_light,
@@ -123,6 +151,20 @@ class InstanceCell(CTkCanvas):
         self.column = column
         self.row = row
 
+        self.done_fg = done_fg
+        self.done_fg_hover = done_fg_hover
+        self.done_text_color = done_text_color
+        self.done_text_color_hover = done_text_color_hover
+        self.done_font = done_font
+        self.done_font_hover = done_font_hover
+
+        self.cancel_fg = cancel_fg
+        self.cancel_fg_hover = cancel_fg_hover
+        self.cancel_text_color = cancel_text_color
+        self.cancel_text_color_hover = cancel_text_color_hover
+        self.cancel_font = cancel_font
+        self.cancel_font_hover = cancel_font_hover
+
         self.positive_fg = positive_fg
         self.positive_fg_hover = positive_fg_hover
         self.positive_text_color = positive_text_color
@@ -156,7 +198,21 @@ class InstanceCell(CTkCanvas):
             InstanceManager.values[self.row]["difficulty"].keys())
         self.con = [KContextMenu(
             self, [{"label": "Aktivieren", "command": self.toggle}]) for _diff in self.diffs]
+        self.__states = []
+        self.reload()
 
+        # Configuration
+        self.configure(
+            bd=5,
+            background=Theme.background3)
+        self.bind("<Configure>", self.__resize)
+        self.bind("<Button-1>", self.__click)
+        self.bind("<Button-3>", self._popup)
+        self.bind("<Leave>", lambda e=...: self._reload())
+        self.bind("<Enter>", self.__hover)
+        self.bind("<Motion>", self.__hover)
+
+    def reload(self) -> None:
         self.__states = ["disable" for _diff in self.diffs]
         for index, diff in enumerate(self.diffs):
             try:
@@ -172,18 +228,7 @@ class InstanceCell(CTkCanvas):
                     self._reload()
             except KeyError:
                 ...
-
-        # Configuration
-        self.configure(
-            bd=5,
-            highlightthickness=0,
-            background=Theme.background3)
-        self.bind("<Configure>", self.__resize)
-        self.bind("<Button-1>", self.__click)
-        self.bind("<Button-3>", self._popup)
-        self.bind("<Leave>", lambda e=...: self._reload())
-        self.bind("<Enter>", self.__hover)
-        self.bind("<Motion>", self.__hover)
+        self._reload()
 
     # Index and height helping funcs
     def _get_index_y(self, cord_y: int | None = None) -> int:
@@ -456,9 +501,9 @@ class InstanceCell(CTkCanvas):
               text_color: str | None = None,
               text_font: tuple[str, int] | None = None,
               **kwargs) -> None:
-        fg = fg if fg else self.positive_fg
-        text_color = text_color if text_color else self.positive_text_color
-        text_font = text_font if text_font else self.positive_font
+        fg = fg if fg else self.done_fg
+        text_color = text_color if text_color else self.done_text_color
+        text_font = text_font if text_font else self.done_font
 
         self.create_rectangle(
             0,
@@ -479,9 +524,9 @@ class InstanceCell(CTkCanvas):
 
     def _done_hover(self, **kwargs) -> None:
         self._done(
-            fg=self.positive_fg_hover,
-            text_color=self.positive_text_color,
-            text_font=self.positive_font_hover,
+            fg=self.done_fg_hover,
+            text_color=self.done_text_color,
+            text_font=self.done_font_hover,
             **kwargs
         )
 
@@ -494,9 +539,9 @@ class InstanceCell(CTkCanvas):
                 text_color: str | None = None,
                 text_font: tuple[str, int] | None = None,
                 **kwargs) -> None:
-        fg = fg if fg else self.negative_fg
-        text_color = text_color if text_color else self.negative_text_color
-        text_font = text_font if text_font else self.negative_font
+        fg = fg if fg else self.cancel_fg
+        text_color = text_color if text_color else self.cancel_text_color
+        text_font = text_font if text_font else self.cancel_font
 
         h1, h2 = self._get_height(**kwargs), self._get_height_top(**kwargs)
         self.create_rectangle(0, h1, self.width, h2, fill=fg)
@@ -515,8 +560,8 @@ class InstanceCell(CTkCanvas):
 
     def _cancel_hover(self, **kwargs) -> None:
         self._cancel(
-            fg=self.negative_fg_hover,
-            text_color=self.negative_text_color,
-            text_font=self.negative_font_hover,
+            fg=self.cancel_fg_hover,
+            text_color=self.cancel_text_color,
+            text_font=self.cancel_font_hover,
             **kwargs
         )

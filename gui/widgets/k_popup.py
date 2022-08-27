@@ -168,6 +168,8 @@ class KPopUp(CTkToplevel):
     def open_popup(self, *_args: any) -> None:
         if not self.winfo_exists():
             self.create()
+        for input_elem in self.input_elems:
+            input_elem.reset()
         self.center()
         self.deiconify()
 

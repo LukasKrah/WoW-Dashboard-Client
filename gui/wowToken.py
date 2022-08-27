@@ -15,13 +15,14 @@ from time import sleep
 
 from data import API
 from style import Theme, KImage
+from gui.widgets import KCanvas
 
 
 ##################################################
 #                 Menu classes                   #
 ##################################################
 
-class WoWToken(CTkCanvas):
+class WoWToken(KCanvas):
     force_reload: bool
 
     width: int
@@ -72,11 +73,14 @@ class WoWToken(CTkCanvas):
         Thread(target=self.get_token_price).start()
 
     def get_token_price(self) -> None:
+        firstrun = True
         while True:
-            self.itemconfigure(
-                self.price, text=str(
-                    API.get_token_history())[
-                    :-4] + " Gold")
+            if self.master.current_window == "wowToken" or firstrun:
+                firstrun = False
+                token_price = str(API.get_token_history())
+                self.itemconfigure(
+                    self.price, text=token_price[:-4] + " Gold")
+                self.update()
             for index in range(20):
                 sleep(1)
                 if self.force_reload:

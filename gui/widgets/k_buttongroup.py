@@ -76,13 +76,14 @@ class KButtonGroup:
 
     def hover_on(self, but: str) -> None:
         self.__buttons[but]["hover"] = True
+        self.__buttons[but]["but"].stop_scaling()
+
         match self.__buttons[but]["but"].fg_color:
             case self.bg | self.bg_hover:
                 self.__buttons[but]["but"].configure(
                     fg_color=self.bg_hover, text_color=self.fg_hover)
                 self.__buttons[but]["but"].text_label.configure(
                     font=(Theme.wow_font, Theme.fontfactor * self.fontsize_hover))
-
             case self.bg_selected | self.bg_selected_hover:
                 self.__buttons[but]["but"].configure(
                     fg_color=self.bg_selected_hover,
@@ -90,8 +91,12 @@ class KButtonGroup:
                 self.__buttons[but]["but"].text_label.configure(
                     font=(Theme.wow_font, Theme.fontfactor * self.fontsize_selected_hover))
 
+        self.__buttons[but]["but"].resume_scaling()
+
     def hover_off(self, but: str) -> None:
         self.__buttons[but]["hover"] = False
+        self.__buttons[but]["but"].stop_scaling()
+
         match self.__buttons[but]["but"].fg_color:
             case self.bg_hover | self.bg:
                 self.__buttons[but]["but"].configure(
@@ -103,6 +108,8 @@ class KButtonGroup:
                     fg_color=self.bg_selected, text_color=self.fg_selected)
                 self.__buttons[but]["but"].text_label.configure(
                     font=(Theme.wow_font, Theme.fontfactor * self.fontsize_selected))
+
+        self.__buttons[but]["but"].resume_scaling()
 
     @property
     def buttons(self) -> list[CTkButton]:

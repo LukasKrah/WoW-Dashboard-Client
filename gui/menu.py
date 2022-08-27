@@ -48,9 +48,6 @@ class LeftMenu(CTkCanvas):
         self.grid_columnconfigure(0, weight=1)
         for index, but in enumerate(self.butgroup.buttons):
             but.grid(row=index, column=0, sticky="NSEW")
-        self.update_idletasks()
-        for but in self.butgroup.buttons:
-            but.grid_rowconfigure(0, minsize=but.winfo_height())
 
 
 class TopMenu(CTkCanvas):

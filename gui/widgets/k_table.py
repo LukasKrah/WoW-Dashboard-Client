@@ -7,17 +7,16 @@ Author: Lukas Krahbichler
 ##################################################
 #                    Imports                     #
 ##################################################
-
-from customtkinter import *
-
 from style import Theme
+
+from .k_canvas import KCanvas
 
 
 ##################################################
 #                     Code                       #
 ##################################################
 
-class KTable(CTkCanvas):
+class KTable(KCanvas):
     """
     General table widget
     """
@@ -29,14 +28,18 @@ class KTable(CTkCanvas):
     row_weight: int
     col_weight: int
 
-    topleft: any
+    __topleft: any
 
     __columns: list
     __rows: list
     __values: dict
 
-    column_headerwidgets: list
-    row_headerwidgets: list
+    column_headerwidgets: dict
+    row_headerwidgets: dict
+    cell_widgets: dict
+
+    row_offset: int
+    col_offset: int
 
     def __init__(
             self,
@@ -69,108 +72,159 @@ class KTable(CTkCanvas):
             highlightthickness=0,
             background=Theme.background3)
 
-        self.topleft = None
+        self.__topleft = None
         self.__rows = []
         self.__columns = []
         self.__values = {}
 
-        self.column_headerwidgets = []
-        self.row_headerwidgets = []
+        self.column_headerwidgets = {}
+        self.row_headerwidgets = {}
+        self.cell_widgets = {}
+
+        self.row_offset = len(self.colheaders)
+        self.col_offset = len(self.rowheaders)
+
+    @property
+    def topleft(self) -> any:
+        return self.__topleft
+
+    @topleft.setter
+    def topleft(self, widget: any) -> None:
+        self.__topleft = widget
+        self.__topleft.grid(
+            row=0,
+            column=0,
+            rowspan=self.row_offset,
+            columnspan=self.col_offset,
+            sticky="NSEW")
 
     def __reload(self) -> None:
         """
         Relaod table rowheaders, columnheaders and cells
         """
         # Delete old elems
-        for widget in self.grid_slaves():
-            self.grid_columnconfigure(widget.grid_info()["column"], weight=0)
-            self.grid_rowconfigure(widget.grid_info()["row"], weight=0)
-            widget.grid_forget()
-            del widget
-        self.row_headerwidgets = []
-        self.column_headerwidgets = []
+        del_cells = []
 
-        row_offset = len(self.colheaders)
-        col_offset = len(self.rowheaders)
+        for row in self.cell_widgets:
+            for column in self.cell_widgets[row]:
+                if row not in [
+                        header["headers"][0]["label"] for header in self.__rows] or column not in [
+                        header["headers"][0]["label"] for header in self.__columns]:
+                    del_cells.append(f"{row},{column}")
+                    self.grid_columnconfigure(
+                        self.cell_widgets[row][column].grid_info()["column"], weight=0)
+                    self.grid_rowconfigure(
+                        self.cell_widgets[row][column].grid_info()["row"], weight=0)
+                    self.cell_widgets[row][column].grid_forget()
+                    self.cell_widgets[row][column].destroy()
 
-        # TopLeft
-        if self.topleft is not None:
-            self.topleft.grid(
-                row=0,
-                column=0,
-                rowspan=row_offset,
-                columnspan=col_offset,
-                sticky="NSEW")
+        for del_cel in del_cells:
+            splitdel = del_cel.split(",")
+            del self.cell_widgets[splitdel[0]][splitdel[1]]
+
+        for header, colrows, typ in ((self.row_headerwidgets, self.__rows, "row"), (
+                self.column_headerwidgets, self.__columns, "column")):
+            del_headers = []
+
+            for headers in header:
+                if headers not in [colrow["headers"][0]["label"]
+                                   for colrow in colrows]:
+                    del_headers.append(headers)
+                    for widget in header[headers]:
+                        self.grid_columnconfigure(
+                            widget.grid_info()[typ], weight=0)
+                        widget.destroy()
+
+            for del_header in del_headers:
+                del header[del_header]
 
         # Column headers
-        self.grid_rowconfigure(0, weight=self.row_weight)
-        self.grid_columnconfigure(0, weight=self.col_weight)
-
-        try:
-            for index in range(max([col["column"]
-                                    for col in self.__columns]) + 1):
-                self.column_headerwidgets.append([])
-        except ValueError:
-            ...
-
-        for index, col in enumerate(self.__columns):
-            self.column_headerwidgets.append([])
+        for col in self.__columns:
+            add = False
             for colindex, colheader in enumerate(self.colheaders):
-                self.column_headerwidgets[col["column"]].append(colheader(
-                    self, col["headers"][colindex]["label"], col["column"], colindex))
-                self.column_headerwidgets[col["column"]][colindex].grid(
+                if col["headers"][0]["label"] not in self.column_headerwidgets or add:
+                    if not add:
+                        self.column_headerwidgets[col["headers"][0]["label"]] = [
+                        ]
+                        add = True
+                    self.column_headerwidgets[col["headers"][0]["label"]].append(colheader(
+                        self, col["headers"][colindex]["label"], col["column"], colindex))
+                self.column_headerwidgets[col["headers"][0]["label"]][colindex].set_index(
+                    col["column"])
+                self.column_headerwidgets[col["headers"][0]["label"]][colindex].grid(
                     row=colindex,
                     column=col["column"] +
-                    col_offset,
+                    self.col_offset,
                     sticky="NSEW")
-                self.grid_rowconfigure(
-                    colindex,
-                    weight=col["headers"][colindex]["weight"] if "weight" in col["headers"][colindex]
-                    else self.col_weight)
+                # self.grid_rowconfigure(
+                #     colindex,
+                #     weight=col["headers"][colindex]["weight"] if "weight" in col["headers"][colindex]
+                #     else self.col_weight)
 
         # Row headers
-        try:
-            for index in range(max([row["row"] for row in self.__rows]) + 1):
-                self.row_headerwidgets.append([])
-        except ValueError:
-            ...
-
-        for index, row in enumerate(self.__rows):
+        for row in self.__rows:
+            add = False
             for rowindex, rowheader in enumerate(self.rowheaders):
-                self.row_headerwidgets[row["row"]].append(rowheader(
-                    self, row["headers"][rowindex]["label"], row["row"], rowindex))
-                self.row_headerwidgets[row["row"]][rowindex].grid(
-                    row=row["row"] + row_offset,
+                if row["headers"][0]["label"] not in self.row_headerwidgets or add:
+                    if not add:
+                        self.row_headerwidgets[row["headers"][0]["label"]] = []
+                        add = True
+                    self.row_headerwidgets[row["headers"][0]["label"]].append(rowheader(
+                        self, row["headers"][rowindex]["label"], row["row"], rowindex))
+                self.row_headerwidgets[row["headers"][0][
+                    "label"]][rowindex].set_index(row["row"])
+                self.row_headerwidgets[row["headers"][0]["label"]][rowindex].grid(
+                    row=row["row"] + self.row_offset,
                     column=rowindex,
                     sticky="NSEW")
-                self.grid_columnconfigure(
-                    rowindex,
-                    weight=row["headers"][rowindex]["weight"] if "weight" in row["headers"][rowindex]
-                    else self.row_weight)
+                # self.grid_columnconfigure(
+                #     rowindex,
+                #     weight=row["headers"][rowindex]["weight"] if "weight" in row["headers"][rowindex]
+                #     else self.row_weight)
 
         # Table
         for rowindex, row in enumerate(self.__rows):
             for colindex, col in enumerate(self.__columns):
-                lab = self.cells(
-                    self,
-                    col["headers"][0]["label"],
-                    row["headers"][0]["label"])
-                lab.grid(
+                if row["headers"][0]["label"] not in self.cell_widgets:
+                    self.cell_widgets[row["headers"][0]["label"]] = {}
+                if col["headers"][0]["label"] not in self.cell_widgets[row["headers"][0]["label"]]:
+                    self.cell_widgets[row["headers"][0]["label"]][col["headers"][0]["label"]] = self.cells(
+                        self, col["headers"][0]["label"], row["headers"][0]["label"])
+                self.cell_widgets[row["headers"][0]["label"]
+                                  ][col["headers"][0]["label"]].reload()
+                self.cell_widgets[row["headers"][0]["label"]][col["headers"][0]["label"]].grid(
                     row=row["row"] +
-                    row_offset,
+                    self.row_offset,
                     column=col["column"] +
-                    col_offset,
+                    self.col_offset,
                     sticky="NSEW")
 
         # Weights
+        for row in range(self.row_offset):
+            self.grid_rowconfigure(row, weight=self.row_weight)
+
+        for col in range(self.col_offset):
+            self.grid_columnconfigure(col, weight=self.col_weight)
+
         for row in self.__rows:
             self.grid_rowconfigure(
-                row["row"] + row_offset,
+                row["row"] + self.row_offset,
                 weight=self.row_weight)
+        try:
+            self.grid_rowconfigure(
+                max([row["row"] + self.row_offset for row in self.__rows]) + 1, weight=0)
+        except ValueError:
+            ...
+
         for column in self.__columns:
             self.grid_columnconfigure(
-                column["column"] + col_offset,
+                column["column"] + self.col_offset,
                 weight=self.col_weight)
+        try:
+            self.grid_columnconfigure(max(
+                [column["column"] + self.col_offset for column in self.__columns]) + 1, weight=0)
+        except ValueError:
+            ...
 
     def reload(
             self,

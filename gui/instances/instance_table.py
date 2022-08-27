@@ -1,5 +1,5 @@
 """
-gui/instances/k_table.py
+gui/instances/instance_table.py
 
 Author: Lukas Krahbichler
 """
@@ -13,7 +13,7 @@ from customtkinter import *
 from tkinter import *
 from typing import Literal
 
-from gui.widgets import KTable
+from gui.widgets import KTable, KCanvas
 from style import Theme, ImageManager, KImage
 from data import Settings, InstanceManager
 
@@ -28,7 +28,7 @@ from .instance_viewmanager import InstanceViewManager
 ##################################################
 
 
-class InstanceTable(CTkCanvas):
+class InstanceTable(KCanvas):
     """
     Instances Table (colums: chars, rows: instances)
     """
@@ -49,10 +49,7 @@ class InstanceTable(CTkCanvas):
         """
 
         super().__init__(*args, **kwargs)
-        self.configure(
-            bd=0,
-            highlightthickness=0,
-            background=Theme.background3)
+        self.configure(background=Theme.background3)
 
         self.relheight = 5.0
 
@@ -134,8 +131,6 @@ class InstanceTable(CTkCanvas):
         """
         Load rows, columns and __values and relaod table
         """
-        # rows = [{"row": 0, "headers": []}]
-
         rows = [{"row": InstanceManager.values[instance]["row"],
                  "headers": [{"label": instance},
                              {"label": ','.join(InstanceManager.values[instance]["difficulty"].keys())}]
@@ -192,6 +187,12 @@ class InstanceTable(CTkCanvas):
                 "realmSlug": realm,
                 "active": True,
                 "column": column}
+
+            for instance in InstanceManager.values:
+                for diff in InstanceManager.values[instance]["difficulty"]:
+                    InstanceManager.values[instance]["difficulty"][diff]["chars"][charname] = {
+                        "done": None}
+
             Settings.write()
             InstanceManager.write()
             self.scroll(null=True)
@@ -222,8 +223,12 @@ class InstanceTable(CTkCanvas):
                 "image": ImageManager.get_image(name),
                 "active": True,
                 "difficulty": {
-                    dif: {"chars": {}} for dif in diff.split(", ")
-                } if diff else {"": {"chars": {}}}
+                    dif: {"chars": {
+                        char: {"done": None} for char in Settings.values["chars"]
+                    }} for dif in diff.split(", ")
+                } if diff else {"": {"chars": {
+                    char: {"done": None} for char in Settings.values["chars"]
+                }}}
             }
         elif not InstanceManager.values[name]["active"]:
             InstanceManager.values[name]["active"] = True
@@ -242,19 +247,26 @@ class InstanceTable(CTkCanvas):
                     "image": ImageManager.get_image(name),
                     "active": True,
                     "difficulty": {
-                        dif: {"chars": {}} for dif in diff.split(", ")
-                    } if diff else {"": {"chars": {}}}
+                        dif: {"chars": {
+                            char: {"done": None} for char in Settings.values["chars"]
+                        }} for dif in diff.split(", ")
+                    } if diff else {"": {"chars": {
+                        char: {"done": None} for char in Settings.values["chars"]
+                    }}}
                 }
             else:
                 InstanceManager.values[name]["active"] = True
-                InstanceManager.values[name]["row"] = max([InstanceManager.values[instance]["row"]
-                                                           for instance in InstanceManager.values
-                                                           if "row" in InstanceManager.values[instance]]) + 1
+                try:
+                    InstanceManager.values[name]["row"] = max([InstanceManager.values[instance]["row"]
+                                                               for instance in InstanceManager.values
+                                                               if "row" in InstanceManager.values[instance]]) + 1
+                except ValueError:
+                    InstanceManager.values[name]["row"] = 0
         else:
             messagebox.showwarning(
                 "Instanz hinzufügen",
                 "Dieses Instanz existiert bereits!")
-
+        print(InstanceManager.values)
         self.scroll(null=True)
         InstanceManager.write()
         self.reload_table()

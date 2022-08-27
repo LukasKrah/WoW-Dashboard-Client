@@ -28,6 +28,36 @@ class FontFactor:
 
 class _Theme:
     path: str
+    background0: str
+    background1: str
+    background2: str
+    background3: str
+
+    text_color_light: str
+    text_color: str
+    text_color_reverse: str
+
+    primary_light: str
+    primary_middle: str
+    primary_dark: str
+
+    done_color: str
+    done_color_light: str
+    done_text: str
+    cancel_color: str
+    cancel_color_light: str
+    cancel_text: str
+
+    positive_color: str
+    positive_color_light: str
+    positive_text: str
+    negative_color: str
+    negative_color_light: str
+    negative_text: str
+
+    fontfactor: FontFactor
+    font: str
+    wow_font: str
 
     def __init__(self, path: str) -> None:
         self.path = path

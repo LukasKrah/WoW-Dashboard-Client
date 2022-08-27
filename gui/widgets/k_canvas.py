@@ -29,6 +29,7 @@ class KCanvas(CTkCanvas):
         :param master: Master widget
         """
         super().__init__(master, *args, **kwargs)
+        self.configure(bd=0, highlightthickness=0, width=0, height=0)
 
     def bind_all_widgets(self: Widget, sequence: str | None = ..., func: Callable[[
             any], any] | None = ..., add: bool | None = ...) -> None:

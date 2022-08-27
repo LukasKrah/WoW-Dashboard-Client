@@ -11,7 +11,7 @@ Author: Lukas Krahbichler
 from concurrent.futures import ThreadPoolExecutor
 from typing import Literal
 
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageEnhance
 from json import loads
 
 
@@ -20,15 +20,26 @@ from json import loads
 ##################################################
 
 class KImage:
+    prepare_grey_out: bool
+
     img: Image.open
     imgTk: ImageTk.PhotoImage
 
+    enhancer: ImageEnhance.Brightness
+    imgTk_greyout: ImageTk.PhotoImage
+
     thread: ThreadPoolExecutor
 
-    def __init__(self, path: str):
+    def __init__(self, path: str, prepare_grey_out: bool | None = True):
+        self.prepare_grey_out = prepare_grey_out
+
         img = Image.open(path)
         self.img = img
         self.imgTk = ImageTk.PhotoImage(self.img)
+
+        if self.prepare_grey_out:
+            self.enhancer = ImageEnhance.Brightness(self.img)
+            self.imgTk_greyout = ImageTk.PhotoImage(self.enhancer.enhance(0.5))
 
         self.thread = ThreadPoolExecutor(max_workers=1)
 
@@ -60,7 +71,12 @@ class KImage:
                 y = img_height * fact
             case "normal":
                 x, y = width, height
+
         self.imgTk = ImageTk.PhotoImage(self.img.resize(size=(int(x), int(y))))
+        if self.prepare_grey_out:
+            self.enhancer = ImageEnhance.Brightness(
+                self.img.resize(size=(int(x), int(y))))
+            self.imgTk_greyout = ImageTk.PhotoImage(self.enhancer.enhance(0.5))
 
 
 class _ImageManager:

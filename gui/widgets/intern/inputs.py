@@ -14,12 +14,14 @@ from tkinter import *
 
 from style import Theme
 
+from ..k_canvas import KCanvas
+
 
 ##################################################
 #                     Code                       #
 ##################################################
 
-class KEntry(CTkCanvas):
+class KEntry(KCanvas):
     label: str
     entry: CTkEntry
     value: str
@@ -71,12 +73,6 @@ class KEntry(CTkCanvas):
 
         self.grid_widgets()
 
-        self.bind("<Expose>", self.default_value)
-
-    def default_value(self, _event: Event) -> None:
-        self.entry.delete(0, END)
-        self.entry.insert(0, self.value) if self.value else ...
-
     def grid_widgets(self) -> None:
         self.entry.grid(
             row=0, column=0, sticky="NSEW", pady=(
@@ -101,9 +97,10 @@ class KEntry(CTkCanvas):
 
     def reset(self) -> None:
         self.entry.delete(0, END)
+        self.entry.insert(0, self.value) if self.value else ...
 
 
-class KButtonGroupInput(CTkCanvas):
+class KButtonGroupInput(KCanvas):
     master: any
     buttons: dict
 
@@ -122,7 +119,7 @@ class KButtonGroupInput(CTkCanvas):
         ...
 
 
-class KOptionMenu(CTkCanvas):
+class KOptionMenu(KCanvas):
     label: str
     optionMenu: CTkOptionMenu
     values: list[str]
@@ -196,7 +193,7 @@ class KOptionMenu(CTkCanvas):
         self.optionMenu.set(self.values[0])
 
 
-class KMenu(CTkCanvas):
+class KMenu(KCanvas):
     label: str
     menuButton: CTkOptionMenu
     menu: Menu
@@ -283,7 +280,7 @@ class KMenu(CTkCanvas):
             self.selection[selection].set(0)
 
 
-class KSlider(CTkCanvas):
+class KSlider(KCanvas):
     """
     Custom slider with label
     """
@@ -322,10 +319,10 @@ class KSlider(CTkCanvas):
             highlightthickness=0,
             background=Theme.background3)
 
-        self.lab = Label(
+        self.lab = CTkLabel(
             self,
             text=self.label,
-            font=(
+            text_font=(
                 Theme.wow_font,
                 Theme.fontfactor * 18),
             background=Theme.background3,
@@ -350,10 +347,10 @@ class KSlider(CTkCanvas):
         Grid custom slider widgets
         """
         self.lab.grid(row=0, column=0, sticky="NSEW")
-        self.slider.grid(row=1, column=0, sticky="NSEW", ipady=5)
+        self.slider.grid(row=1, column=0, sticky="NSEW")
 
-        self.grid_columnconfigure(0, weight=1)
-        for index, weight in enumerate([1, 1]):
+        self.grid_columnconfigure(0, weight=10)
+        for index, weight in enumerate([10, 10]):
             self.grid_rowconfigure(index, weight=weight)
 
     def get(self) -> float:
