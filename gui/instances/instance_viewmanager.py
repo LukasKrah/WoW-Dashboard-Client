@@ -62,21 +62,20 @@ class InstanceViewManager(KCanvas):
                                 [{"label": "Diese Ansicht für alle Wochen übernehmen",
                                   "command": self.set_view_all}])
 
-        self.configure(bd=0, highlightthickness=0,
-                       background=Theme.background3)
+        self.configure(background=Theme.background3)
 
         self.reload()
 
     def reload(self) -> None:
         self.view_elems = {}
-        for index, view in enumerate(Settings["view"]["views"]):
+        for outindex, view in enumerate(Settings["view"]["views"]):
             self.butgroup.add_button(
                 view,
                 Settings["view"]["views"][view]["name"],
                 lambda v=view: self.set_view(v),
                 Settings.values["view"]["selectedView"] == view)
             self.view_elems[view] = {
-                "but": self.butgroup.buttons[index],
+                "but": self.butgroup.buttons[outindex],
                 "propertys": {}}
 
             for index, prop in enumerate(
@@ -110,6 +109,7 @@ class InstanceViewManager(KCanvas):
 
     def grid_widgets(self) -> None:
         self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
         for index, view in enumerate(self.view_elems):
             self.view_elems[view]["but"].grid(
                 row=0, column=index, sticky="NSEW")

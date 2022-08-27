@@ -13,7 +13,7 @@ from customtkinter import *
 from tkinter import *
 from typing import Literal
 
-from gui.widgets import KTable
+from gui.widgets import KTable, KCanvas
 from style import Theme, ImageManager, KImage
 from data import Settings, InstanceManager
 
@@ -28,7 +28,7 @@ from .instance_viewmanager import InstanceViewManager
 ##################################################
 
 
-class InstanceTable(CTkCanvas):
+class InstanceTable(KCanvas):
     """
     Instances Table (colums: chars, rows: instances)
     """
@@ -49,10 +49,7 @@ class InstanceTable(CTkCanvas):
         """
 
         super().__init__(*args, **kwargs)
-        self.configure(
-            bd=0,
-            highlightthickness=0,
-            background=Theme.background3)
+        self.configure(background=Theme.background3)
 
         self.relheight = 5.0
 
@@ -247,9 +244,12 @@ class InstanceTable(CTkCanvas):
                 }
             else:
                 InstanceManager.values[name]["active"] = True
-                InstanceManager.values[name]["row"] = max([InstanceManager.values[instance]["row"]
-                                                           for instance in InstanceManager.values
-                                                           if "row" in InstanceManager.values[instance]]) + 1
+                try:
+                    InstanceManager.values[name]["row"] = max([InstanceManager.values[instance]["row"]
+                                                               for instance in InstanceManager.values
+                                                               if "row" in InstanceManager.values[instance]]) + 1
+                except ValueError:
+                    InstanceManager.values[name]["row"] = 0
         else:
             messagebox.showwarning(
                 "Instanz hinzufügen",

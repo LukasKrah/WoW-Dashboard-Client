@@ -13,7 +13,7 @@ from typing import Literal
 from tkinter import *
 from PIL import Image, ImageTk
 
-from gui.widgets import KContextMenu
+from gui.widgets import KContextMenu, KCanvas
 from style import KImage, Theme
 from data import InstanceManager, Settings
 
@@ -22,14 +22,15 @@ from data import InstanceManager, Settings
 #                     Code                       #
 ##################################################
 
-class InstanceRowHeader(CTkCanvas):
+class InstanceRowHeader(KCanvas):
     master: any
     name: str
     colrow_index: int
     index: int
     typ: Literal["col", "row"]
 
-    headerwidgets: list
+    headerwidgets: dict
+    headerwidgets_by_index: list
     dragindex: int
 
     width: int
@@ -89,7 +90,7 @@ class InstanceRowHeader(CTkCanvas):
 
     def delete_in_all_headers(self, tag: str | None = "dragndrop"):
         for header in self.headerwidgets:
-            for subheader in header:
+            for subheader in self.headerwidgets[header]:
                 subheader.delete(tag)
 
     def drag_down(self, event: Event) -> None:
@@ -123,14 +124,19 @@ class InstanceRowHeader(CTkCanvas):
         modify = 0.5 if eventcoord >= 0 else -0.5
         self.dragindex = int(
             ((eventcoord / size) + modify)) + self.colrow_index
+
+        self.headerwidgets_by_index = [[] for header in self.headerwidgets]
+        for header in self.headerwidgets:
+            self.headerwidgets_by_index[self.headerwidgets[header][0].colrow_index] = self.headerwidgets[header]
+
         try:
-            self.headerwidgets[self.dragindex -
-                               1][self.index].draw_pre() if self.dragindex > 0 else None
-        except IndexError:
+            self.headerwidgets_by_index[self.dragindex -
+                                   1][self.index].draw_pre() if self.dragindex > 0 else None
+        except (IndexError, KeyError):
             ...
         try:
-            self.headerwidgets[self.dragindex][self.index].draw_after()
-        except IndexError:
+            self.headerwidgets_by_index[self.dragindex][self.index].draw_after()
+        except (IndexError, KeyError):
             ...
         self.dragindex = 0 if self.dragindex < 0 else self.dragindex
         self.dragindex = len(
@@ -211,6 +217,9 @@ class InstanceRowHeader(CTkCanvas):
                     width=20,
                     tags=["dragndrop"])
 
+    def set_index(self, value: int) -> None:
+        self.colrow_index = value
+
     def reload(self) -> None:
         self.delete("all")
 
@@ -260,13 +269,12 @@ class InstanceRowHeader(CTkCanvas):
             case "row":
                 for diff in InstanceManager.values[self.name]["difficulty"]:
                     if value == "del":
-                        InstanceManager.values[self.name]["difficulty"][diff]["chars"] = {
-                        }
+                        InstanceManager.values[self.name]["difficulty"][diff]["chars"] = {}
                     else:
                         for char in Settings.values["chars"]:
                             if char not in InstanceManager.values[self.name]["difficulty"][diff]["chars"]:
-                                InstanceManager.values[self.name]["difficulty"][diff]["chars"][char] = {
-                                    "done": value}
+                                InstanceManager.values[self.name]["difficulty"][diff]["chars"][char] = \
+                                    {"done": value}
 
             case "col":
                 for instance in InstanceManager.values:
@@ -276,8 +284,8 @@ class InstanceRowHeader(CTkCanvas):
                                 del InstanceManager.values[instance]["difficulty"][diff]["chars"][self.name]
                         else:
                             if value != "del":
-                                InstanceManager.values[instance]["difficulty"][diff]["chars"][self.name] = {
-                                    "done": value}
+                                InstanceManager.values[instance]["difficulty"][diff]["chars"][self.name] = \
+                                    {"done": value}
         self.master.master.master.reload_table()
 
     def activate_whole(self) -> None:

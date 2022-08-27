@@ -73,10 +73,11 @@ class WoWToken(CTkCanvas):
 
     def get_token_price(self) -> None:
         while True:
+            token_price = str(API.get_token_history())
+            print("RELOAD", token_price)
             self.itemconfigure(
-                self.price, text=str(
-                    API.get_token_history())[
-                    :-4] + " Gold")
+                self.price, text=token_price[:-4] + " Gold")
+            self.update()
             for index in range(20):
                 sleep(1)
                 if self.force_reload:

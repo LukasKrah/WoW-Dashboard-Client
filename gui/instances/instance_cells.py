@@ -13,7 +13,7 @@ from tkinter import messagebox
 from tkinter import *
 from json import dumps
 
-from gui.widgets import KContextMenu, KTable
+from gui.widgets import KContextMenu, KTable, KCanvas
 from style import Theme
 from data import InstanceManager
 
@@ -22,7 +22,7 @@ from data import InstanceManager
 #                     Code                       #
 ##################################################
 
-class InstanceCell(CTkCanvas):
+class InstanceCell(KCanvas):
     """
     Instance Cell widget for Instance table
     """
@@ -156,7 +156,21 @@ class InstanceCell(CTkCanvas):
             InstanceManager.values[self.row]["difficulty"].keys())
         self.con = [KContextMenu(
             self, [{"label": "Aktivieren", "command": self.toggle}]) for _diff in self.diffs]
+        self.__states = []
+        self.reload()
 
+        # Configuration
+        self.configure(
+            bd=5,
+            background=Theme.background3)
+        self.bind("<Configure>", self.__resize)
+        self.bind("<Button-1>", self.__click)
+        self.bind("<Button-3>", self._popup)
+        self.bind("<Leave>", lambda e=...: self._reload())
+        self.bind("<Enter>", self.__hover)
+        self.bind("<Motion>", self.__hover)
+
+    def reload(self) -> None:
         self.__states = ["disable" for _diff in self.diffs]
         for index, diff in enumerate(self.diffs):
             try:
@@ -172,18 +186,7 @@ class InstanceCell(CTkCanvas):
                     self._reload()
             except KeyError:
                 ...
-
-        # Configuration
-        self.configure(
-            bd=5,
-            highlightthickness=0,
-            background=Theme.background3)
-        self.bind("<Configure>", self.__resize)
-        self.bind("<Button-1>", self.__click)
-        self.bind("<Button-3>", self._popup)
-        self.bind("<Leave>", lambda e=...: self._reload())
-        self.bind("<Enter>", self.__hover)
-        self.bind("<Motion>", self.__hover)
+        self._reload()
 
     # Index and height helping funcs
     def _get_index_y(self, cord_y: int | None = None) -> int:

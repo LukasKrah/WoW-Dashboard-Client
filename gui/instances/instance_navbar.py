@@ -16,22 +16,21 @@ from tkinter import *
 
 from data import Settings
 from style import Theme
-
-from gui.widgets.k_popup import KPopUp
+from gui.widgets import KPopUp, KCanvas
 
 ##################################################
 #                     Code                       #
 ##################################################
 
 
-class InstanceNavBar(CTkCanvas):
+class InstanceNavBar(KCanvas):
     """
     Bottom NavBar of the InstanceTable
     """
     master: any
     week_call: Callable[[str], None]
     new_char_callback: Callable[[str, str], None]
-    new_todo_callback: Callable[[str, Literal["daily", "weekly"], str], None]
+    new_todo_callback: Callable[[str, Literal["Daily", "Weekly"], str], None]
 
     weeks: dict[str, str]
 
@@ -46,7 +45,7 @@ class InstanceNavBar(CTkCanvas):
                  master: any,
                  week_call: Callable[[str], None],
                  new_char_callback: Callable[[str, str], None],
-                 new_todo_callback: Callable[[str, Literal["daily", "weekly"], str], None],
+                 new_todo_callback: Callable[[str, Literal["Daily", "Weekly"], str], None],
                  *args, **kwargs) -> None:
         """
         Test
@@ -64,8 +63,6 @@ class InstanceNavBar(CTkCanvas):
         super().__init__(master, *args, **kwargs)
 
         self.configure(
-            bd=0,
-            highlightthickness=0,
             background=Theme.background1,
             height=50)
 
