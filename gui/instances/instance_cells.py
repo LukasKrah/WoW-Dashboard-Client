@@ -150,14 +150,14 @@ class InstanceCell(KCanvas):
         self.master = master
         self.column = column
         self.row = row
-        
+
         self.done_fg = done_fg
         self.done_fg_hover = done_fg_hover
         self.done_text_color = done_text_color
         self.done_text_color_hover = done_text_color_hover
         self.done_font = done_font
         self.done_font_hover = done_font_hover
-        
+
         self.cancel_fg = cancel_fg
         self.cancel_fg_hover = cancel_fg_hover
         self.cancel_text_color = cancel_text_color

@@ -118,15 +118,17 @@ class InstanceRowHeader(KCanvas):
 
         self.headerwidgets_by_index = [[] for header in self.headerwidgets]
         for header in self.headerwidgets:
-            self.headerwidgets_by_index[self.headerwidgets[header][0].colrow_index] = self.headerwidgets[header]
+            self.headerwidgets_by_index[self.headerwidgets[header][
+                0].colrow_index] = self.headerwidgets[header]
 
         try:
             self.headerwidgets_by_index[self.dragindex -
-                                   1][self.index].draw_pre() if self.dragindex > 0 else None
+                                        1][self.index].draw_pre() if self.dragindex > 0 else None
         except (IndexError, KeyError):
             ...
         try:
-            self.headerwidgets_by_index[self.dragindex][self.index].draw_after()
+            self.headerwidgets_by_index[self.dragindex][self.index].draw_after(
+            )
         except (IndexError, KeyError):
             ...
 
@@ -262,12 +264,13 @@ class InstanceRowHeader(KCanvas):
             case "row":
                 for diff in InstanceManager.values[self.name]["difficulty"]:
                     if value == "del":
-                        InstanceManager.values[self.name]["difficulty"][diff]["chars"] = {}
+                        InstanceManager.values[self.name]["difficulty"][diff]["chars"] = {
+                        }
                     else:
                         for char in Settings.values["chars"]:
                             if char not in InstanceManager.values[self.name]["difficulty"][diff]["chars"]:
-                                InstanceManager.values[self.name]["difficulty"][diff]["chars"][char] = \
-                                    {"done": value}
+                                InstanceManager.values[self.name]["difficulty"][diff]["chars"][char] = {
+                                    "done": value}
 
             case "col":
                 for instance in InstanceManager.values:
@@ -277,8 +280,8 @@ class InstanceRowHeader(KCanvas):
                                 del InstanceManager.values[instance]["difficulty"][diff]["chars"][self.name]
                         else:
                             if value != "del":
-                                InstanceManager.values[instance]["difficulty"][diff]["chars"][self.name] = \
-                                    {"done": value}
+                                InstanceManager.values[instance]["difficulty"][diff]["chars"][self.name] = {
+                                    "done": value}
         self.master.master.master.reload_table()
 
     def activate_whole(self) -> None:

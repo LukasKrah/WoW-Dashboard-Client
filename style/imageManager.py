@@ -74,7 +74,8 @@ class KImage:
 
         self.imgTk = ImageTk.PhotoImage(self.img.resize(size=(int(x), int(y))))
         if self.prepare_grey_out:
-            self.enhancer = ImageEnhance.Brightness(self.img.resize(size=(int(x), int(y))))
+            self.enhancer = ImageEnhance.Brightness(
+                self.img.resize(size=(int(x), int(y))))
             self.imgTk_greyout = ImageTk.PhotoImage(self.enhancer.enhance(0.5))
 
 

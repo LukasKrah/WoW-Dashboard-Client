@@ -179,7 +179,7 @@ class InstanceTable(KCanvas):
         if add:
             try:
                 column = max([Settings.values["chars"][char]["column"] for char in Settings.values["chars"]
-                             if "column" in Settings.values["chars"][char]]) + 1
+                              if "column" in Settings.values["chars"][char]]) + 1
             except ValueError:
                 column = 0
             Settings["chars"][charname] = {
@@ -190,7 +190,8 @@ class InstanceTable(KCanvas):
 
             for instance in InstanceManager.values:
                 for diff in InstanceManager.values[instance]["difficulty"]:
-                    InstanceManager.values[instance]["difficulty"][diff]["chars"][charname] = {"done": None}
+                    InstanceManager.values[instance]["difficulty"][diff]["chars"][charname] = {
+                        "done": None}
 
             Settings.write()
             InstanceManager.write()
@@ -211,7 +212,7 @@ class InstanceTable(KCanvas):
         Settings.values["add_todo"]["last_typ"] = typ
         try:
             row = max([InstanceManager.values[instance]["row"] for instance in InstanceManager.values
-                      if "row" in InstanceManager.values[instance]]) + 1
+                       if "row" in InstanceManager.values[instance]]) + 1
         except ValueError:
             row = 0
 
@@ -237,7 +238,7 @@ class InstanceTable(KCanvas):
                     "Möchtest du sie wiederherstellen?"):
                 try:
                     row = max([InstanceManager.values[instance]["row"] for instance in InstanceManager.values
-                              if "row" in InstanceManager.values[instance]]) + 1
+                               if "row" in InstanceManager.values[instance]]) + 1
                 except ValueError:
                     row = 0
                 InstanceManager.values[name] = {
