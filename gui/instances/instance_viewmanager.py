@@ -1,6 +1,8 @@
 """
 gui/instances/instance_viewmanager.py
 
+Project: WoW-Dashboard-Client
+Created: 20.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -10,13 +12,12 @@ Author: Lukas Krahbichler
 
 from json import loads, dumps
 from typing import Callable
-from customtkinter import *
 from os import listdir
 
-from gui.widgets.intern import KSlider
 from gui.widgets import KContextMenu, KCanvas, KButtonGroup
-from style import Theme
+from gui.widgets.intern import KSlider
 from data import Settings
+from style import Theme
 
 
 ##################################################

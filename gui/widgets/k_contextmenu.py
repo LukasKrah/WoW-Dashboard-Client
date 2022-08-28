@@ -1,6 +1,8 @@
 """
-widgets/k_contextmenu.py
+gui/widgets/k_contextmenu.py
 
+Project: WoW-Dashboard-Client
+Created: 19.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -8,8 +10,7 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
-# from customtkinter import *
-from tkinter import *
+from tkinter import Menu, Event
 
 from style import Theme
 

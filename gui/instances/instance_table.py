@@ -1,6 +1,8 @@
 """
 gui/instances/instance_table.py
 
+Project: WoW-Dashboard-Client
+Created: 19.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -8,23 +10,22 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
-from tkinter import messagebox
-from customtkinter import *
-from tkinter import *
+from tkinter import messagebox, Event, DISABLED
+from customtkinter import CTkCanvas
 from typing import Literal
 
-from gui.widgets import KTable, KCanvas
 from style import Theme, ImageManager, KImage
 from data import Settings, InstanceManager
+from gui.widgets import KTable, KCanvas
 
 from .instance_headers import InstanceColHeader, InstanceRowHeader
-from .instance_cells import InstanceCell
-from .instance_navbar import InstanceNavBar
 from .instance_viewmanager import InstanceViewManager
+from .instance_navbar import InstanceNavBar
+from .instance_cells import InstanceCell
 
 
 ##################################################
-#                 Menu classes                   #
+#                     Code                       #
 ##################################################
 
 
@@ -33,7 +34,6 @@ class InstanceTable(KCanvas):
     Instances Table (colums: chars, rows: instances)
     """
     master: any
-    root: Tk | CTk
 
     table: KTable
     navBar: InstanceNavBar

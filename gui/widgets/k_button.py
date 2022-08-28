@@ -1,6 +1,8 @@
 """
-.py
+gui/widgets/k_button.py
 
+Project: WoW-Dashboard-Client
+Created: 22.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -8,9 +10,9 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
+from tkinter import DISABLED, Widget
+from customtkinter import CTkButton
 from typing import Callable
-from customtkinter import *
-from tkinter import *
 
 
 ##################################################

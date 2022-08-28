@@ -1,11 +1,13 @@
 """
-main.py
+/main.py
 Runs the GUI of the WoW-Dashboard
 
-Author: Lukas Krahbicher
+Project: WoW-Dashboard-Client
+Created: 12.08.2022
+Author: Lukas Krahbichler
 """
 
-from gui import *
+from gui import Window
 
 
 if __name__ == "__main__":

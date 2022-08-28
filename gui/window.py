@@ -1,6 +1,8 @@
 """
 gui/window.py
 
+Project: WoW-Dashboard-Client
+Created: 12.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -8,20 +10,20 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
+from customtkinter import CTk
 from os import kill, getpid
-from customtkinter import *
-from tkinter import *
-
-from style import Theme
-from .menu import TopMenu, LeftMenu
-from .instances import InstanceTable
-from .wowToken import WoWToken
+from tkinter import Event
 
 from data import Settings, InstanceManager
+from style import Theme
+
+from .instances import InstanceTable
+from .menu import TopMenu, LeftMenu
+from .wowToken import WoWToken
 
 
 ##################################################
-#                 Window class                   #
+#                     Code                       #
 ##################################################
 
 class Window(CTk):

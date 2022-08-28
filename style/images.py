@@ -1,6 +1,8 @@
 """
 style/imageManager.py
 
+Project: WoW-Dashboard-Client
+Created: 18.08.2022
 Author: Lukas Krahbichler
 """
 

@@ -1,6 +1,8 @@
 """
-.py
+gui/widgets/k_canvas.py
 
+Project: WoW-Dashboard-Client
+Created: 20.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -8,9 +10,9 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
+from customtkinter import CTkCanvas
 from typing import Callable
-from customtkinter import *
-from tkinter import *
+from tkinter import Widget
 
 
 ##################################################

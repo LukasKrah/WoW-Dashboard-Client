@@ -1,6 +1,8 @@
 """
-gui/instances/instanceData.py
+data/settings.py
 
+Project: WoW-Dashboard-Client
+Created: 13.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -10,9 +12,8 @@ Author: Lukas Krahbichler
 
 from datetime import date, timedelta
 from typing import TextIO, Callable
+from json import dumps, loads
 from os import listdir
-
-import json
 
 
 ##################################################
@@ -40,7 +41,7 @@ class _SettingsManager:
         self.values = {}
 
         with open(f"{path}default.json", "r") as default:
-            self.default = json.loads(default.read())
+            self.default = loads(default.read())
 
         self.read()
 
@@ -56,7 +57,7 @@ class _SettingsManager:
         self.write()
 
     def _reset(self, week: TextIO):
-        week.write(json.dumps(self.default, indent=2))
+        week.write(dumps(self.default, indent=2))
 
     @property
     def today(self) -> list:
@@ -84,7 +85,7 @@ class _SettingsManager:
         for index in range(2):
             try:
                 with open(f"{self.path}{self.__today[1]}_{self.__today[0]}.json", "r") as data:
-                    self.values = json.loads(data.read())
+                    self.values = loads(data.read())
                     break
 
             except FileNotFoundError:
@@ -106,16 +107,16 @@ class _SettingsManager:
 
                     if youngest:
                         with open(f"{self.path}{youngest[0]}_{youngest[1]}.json", "r") as lastdata:
-                            last = json.loads(lastdata.read())
+                            last = loads(lastdata.read())
                             if self.reset_callback:
                                 last = self.reset_callback(last)
-                            data.write(json.dumps(last, indent=4))
+                            data.write(dumps(last, indent=4))
                     else:
                         self._reset(data)
 
     def write(self) -> None:
         with open(f"{self.path}{self.__today[1]}_{self.__today[0]}.json", "w+") as data:
-            data.write(json.dumps(self.values, indent=2))
+            data.write(dumps(self.values, indent=2))
 
 
 def reset_instances(instances: dict) -> dict:

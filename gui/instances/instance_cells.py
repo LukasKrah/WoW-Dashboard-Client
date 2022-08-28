@@ -1,6 +1,8 @@
 """
 gui/instances/instance_cells.py
 
+Project: WoW-Dashboard-Client
+Created: 19.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -8,15 +10,12 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
-from customtkinter import *
-from tkinter import messagebox
-from tkinter import *
+from tkinter import messagebox, Event
 from json import dumps
 
 from gui.widgets import KContextMenu, KTable, KCanvas
-from style import Theme
 from data import InstanceManager
-
+from style import Theme
 
 ##################################################
 #                     Code                       #

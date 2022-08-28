@@ -1,6 +1,8 @@
 """
-widgets/k_navbar.py
+gui/instances/instance_navbar.py
 
+Project: WoW-Dashboard-Client
+Created: 13.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -8,15 +10,15 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
+from customtkinter import CTkButton, CTkOptionMenu
 from datetime import date, timedelta
 from typing import Callable, Literal
-from customtkinter import *
+from tkinter import StringVar
 from os import listdir
-from tkinter import *
 
+from gui.widgets import KPopUp, KCanvas
 from data import Settings
 from style import Theme
-from gui.widgets import KPopUp, KCanvas
 
 ##################################################
 #                     Code                       #

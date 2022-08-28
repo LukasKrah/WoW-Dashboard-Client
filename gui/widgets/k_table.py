@@ -1,12 +1,15 @@
 """
 gui/widgets/k_table.py
 
+Project: WoW-Dashboard-Client
+Created: 13.08.2022
 Author: Lukas Krahbichler
 """
 
 ##################################################
 #                    Imports                     #
 ##################################################
+
 from style import Theme
 
 from .k_canvas import KCanvas

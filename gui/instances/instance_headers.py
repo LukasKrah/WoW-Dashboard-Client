@@ -1,6 +1,8 @@
 """
 gui/instances/instance_headers.py
 
+Project: WoW-Dashboard-Client
+Created: 19.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -8,14 +10,12 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
-from customtkinter import *
 from typing import Literal
-from tkinter import *
-from PIL import Image, ImageTk
+from tkinter import Event
 
 from gui.widgets import KContextMenu, KCanvas
-from style import KImage, Theme
 from data import InstanceManager, Settings
+from style import KImage, Theme
 
 
 ##################################################
@@ -116,7 +116,7 @@ class InstanceRowHeader(KCanvas):
         self.dragindex = int(
             ((eventcoord / size) + modify)) + self.colrow_index
 
-        self.headerwidgets_by_index = [[] for header in self.headerwidgets]
+        self.headerwidgets_by_index = [[] for _header in self.headerwidgets]
         for header in self.headerwidgets:
             self.headerwidgets_by_index[self.headerwidgets[header][
                 0].colrow_index] = self.headerwidgets[header]

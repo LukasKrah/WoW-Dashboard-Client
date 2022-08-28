@@ -1,6 +1,8 @@
 """
 data/API.py
 
+Project: WoW-Dashboard-Client
+Created: 13.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -18,7 +20,6 @@ from .settings import Settings
 #                     Code                       #
 ##################################################
 
-# {'access_token': 'USXjGZhVfgRXy63Jk9XIhNA6ZyTAgy1wQU', 'token_type': 'bearer', 'expires_in': 86399, 'sub': 'f34246c0c509489e8231d340185a0920'} # noqa
 class _API:
     token: dict
 
