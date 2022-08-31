@@ -16,7 +16,7 @@ from os import listdir
 
 from gui.widgets import KContextMenu, KCanvas, KButtonGroup
 from gui.widgets.intern import KSlider
-from data import Settings
+from data import WeeklySettings
 from style import Theme
 
 
@@ -69,37 +69,37 @@ class InstanceViewManager(KCanvas):
 
     def reload(self) -> None:
         self.view_elems = {}
-        for outindex, view in enumerate(Settings["view"]["views"]):
+        for outindex, view in enumerate(WeeklySettings["view"]["views"]):
             self.butgroup.add_button(
                 view,
-                Settings["view"]["views"][view]["name"],
+                WeeklySettings["view"]["views"][view]["name"],
                 lambda v=view: self.set_view(v),
-                Settings.values["view"]["selectedView"] == view)
+                WeeklySettings.values["view"]["selectedView"] == view)
             self.view_elems[view] = {
                 "but": self.butgroup.buttons[outindex],
                 "propertys": {}}
 
             for index, prop in enumerate(
-                    Settings["view"]["views"][view]["propertys"]):
-                match Settings["view"]["views"][view]["propertys"][prop]["type"]:
+                    WeeklySettings["view"]["views"][view]["propertys"]):
+                match WeeklySettings["view"]["views"][view]["propertys"][prop]["type"]:
                     case "slider":
                         self.view_elems[view]["propertys"][prop] = KSlider(
                             self,
-                            Settings["view"]["views"][view]["propertys"][prop]["name"],
-                            Settings["view"]["views"][view]["propertys"][prop]["valid_values"],
+                            WeeklySettings["view"]["views"][view]["propertys"][prop]["name"],
+                            WeeklySettings["view"]["views"][view]["propertys"][prop]["valid_values"],
                             lambda v=view, i=index: self.set(view=view)
                         )
                         self.view_elems[view]["propertys"][prop].set(
-                            Settings["view"]["views"][view]["propertys"][prop]["value"])
+                            WeeklySettings["view"]["views"][view]["propertys"][prop]["value"])
 
-        self.set_view(Settings["view"]["selectedView"])
+        self.set_view(WeeklySettings["view"]["selectedView"])
 
     def set(self, view: str) -> None:
         values = []
         for index, prop in enumerate(self.view_elems[view]["propertys"]):
-            Settings["view"]["views"][view]["propertys"][prop]["value"] = \
+            WeeklySettings["view"]["views"][view]["propertys"][prop]["value"] = \
                 self.view_elems[view]["propertys"][prop].get()
-            values.append(Settings["view"]["views"][view]
+            values.append(WeeklySettings["view"]["views"][view]
                           ["propertys"][prop]["value"])
 
         try:
@@ -117,8 +117,8 @@ class InstanceViewManager(KCanvas):
             self.grid_columnconfigure(index, weight=1)
 
     def set_view(self, view: str) -> None:
-        Settings.values["view"]["selectedView"] = view
-        Settings.write()
+        WeeklySettings.values["view"]["selectedView"] = view
+        WeeklySettings.write()
         for widget in self.grid_slaves():
             gridinfos = widget.grid_info()
             self.grid_rowconfigure(gridinfos["row"], weight=0)
@@ -133,7 +133,7 @@ class InstanceViewManager(KCanvas):
                 row=propindex + 1,
                 column=0,
                 columnspan=len(
-                    Settings["view"]["views"][view]),
+                    WeeklySettings["view"]["views"][view]),
                 sticky="NSEW")
             self.grid_rowconfigure(propindex + 1, weight=1)
         self.set_view_callback(view) if self.set_view_callback else None
@@ -146,8 +146,8 @@ class InstanceViewManager(KCanvas):
             if file.endswith(".json") and file != "default.json":
                 with open(f"data/settings/{file}", "r") as data:
                     values = loads(data.read())
-                    selected_view = Settings["view"]["selectedView"]
+                    selected_view = WeeklySettings["view"]["selectedView"]
                     values["view"]["selectedView"] = selected_view
-                    values["view"]["views"][selected_view] = Settings["view"]["views"][selected_view]
+                    values["view"]["views"][selected_view] = WeeklySettings["view"]["views"][selected_view]
                 with open(f"data/settings/{file}", "w") as data:
                     data.write(dumps(values))

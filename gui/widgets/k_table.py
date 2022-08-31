@@ -10,6 +10,8 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
+from typing import Literal, Callable
+
 from style import Theme
 
 from .k_canvas import KCanvas
@@ -57,8 +59,8 @@ class KTable(KCanvas):
         """
         Create table (call .reload to load table)
         :param master: master widget (e.g: root)
-        :param rowheaders: Row-header widgets (will pass master, rowname, rowindex and header-index as positional arg)
-        :param colheaders: Col-header widgets (will pass master, colname, colindex amd header-index as positional arg)
+        :param rowheaders: Row-header widgets (will pass master, rowname, label, index and header-index as pos-args)
+        :param colheaders: Col-header widgets (will pass master, colname, label, index and header-index as pos-args)
         :param cells: Cells widgets (will pass master, first colname and first rowname as positional args)
         """
         self.master = master
@@ -150,19 +152,20 @@ class KTable(KCanvas):
                         self.column_headerwidgets[col["headers"][0]["label"]] = [
                         ]
                         add = True
-                    self.column_headerwidgets[col["headers"][0]["label"]].append(colheader(
-                        self, col["headers"][colindex]["label"], col["column"], colindex))
-                self.column_headerwidgets[col["headers"][0]["label"]][colindex].set_index(
-                    col["column"])
+                    self.column_headerwidgets[col["headers"][0]["label"]].append(
+                        colheader(
+                            self,
+                            col["headers"][colindex]["name"],
+                            col["headers"][colindex]["label"],
+                            col["column"],
+                            colindex
+                        )
+                    )
                 self.column_headerwidgets[col["headers"][0]["label"]][colindex].grid(
                     row=colindex,
                     column=col["column"] +
                     self.col_offset,
                     sticky="NSEW")
-                # self.grid_rowconfigure(
-                #     colindex,
-                #     weight=col["headers"][colindex]["weight"] if "weight" in col["headers"][colindex]
-                #     else self.col_weight)
 
         # Row headers
         for row in self.__rows:
@@ -172,18 +175,19 @@ class KTable(KCanvas):
                     if not add:
                         self.row_headerwidgets[row["headers"][0]["label"]] = []
                         add = True
-                    self.row_headerwidgets[row["headers"][0]["label"]].append(rowheader(
-                        self, row["headers"][rowindex]["label"], row["row"], rowindex))
-                self.row_headerwidgets[row["headers"][0][
-                    "label"]][rowindex].set_index(row["row"])
+                    self.row_headerwidgets[row["headers"][0]["label"]].append(
+                        rowheader(
+                            self,
+                            row["headers"][rowindex]["name"],
+                            row["headers"][rowindex]["label"],
+                            row["row"],
+                            rowindex
+                        )
+                    )
                 self.row_headerwidgets[row["headers"][0]["label"]][rowindex].grid(
                     row=row["row"] + self.row_offset,
                     column=rowindex,
                     sticky="NSEW")
-                # self.grid_columnconfigure(
-                #     rowindex,
-                #     weight=row["headers"][rowindex]["weight"] if "weight" in row["headers"][rowindex]
-                #     else self.row_weight)
 
         # Table
         for rowindex, row in enumerate(self.__rows):
@@ -233,7 +237,7 @@ class KTable(KCanvas):
             self,
             rows: list | None = None,
             columns: list | None = None,
-            values: list | None = None) -> None:
+            values: dict | None = None) -> None:
         """
         Reload table rows, columns and cells (__values)
 
@@ -246,6 +250,19 @@ class KTable(KCanvas):
         self.__values = values if values is not None else self.__values
 
         self.__reload()
+
+    def get_index(self, typ: Literal["row", "column"], name: str) -> int | None:
+        match typ:
+            case "row":
+                for row in self.__rows:
+                    for subrow in row["headers"]:
+                        if subrow["label"] == name:
+                            return row["row"]
+            case "column":
+                for column in self.__columns:
+                    for subcol in column["headers"]:
+                        if subcol["label"] == name:
+                            return column["column"]
 
     @property
     def rows(self) -> list:

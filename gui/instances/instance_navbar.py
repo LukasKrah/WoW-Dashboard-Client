@@ -17,7 +17,7 @@ from tkinter import StringVar
 from os import listdir
 
 from gui.widgets import KPopUp, KCanvas
-from data import Settings
+from data import WeeklySettings
 from style import Theme
 
 ##################################################
@@ -75,7 +75,7 @@ class InstanceNavBar(KCanvas):
                                               "label": "Name"},
                                              {"type": "InputText",
                                               "label": "Realm",
-                                              "value": Settings.values["add_char"]["last_realm"]}],
+                                              "value": WeeklySettings.values["add_char"]["last_realm"]}],
                                      confirm_call=self.new_char_callback)
         self.new_char = CTkButton(
             self,
@@ -95,7 +95,7 @@ class InstanceNavBar(KCanvas):
                                               "label": "Name"},
                                              {"type": "OptionMenu",
                                               "label": "Typ",
-                                              "value": Settings.values["add_todo"]["last_typ"],
+                                              "value": WeeklySettings.values["add_todo"]["last_typ"],
                                               "validValues": ["Daily",
                                                               "Weekly"]},
                                              {"type": "ComboBox",

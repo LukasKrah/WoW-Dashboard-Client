@@ -17,6 +17,7 @@ from gui.widgets import KContextMenu, KTable, KCanvas
 from data import InstanceManager
 from style import Theme
 
+
 ##################################################
 #                     Code                       #
 ##################################################
@@ -380,12 +381,15 @@ class InstanceCell(KCanvas):
         text_color = text_color if text_color else self.disabled_text_color
         text_font = text_font if text_font else self.disabled_font
 
-        self.create_rectangle(
+        self.create_rectangle_rounded_filled(
             0,
             self._get_height(**kwargs),
             self.width,
             self._get_height_top(**kwargs),
-            fill=fg)
+            r=15,
+            fill=fg
+        )
+
         self.create_text(
             self.width / 2,
             self._get_height_text(**kwargs),
@@ -430,21 +434,21 @@ class InstanceCell(KCanvas):
         negative_text_color = negative_text_color if negative_text_color else self.negative_text_color
         negative_text_font = negative_text_font if negative_text_font else self.negative_font
 
-        self.create_rectangle(
+        self.create_rectangle_rounded_filled(
             0,
-            self._get_height(
-                **kwargs),
+            self._get_height(**kwargs),
             self.width / 2,
-            self._get_height_top(
-                **kwargs),
+            self._get_height_top(**kwargs),
+            r_nw=15,
+            r_sw=15,
             fill=positive_fg)
-        self.create_rectangle(
+        self.create_rectangle_rounded_filled(
             self.width / 2,
-            self._get_height(
-                **kwargs),
+            self._get_height(**kwargs),
             self.width,
-            self._get_height_top(
-                **kwargs),
+            self._get_height_top(**kwargs),
+            r_ne=15,
+            r_se=15,
             fill=negative_fg)
 
         self.create_text(
@@ -504,13 +508,14 @@ class InstanceCell(KCanvas):
         text_color = text_color if text_color else self.done_text_color
         text_font = text_font if text_font else self.done_font
 
-        self.create_rectangle(
+        self.create_rectangle_rounded_filled(
             0,
             self._get_height(
                 **kwargs),
             self.width,
             self._get_height_top(
                 **kwargs),
+            r=15,
             fill=fg)
 
         self.create_text(
@@ -543,7 +548,7 @@ class InstanceCell(KCanvas):
         text_font = text_font if text_font else self.cancel_font
 
         h1, h2 = self._get_height(**kwargs), self._get_height_top(**kwargs)
-        self.create_rectangle(0, h1, self.width, h2, fill=fg)
+        self.create_rectangle_rounded_filled(0, h1, self.width, h2, r=15, fill=fg)
         self.create_text(
             self.width /
             2,

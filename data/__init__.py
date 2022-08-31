@@ -6,5 +6,6 @@ Created: 12.08.2022
 Author: Lukas Krahbichler
 """
 
-from .settings import Settings, InstanceManager
+from .weekly_settings import WeeklySettings, InstanceManager
+from .settings import Settings
 from .API import API

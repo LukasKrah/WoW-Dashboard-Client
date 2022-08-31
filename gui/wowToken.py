@@ -14,8 +14,8 @@ from threading import Thread
 from tkinter import Event
 from time import sleep
 
-from style import Theme, KImage
-from gui.widgets import KCanvas
+from gui.widgets import KCanvas, KImage
+from style import Theme
 from data import API
 
 

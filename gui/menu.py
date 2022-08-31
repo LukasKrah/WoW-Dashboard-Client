@@ -15,7 +15,7 @@ from PIL import Image, ImageTk
 from tkinter import Tk
 
 from gui.widgets import KButtonGroup
-from data import Settings
+from data import WeeklySettings
 from style import Theme
 
 
@@ -72,7 +72,7 @@ class TopMenu(CTkCanvas):
         self.can.create_text(
             100,
             25,
-            text=f"Willkommen  im  WoW-Dashboard  {Settings['myAccount']['characterName']}",
+            text=f"Willkommen  im  WoW-Dashboard  {WeeklySettings['myAccount']['characterName']}",
             anchor="w",
             fill=Theme.text_color,
             font=(

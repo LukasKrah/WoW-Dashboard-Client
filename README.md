@@ -149,7 +149,7 @@
 <h3 id="other_instructions">4. Other Instructions and Wikis</h3>
 
 * <a href="docs/my_coding_guidlines.md">My coding guidelines<a /> _**(in progress)**_
-
+* <a href="docs/project_sections_explained.md">The project code-sections explained<a /> _**(in progress)**_
 ---
 
 <h3 id="copyrights">5. Copyrights</h3>

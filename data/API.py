@@ -11,6 +11,7 @@ Author: Lukas Krahbichler
 ##################################################
 
 from requests import Response
+from typing import Literal
 import requests
 
 from .settings import Settings
@@ -27,14 +28,19 @@ class _API:
         self.token = {}
         self.auth()
 
+    def get_all_mounts(self) -> dict:
+        return self.request(
+            "/data/wow/mount/index",
+            "static"
+        ).json()["mounts"]
+
     def get_token_history(self) -> int:
         return self.request(
             "/data/wow/token/index",
-            f'dynamic-{Settings["myAccount"]["region"]}').json()["price"]
+            "dynamic").json()["price"]
 
-    def request(self, path: str, namespace: str | None = None) -> Response:
-        if namespace is None:
-            namespace = Settings["myAccount"]["namespace"]
+    def request(self, path: str, namespace: Literal["profile", "dynamic", "static"]) -> Response:
+        namespace = f'{namespace}-{Settings["myAccount"]["region"]}'
 
         path = path.replace(
             "{realmSlug}",
