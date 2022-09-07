@@ -124,7 +124,6 @@ class _WeeklySettingsManager:
 class _InstanceManager(_WeeklySettingsManager, Debugger):
     def __init__(self):
         _WeeklySettingsManager.__init__(self, reset_callback=self.reset_instances)
-        self.debug_prints = True
 
     def activate_whole(self, *_args, **_kwargs) -> None:
         ...
@@ -171,7 +170,6 @@ class _InstanceManager(_WeeklySettingsManager, Debugger):
 class _WeeklySettings(_WeeklySettingsManager, Debugger):
     def __init__(self):
         _WeeklySettingsManager.__init__(self, path="data/weekly_settings/", reset_callback=self.reset_settings)
-        self.debug_prints = True
 
     def activate_whole(self, *_args, **_kwargs) -> None:
         ...

@@ -9,6 +9,7 @@ Author: Lukas Krahbichler
 from .k_tableheader import KTableHeader, KTableRowHeader, KTableColHeader
 from .k_contextmenu import KContextMenu
 from .k_buttongroup import KButtonGroup
+from .k_tablecells import KTableCell
 from .k_canvas import KCanvas
 from .k_button import KButton
 from .k_popup import KPopUp

@@ -10,7 +10,7 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
-from typing import Literal, Callable
+from typing import Literal
 
 from style import Theme
 
@@ -29,6 +29,7 @@ class KTable(KCanvas):
     rowheaders: list[any]
     colheaders: list[any]
     cells: any
+    cell_split: str
 
     row_weight: int
     col_weight: int
@@ -52,6 +53,7 @@ class KTable(KCanvas):
             rowheaders: list[any],
             colheaders: list[any],
             cells: any,
+            cell_split: str | None = "column",
             *args,
             row_weight: int | None = 10,
             col_weight: int | None = 10,
@@ -62,11 +64,13 @@ class KTable(KCanvas):
         :param rowheaders: Row-header widgets (will pass master, rowname, label, index and header-index as pos-args)
         :param colheaders: Col-header widgets (will pass master, colname, label, index and header-index as pos-args)
         :param cells: Cells widgets (will pass master, first colname and first rowname as positional args)
+        :param cell_split: How different cells are splited when a list with elems is given as cells argument
         """
         self.master = master
         self.rowheaders = rowheaders
         self.colheaders = colheaders
         self.cells = cells
+        self.cell_split = cell_split
 
         self.row_weight = row_weight
         self.col_weight = col_weight
@@ -195,8 +199,14 @@ class KTable(KCanvas):
                 if row["headers"][0]["label"] not in self.cell_widgets:
                     self.cell_widgets[row["headers"][0]["label"]] = {}
                 if col["headers"][0]["label"] not in self.cell_widgets[row["headers"][0]["label"]]:
-                    self.cell_widgets[row["headers"][0]["label"]][col["headers"][0]["label"]] = self.cells(
-                        self, col["headers"][0]["label"], row["headers"][0]["label"])
+                    if isinstance(self.cells, list):
+                        self.cell_widgets[row["headers"][0]["label"]][col["headers"][0]["label"]] = \
+                            self.cells[colindex if self.cell_split == "column" else rowindex](
+                                self, col["headers"][0]["name"], row["headers"][0]["name"])
+                    else:
+                        self.cell_widgets[row["headers"][0]["label"]][col["headers"][0]["label"]] = \
+                            self.cells(self, col["headers"][0]["name"], row["headers"][0]["name"])
+
                 self.cell_widgets[row["headers"][0]["label"]
                                   ][col["headers"][0]["label"]].reload()
                 self.cell_widgets[row["headers"][0]["label"]][col["headers"][0]["label"]].grid(
@@ -256,12 +266,12 @@ class KTable(KCanvas):
             case "row":
                 for row in self.__rows:
                     for subrow in row["headers"]:
-                        if subrow["label"] == name:
+                        if subrow["name"] == name:
                             return row["row"]
             case "column":
                 for column in self.__columns:
                     for subcol in column["headers"]:
-                        if subcol["label"] == name:
+                        if subcol["name"] == name:
                             return column["column"]
 
     @property

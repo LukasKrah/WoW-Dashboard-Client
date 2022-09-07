@@ -72,7 +72,7 @@ class KTableHeader(KCanvas):
             typ: Literal["row", "column"],
             *args: any,
             image: KImage | None = None,
-            move_callback: Callable[[str, int], any] | None = None,
+            move_callback: Callable[[str, int, int], any] | None = None,
             context_menu: list[dict[Literal["label", "command"], Union[str, Callable[[None], any]]]] | None = None,
 
             fg_color: str | None = "#222222",
@@ -105,7 +105,7 @@ class KTableHeader(KCanvas):
         :param movemark_color: Drag'n'drop locationmark color
         :param movemark_width: Drag'n'drop locationmark width
         """
-        print("NEW", master, name, labels, typ)
+        print("NEW", master, name, labels, typ, index, header_index)
         # Params
         self.master = master
         self.name = name
@@ -209,8 +209,10 @@ class KTableHeader(KCanvas):
 
         self.__all_header_by_index = [[] for _header in self.__all_header_elems]
         for header in self.__all_header_elems:
+            print(header, self.__all_header_elems[header][0].index, self.__all_header_elems)
             self.__all_header_by_index[self.__all_header_elems[header][
                 0].index] = self.__all_header_elems[header]
+        print("ALL", self.__all_header_by_index, "OF", self.__all_header_elems)
 
         # Selection effect
 
@@ -264,7 +266,6 @@ class KTableHeader(KCanvas):
         Final moving function
         :param _event: Tkinter Bind-Event
         """
-
         for header in self.__all_header_by_index[self.index]:
             header._movemark_delete()
             header.reload(full_reformat=True)
@@ -272,7 +273,10 @@ class KTableHeader(KCanvas):
         self.__dragindex += (-1 if self.index <= self.__dragindex - 1 else 0)
 
         self.move_callback(self.name, self.index, self.__dragindex)
-        self.master.master.master.reload_table()
+        try:
+            self.master.master.master.reload_table()
+        except AttributeError:
+            self.master.master.reload_table()
 
     def _movemark_pre(self, tag: str | None = "movemark") -> None:
         """
@@ -334,20 +338,23 @@ class KTableRowHeader(KTableHeader):
             self,
             master: KTable,
             name: str,
+            labels: list[str],
             *args: any,
             **kwargs: any):
         """
         Create default Row-Header widget
         :param master: Is passed by KTable
         :param name: Is passed by KTable
+        :param labels: Labels
         :param args: Look at KTableHeader for exact doc
         :param kwargs: Look at KTableHeader for exact doc
         """
         super().__init__(
             master,
             name,
-            "row",
+            labels,
             *args,
+            typ="row",
             **kwargs)
 
 
@@ -359,18 +366,21 @@ class KTableColHeader(KTableHeader):
             self,
             master: KTable,
             name: str,
+            labels: list[str],
             *args: any,
             **kwargs: any):
         """
         Create default Column-Header widget
         :param master: Is passed by KTable
         :param name: Is passed by KTable
+        :param labels: Labels
         :param args: Look at KTableHeader for exact doc
         :param kwargs: Look at KTableHeader for exact doc
         """
         super().__init__(
             master,
             name,
-            "column",
+            labels,
             *args,
+            typ="column",
             **kwargs)

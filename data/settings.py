@@ -47,6 +47,10 @@ class _Settings(Debugger):
         self._get_default()
         self.read()
 
+    @property
+    def values(self) -> dict:
+        return self.__values
+
     def __setitem__(self, key, value) -> None:
         self.write()
         self.__values[key] = value

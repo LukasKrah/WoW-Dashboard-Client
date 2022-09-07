@@ -12,8 +12,8 @@
   "primary_middle": "#02057A",
   "primary_dark": "#000137",
 
-  "done_color": "#0000DD",
-  "done_color_light": "#0000FF",
+  "done_color": "#0022FF",
+  "done_color_light": "#0055FF",
   "done_text": "#000022",
   "cancel_color": "#EE8800",
   "cancel_color_light": "#FFAA00",

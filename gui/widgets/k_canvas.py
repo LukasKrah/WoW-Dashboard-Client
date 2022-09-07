@@ -13,7 +13,7 @@ Author: Lukas Krahbichler
 from customtkinter import CTkCanvas
 from typing import Callable
 from tkinter import Widget
-from time import time
+
 
 ##################################################
 #                     Code                       #
@@ -32,7 +32,7 @@ class KCanvas(CTkCanvas):
         :param master: Master widget
         """
         super().__init__(master, *args, **kwargs)
-        self.configure(bd=0, highlightthickness=0, width=0, height=0)
+        self.configure(bd=0, highlightthickness=0, width=0, height=0, background="snow")
 
         self.custom_tag_count = 0
 
