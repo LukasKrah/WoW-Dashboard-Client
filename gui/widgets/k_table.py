@@ -214,6 +214,8 @@ class KTable(KCanvas):
                     self.row_offset,
                     column=col["column"] +
                     self.col_offset,
+                    padx=5,
+                    pady=5,
                     sticky="NSEW")
 
         # Weights

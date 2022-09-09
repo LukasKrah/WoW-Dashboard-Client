@@ -17,7 +17,7 @@ from tkinter import StringVar
 from os import listdir
 
 from gui.widgets import KPopUp, KCanvas
-from data import WeeklySettings
+from data import WeeklySettings, Settings
 from style import Theme
 
 ##################################################
@@ -75,7 +75,7 @@ class InstanceNavBar(KCanvas):
                                               "label": "Name"},
                                              {"type": "InputText",
                                               "label": "Realm",
-                                              "value": WeeklySettings.values["add_char"]["last_realm"]}],
+                                              "value": Settings.values["add_char"]["last_realm"]}],
                                      confirm_call=self.new_char_callback)
         self.new_char = CTkButton(
             self,
@@ -95,7 +95,7 @@ class InstanceNavBar(KCanvas):
                                               "label": "Name"},
                                              {"type": "OptionMenu",
                                               "label": "Typ",
-                                              "value": WeeklySettings.values["add_todo"]["last_typ"],
+                                              "value": Settings.values["add_todo"]["last_typ"],
                                               "validValues": ["Daily",
                                                               "Weekly"]},
                                              {"type": "ComboBox",
@@ -130,7 +130,8 @@ class InstanceNavBar(KCanvas):
                 if file == thisweek:
                     self.weeks["Diese Woche"] = file
                 else:
-                    self.weeks[file.rstrip(".json")] = file
+                    splitfile = file.rstrip(".json").split("_")
+                    self.weeks[f"KW{splitfile[0]}-{splitfile[1]}"] = file
 
         self.weekvar = StringVar()
         self.week = CTkOptionMenu(
@@ -141,7 +142,7 @@ class InstanceNavBar(KCanvas):
             text_color=Theme.text_color,
             values=list(
                 self.weeks.keys()),
-            command=self.week_call,
+            command=self.call_week,
             text_font=(
                 Theme.wow_font,
                 Theme.fontfactor * 18
@@ -150,6 +151,9 @@ class InstanceNavBar(KCanvas):
 
         # Grid widgets
         self.grid_widgets()
+
+    def call_week(self, value: str) -> None:
+        self.week_call(self.weeks[value])
 
     def grid_widgets(self) -> None:
         """

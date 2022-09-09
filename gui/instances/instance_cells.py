@@ -203,7 +203,6 @@ class InstanceCell(KCanvas):
 
         # Configuration
         self.configure(
-            bd=5,
             background=Theme.background3)
         self.bind("<Configure>", self.__resize)
         self.bind("<Button-1>", self.__click)
@@ -386,7 +385,7 @@ class InstanceCell(KCanvas):
             self._get_height(**kwargs),
             self.width,
             self._get_height_top(**kwargs),
-            r=15,
+            r=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
             fill=fg
         )
 
@@ -439,16 +438,16 @@ class InstanceCell(KCanvas):
             self._get_height(**kwargs),
             self.width / 2,
             self._get_height_top(**kwargs),
-            r_nw=15,
-            r_sw=15,
+            r_nw=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
+            r_sw=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
             fill=positive_fg)
         self.create_rectangle_rounded_filled(
             self.width / 2,
             self._get_height(**kwargs),
             self.width,
             self._get_height_top(**kwargs),
-            r_ne=15,
-            r_se=15,
+            r_ne=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
+            r_se=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
             fill=negative_fg)
 
         self.create_text(
@@ -515,7 +514,7 @@ class InstanceCell(KCanvas):
             self.width,
             self._get_height_top(
                 **kwargs),
-            r=15,
+            r=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
             fill=fg)
 
         self.create_text(
@@ -548,7 +547,9 @@ class InstanceCell(KCanvas):
         text_font = text_font if text_font else self.cancel_font
 
         h1, h2 = self._get_height(**kwargs), self._get_height_top(**kwargs)
-        self.create_rectangle_rounded_filled(0, h1, self.width, h2, r=15, fill=fg)
+        self.create_rectangle_rounded_filled(0, h1, self.width, h2,
+                                             r=15 if self.height // len(self.diffs) > 30
+                                             else self.height // len(self.diffs) // 3, fill=fg)
         self.create_text(
             self.width /
             2,

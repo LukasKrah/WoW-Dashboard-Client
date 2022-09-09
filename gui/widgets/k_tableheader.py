@@ -105,7 +105,7 @@ class KTableHeader(KCanvas):
         :param movemark_color: Drag'n'drop locationmark color
         :param movemark_width: Drag'n'drop locationmark width
         """
-        print("NEW", master, name, labels, typ, index, header_index)
+
         # Params
         self.master = master
         self.name = name
@@ -209,13 +209,10 @@ class KTableHeader(KCanvas):
 
         self.__all_header_by_index = [[] for _header in self.__all_header_elems]
         for header in self.__all_header_elems:
-            print(header, self.__all_header_elems[header][0].index, self.__all_header_elems)
             self.__all_header_by_index[self.__all_header_elems[header][
                 0].index] = self.__all_header_elems[header]
-        print("ALL", self.__all_header_by_index, "OF", self.__all_header_elems)
 
         # Selection effect
-
         for header in self.__all_header_by_index[self.index]:
             if header.image:
                 header.reload(grey_out=True)
@@ -258,7 +255,6 @@ class KTableHeader(KCanvas):
         for header_list in self.__all_header_elems:
             for header in self.__all_header_elems[header_list]:
                 header.index = header.master.get_index(header.typ, header.name)
-                print(header, "new index", header.index)
         self._move_dragdown(event)
 
     def _move_dragup(self, _event: Event) -> None:

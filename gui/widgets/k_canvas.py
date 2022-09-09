@@ -97,7 +97,7 @@ class KCanvas(CTkCanvas):
                               x2-max(r_ne, r_se), y2-max(r_se, r_sw),
                               **kwargs, outline="", tags=[tag])
 
-        bd = int(self["bd"])
+        bd = 0
 
         self.create_arc(x1+bd, y1+bd, x1+(r_nw*2), y1+(r_nw*2), start=90,
                         **kwargs, outline="", tags=[tag])

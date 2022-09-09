@@ -3,3 +3,4 @@ future
 Pillow
 requests
 pyglet
+observable

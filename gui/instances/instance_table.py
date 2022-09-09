@@ -14,9 +14,9 @@ from tkinter import messagebox, Event, DISABLED
 from customtkinter import CTkCanvas
 from typing import Literal
 
-from style import Theme, ImageManager
-from data import WeeklySettings, InstanceManager
+from data import WeeklySettings, InstanceManager, Settings
 from gui.widgets import KTable, KCanvas, KImage
+from style import Theme, ImageManager
 
 from .instance_headers import InstanceColHeader, InstanceRowHeader
 from .instance_viewmanager import InstanceViewManager
@@ -27,7 +27,6 @@ from .instance_cells import InstanceCell
 ##################################################
 #                     Code                       #
 ##################################################
-
 
 class InstanceTable(KCanvas):
     """
@@ -78,6 +77,9 @@ class InstanceTable(KCanvas):
         self.navBar = InstanceNavBar(self, self.set_week,
                                      new_char_callback=self.add_char_callback,
                                      new_todo_callback=self.add_todo_callback)
+
+        InstanceManager.reload_observable.on("reload", self.reload_table)
+        WeeklySettings.reload_observable.on("reload", self.reload_table)
 
         self._grid_widgets()
 
@@ -156,7 +158,7 @@ class InstanceTable(KCanvas):
         :param name: Name of the char
         :param realm: Realm on which the char is playing
         """
-        WeeklySettings.values["add_char"]["last_realm"] = realm
+        Settings.values["add_char"]["last_realm"] = realm
 
         charname = f"{name}:{realm}".lower()
 
@@ -212,7 +214,7 @@ class InstanceTable(KCanvas):
         :param typ: Whether the instance is daily or weekly
         :param diff: Different difficultys of the instance
         """
-        WeeklySettings.values["add_todo"]["last_typ"] = typ
+        Settings.values["add_todo"]["last_typ"] = typ
         try:
             row = max([InstanceManager.values[instance]["row"] for instance in InstanceManager.values
                        if "row" in InstanceManager.values[instance]]) + 1
@@ -269,7 +271,6 @@ class InstanceTable(KCanvas):
             messagebox.showwarning(
                 "Instanz hinzufügen",
                 "Dieses Instanz existiert bereits!")
-        print(InstanceManager.values)
         self.scroll(null=True)
         InstanceManager.write()
         self.reload_table()

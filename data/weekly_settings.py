@@ -12,6 +12,7 @@ Author: Lukas Krahbichler
 
 from datetime import date, timedelta
 from typing import TextIO, Callable
+from observable import Observable
 from json import dumps, loads
 from os import listdir
 
@@ -122,17 +123,38 @@ class _WeeklySettingsManager:
 
 
 class _InstanceManager(_WeeklySettingsManager, Debugger):
+    reload_observable: Observable
+
     def __init__(self):
         _WeeklySettingsManager.__init__(self, reset_callback=self.reset_instances)
+        self.reload_observable = Observable()
 
-    def activate_whole(self, *_args, **_kwargs) -> None:
-        ...
+    def __set_states(self, name: str, value: bool | str | None):
+        for diff in self.values[name]["difficulty"]:
+            if value == "del":
+                self.values[name]["difficulty"][diff]["chars"] = {}
+            else:
+                for char in WeeklySettings["chars"]:
+                    if char not in self.values[name]["difficulty"][diff]["chars"]:
+                        self.values[name]["difficulty"][diff]["chars"]["char"] = {
+                            "done": value
+                        }
+        self.reload_observable.trigger("reload")
 
-    def deactivate_whole(self, *_args, **_kwargs) -> None:
-        ...
+    def activate_whole(self, name: str) -> None:
+        self.__set_states(name, None)
 
-    def delete_whole(self, *_args, **_kwargs) -> None:
-        ...
+    def deactivate_whole(self, name: str) -> None:
+        self.__set_states(name, "del")
+
+    def delete_whole(self, name: str) -> None:
+        self.values[name]["active"] = False
+        for instance in self.values:
+            if "row" in self.values[instance]:
+                if self.values[instance]["row"] > self.values[name]["row"]:
+                    self.values[instance]["row"] -= 1
+        del self.values[name]["row"]
+        self.reload_observable.trigger("reload")
 
     def move_row(self, name: str, cur_index: int, new_index: int) -> None:
         self.debug("ROW", name, new_index)
@@ -168,17 +190,40 @@ class _InstanceManager(_WeeklySettingsManager, Debugger):
 
 
 class _WeeklySettings(_WeeklySettingsManager, Debugger):
+    reload_observable: Observable
+
     def __init__(self):
         _WeeklySettingsManager.__init__(self, path="data/weekly_settings/", reset_callback=self.reset_settings)
+        self.reload_observable = Observable()
 
-    def activate_whole(self, *_args, **_kwargs) -> None:
-        ...
+    def __set_states(self, name: str, value: str | bool | None) -> None:  # noqa
+        for instance in InstanceManager.values:
+            for diff in InstanceManager[instance]["difficulty"]:
+                if name in InstanceManager[instance]["difficulty"][diff]["chars"]:
+                    if value == "del":
+                        del InstanceManager.values[instance]["difficulty"][diff]["chars"][name]
+                else:
+                    if value != "del":
+                        InstanceManager.values[instance]["difficulty"][diff]["chars"][name] = {
+                            "done": value
+                        }
+        self.reload_observable.trigger("reload")
 
-    def deactivate_whole(self, *_args, **_kwargs) -> None:
-        ...
+    def activate_whole(self, name: str) -> None:
+        self.__set_states(name, None)
 
-    def delete_whole(self, *_args, **_kwargs) -> None:
-        ...
+    def deactivate_whole(self, name: str) -> None:
+        self.__set_states(name, "del")
+
+    def delete_whole(self, name: str) -> None:
+        self.values["chars"][name]["active"] = False
+        for char in self.values["chars"]:
+            if "column" in self.values["chars"][char]:
+                if self.values["chars"][char]["column"] > self.values["chars"][name]["column"]:
+                    self.values["chars"][char]["column"] -= 1
+        del self.values["chars"][name]["column"]
+
+        self.reload_observable.trigger("reload")
 
     def move_col(self, name: str, cur_index: int, new_index: int) -> None:
         self.debug("COL", name, new_index)
