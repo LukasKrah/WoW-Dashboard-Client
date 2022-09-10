@@ -8,7 +8,7 @@
         <img width="200px" height="40px" src="https://img.shields.io/github/license/LukasKrah/WoW-Dashboard-Client.svg?style=for-the-badge" alt="License" />
     </a>
     <a href="https://github.com/LukasKrah/WoW-Dashboard-Client/releases" style="text-decoration: none">
-        <img width="200px" height="40px"  src="https://img.shields.io/github/release/LukasKrah/2dGravitySim.svg?style=for-the-badge" alt="Release" />
+        <img width="200px" height="40px"  src="https://img.shields.io/github/release/LukasKrah/WoW-Dashboard-Client.svg?style=for-the-badge" alt="Release" />
     </a>
     <br />
     <a href="https://github.com/LukasKrah/WoW-Dashboard-Client/issues" style="text-decoration: none">
@@ -38,7 +38,7 @@
   <a href="https://github.com/LukasKrah/WoW-Dashboard-Client/commits">
     <img width="200px" height="40px" src="https://img.shields.io/github/commit-activity/y/LukasKrah/WoW-Dashboard-Client?logo=git&label=commits&style=for-the-badge" alt="GitHub commit activity" />
   </a>
-  <img width="200px" height="40px" src="https://img.shields.io/static/v1?label=Time&message=55hours 13mins&color=red&style=for-the-badge" alt="Time: 55 hours 13 minutes" />
+  <img width="200px" height="40px" src="https://img.shields.io/static/v1?label=Time&message=70hours 50mins&color=red&style=for-the-badge" alt="Time: 55 hours 13 minutes" />
 </div>
 
 ---
