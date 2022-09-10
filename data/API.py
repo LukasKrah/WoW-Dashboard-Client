@@ -1,6 +1,8 @@
 """
 data/API.py
 
+Project: WoW-Dashboard-Client
+Created: 13.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -9,6 +11,7 @@ Author: Lukas Krahbichler
 ##################################################
 
 from requests import Response
+from typing import Literal
 import requests
 
 from .settings import Settings
@@ -18,7 +21,6 @@ from .settings import Settings
 #                     Code                       #
 ##################################################
 
-# {'access_token': 'USXjGZhVfgRXy63Jk9XIhNA6ZyTAgy1wQU', 'token_type': 'bearer', 'expires_in': 86399, 'sub': 'f34246c0c509489e8231d340185a0920'} # noqa
 class _API:
     token: dict
 
@@ -26,14 +28,32 @@ class _API:
         self.token = {}
         self.auth()
 
+    def get_all_mounts(self) -> dict:
+        return self.request(
+            "/data/wow/mount/index",
+            "static"
+        ).json()["mounts"]
+
+    def get_mount(self, mount_id: int) -> dict:
+        return self.request(f"/data/wow/mount/{mount_id}",
+                            namespace="static").json()
+
+    def get_create_display_media(self, creature_display_id) -> dict:
+        return self.request(
+            f"/data/wow/media/creature-display/{creature_display_id}",
+            namespace="static").json()["assets"]["value"]
+
     def get_token_history(self) -> int:
         return self.request(
             "/data/wow/token/index",
-            f'dynamic-{Settings["myAccount"]["region"]}').json()["price"]
+            "dynamic").json()["price"]
 
-    def request(self, path: str, namespace: str | None = None) -> Response:
-        if namespace is None:
-            namespace = Settings["myAccount"]["namespace"]
+    def request(self,
+                path: str,
+                namespace: Literal["profile",
+                                   "dynamic",
+                                   "static"]) -> Response:
+        namespace = f'{namespace}-{Settings["myAccount"]["region"]}'
 
         path = path.replace(
             "{realmSlug}",

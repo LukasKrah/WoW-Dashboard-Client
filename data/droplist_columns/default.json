@@ -1,0 +1,17 @@
+{
+    "mount": {
+        "label": "Mount",
+        "column": 0,
+        "active": true
+    },
+    "date": {
+        "label": "Datum",
+        "column": 1,
+        "active": true
+    },
+    "trys": {
+        "label": "Versuche",
+        "column": 2,
+        "active": true
+    }
+}

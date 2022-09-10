@@ -1,6 +1,8 @@
 """
-gui/helpers/buttongroup.py
+gui/widgets/k_buttongroup.py
 
+Project: WoW-Dashboard-Client
+Created: 22.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -8,11 +10,11 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
+from customtkinter import CTkButton
 from typing import Callable
-from customtkinter import *
-from tkinter import *
 
 from style import Theme
+
 from .k_button import KButton
 
 

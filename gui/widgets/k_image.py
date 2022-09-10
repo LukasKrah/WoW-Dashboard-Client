@@ -1,18 +1,19 @@
 """
-style/imageManager.py
+gui/widgets/k_image.py
 
+Project: WoW-Dashboard-Client
+Created: 30.08.2022
 Author: Lukas Krahbichler
 """
+
 
 ##################################################
 #                    Imports                     #
 ##################################################
 
 from concurrent.futures import ThreadPoolExecutor
-from typing import Literal
-
 from PIL import Image, ImageTk, ImageEnhance
-from json import loads
+from typing import Literal
 
 
 ##################################################
@@ -21,6 +22,7 @@ from json import loads
 
 class KImage:
     prepare_grey_out: bool
+    grey_out_alpha: float
 
     img: Image.open
     imgTk: ImageTk.PhotoImage
@@ -30,8 +32,13 @@ class KImage:
 
     thread: ThreadPoolExecutor
 
-    def __init__(self, path: str, prepare_grey_out: bool | None = True):
+    def __init__(
+            self,
+            path: str,
+            prepare_grey_out: bool | None = True,
+            grey_out_alpha: float | None = 0.2):
         self.prepare_grey_out = prepare_grey_out
+        self.grey_out_alpha = grey_out_alpha
 
         img = Image.open(path)
         self.img = img
@@ -39,7 +46,8 @@ class KImage:
 
         if self.prepare_grey_out:
             self.enhancer = ImageEnhance.Brightness(self.img)
-            self.imgTk_greyout = ImageTk.PhotoImage(self.enhancer.enhance(0.5))
+            self.imgTk_greyout = ImageTk.PhotoImage(
+                self.enhancer.enhance(self.grey_out_alpha))
 
         self.thread = ThreadPoolExecutor(max_workers=1)
 
@@ -76,46 +84,5 @@ class KImage:
         if self.prepare_grey_out:
             self.enhancer = ImageEnhance.Brightness(
                 self.img.resize(size=(int(x), int(y))))
-            self.imgTk_greyout = ImageTk.PhotoImage(self.enhancer.enhance(0.5))
-
-
-class _ImageManager:
-    path: str
-    configfilename: str
-    valid_extenstions: list[str]
-
-    images: list
-
-    def __init__(
-            self,
-            path: str | None = "style/images/",
-            configfilename: str | None = "images.json",
-            valid_extenstions=None) -> None:
-        if valid_extenstions is None:
-            valid_extenstions = []
-        self.path = path
-        self.configfilename = configfilename
-        self.valid_extenstions = valid_extenstions
-        with open(self.path + self.configfilename, "r") as config:
-            self.images = loads(config.read())
-
-    def __search_image(self, query: str) -> int | None:
-        for index, image in enumerate(self.images):
-            if query.lower() in ",".join(image["keywords"]):
-                return index
-
-        for index, image in enumerate(self.images):
-            for keyword in image["keywords"]:
-                if keyword in query.lower():
-                    return index
-
-        return None
-
-    def get_image(self, query: str) -> str | None:
-        index = self.__search_image(query)
-        if index is not None:
-            return f'{self.path}{self.images[index]["path"]}'
-        return None
-
-
-ImageManager = _ImageManager()
+            self.imgTk_greyout = ImageTk.PhotoImage(
+                self.enhancer.enhance(self.grey_out_alpha))

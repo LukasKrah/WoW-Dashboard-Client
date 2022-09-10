@@ -1,6 +1,8 @@
 """
 gui/wowToken.py
 
+Project: WoW-Dashboard-Client
+Created: 13.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -9,17 +11,16 @@ Author: Lukas Krahbichler
 ##################################################
 
 from threading import Thread
-from customtkinter import *
-from tkinter import *
+from tkinter import Event
 from time import sleep
 
+from gui.widgets import KCanvas, KImage
+from style import Theme
 from data import API
-from style import Theme, KImage
-from gui.widgets import KCanvas
 
 
 ##################################################
-#                 Menu classes                   #
+#                     Code                       #
 ##################################################
 
 class WoWToken(KCanvas):

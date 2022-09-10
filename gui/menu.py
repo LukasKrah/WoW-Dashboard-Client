@@ -1,6 +1,8 @@
 """
 gui/menu.py
 
+Project: WoW-Dashboard-Client
+Created: 13.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -8,17 +10,17 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
-from customtkinter import *
-from tkinter import *
+from customtkinter import CTkCanvas
 from PIL import Image, ImageTk
+from tkinter import Tk
 
+from gui.widgets import KButtonGroup
 from data import Settings
 from style import Theme
-from gui.widgets import KButtonGroup
 
 
 ##################################################
-#                 Menu classes                   #
+#                     Code                       #
 ##################################################
 
 class LeftMenu(CTkCanvas):

@@ -1,6 +1,8 @@
 """
-widgets/k_popup.py
+gui/widgets/k_popup.py
 
+Project: WoW-Dashboard-Client
+Created: 14.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -8,8 +10,8 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
+from customtkinter import CTkToplevel, CTkButton, CTk
 from typing import Callable
-from customtkinter import *
 
 from style import Theme
 
@@ -149,9 +151,6 @@ class KPopUp(CTkToplevel):
         rooty = root.winfo_rooty()
         root_width = root.winfo_width()
         root_height = root.winfo_height()
-
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
 
         self.width = self.winfo_width()
         self.height = self.winfo_height()

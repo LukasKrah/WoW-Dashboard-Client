@@ -1,16 +1,18 @@
 """
 gui/widgets/inputs.py
 
+Project: WoW-Dashboard-Client
+Created: 16.08.2022
 Author: Lukas Krahbichler
 """
 
 ##################################################
 #                    Imports                     #
 ##################################################
-from typing import Callable
 
-from customtkinter import *
-from tkinter import *
+from customtkinter import CTkEntry, CTkOptionMenu, CTkLabel, CTkSlider
+from tkinter import StringVar, END, Event, IntVar, Menu
+from typing import Callable
 
 from style import Theme
 

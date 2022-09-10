@@ -1,6 +1,8 @@
 """
 gui/window.py
 
+Project: WoW-Dashboard-Client
+Created: 12.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -8,20 +10,21 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
+from customtkinter import CTk
 from os import kill, getpid
-from customtkinter import *
-from tkinter import *
+from tkinter import Event
 
+from data import WeeklySettings, InstanceManager, Settings
 from style import Theme
-from .menu import TopMenu, LeftMenu
-from .instances import InstanceTable
-from .wowToken import WoWToken
 
-from data import Settings, InstanceManager
+from .instances import InstanceTable
+from .menu import TopMenu, LeftMenu
+from .droplist import DroplistTable
+from .wowToken import WoWToken
 
 
 ##################################################
-#                 Window class                   #
+#                     Code                       #
 ##################################################
 
 class Window(CTk):
@@ -46,6 +49,7 @@ class Window(CTk):
 
         self.windows = {
             "instanceTable": InstanceTable(self),
+            "droplist": DroplistTable(self),
             "wowToken": WoWToken(self)}
 
         self.topMenu = TopMenu(self)
@@ -55,8 +59,11 @@ class Window(CTk):
                 {"label": "InstanzenTabelle",
                  "selected": True,
                  "command": lambda w="instanceTable": self.change_to_frame(w)},
+             "droplist":
+                 {"label": "Dropliste",
+                  "command": lambda w="droplist": self.change_to_frame(w)},
              "wowToken":
-                {"label": "WoW-Token",
+                {"label": "WoW Marke",
                  "command": lambda w="wowToken": self.change_to_frame(w)}}
         )
 
@@ -96,8 +103,9 @@ class Window(CTk):
         self.state("zoomed")
 
     def delete_window(self, *_args: any) -> None:
-        Settings.write()
+        WeeklySettings.write()
         InstanceManager.write()
+        Settings.write()
 
         self.destroy()
         kill(getpid(), 9)

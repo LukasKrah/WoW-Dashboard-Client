@@ -130,9 +130,18 @@ dmypy.json
 
 # Jetbrains Pycharm
 .idea/
-WoW-Dashboard/
 
+WoW-Dashboard/
+WoW-Dashboard.zip
+data_versions/
+
+data/weekly_settings/*.json
+!data/weekly_settings/default.json
 data/instance_data/*.json
-data/settings/*.json
 !data/instance_data/default.json
+data/settings/*.json
 !data/settings/default.json
+data/droplist/*.json
+!data/droplist/default.json
+data/droplist_columns/*.json
+!data/droplist_columns/default.json

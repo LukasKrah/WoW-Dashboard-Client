@@ -1,6 +1,8 @@
 """
 gui/instances/instance_table.py
 
+Project: WoW-Dashboard-Client
+Created: 19.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -8,32 +10,29 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
-from tkinter import messagebox
-from customtkinter import *
-from tkinter import *
+from tkinter import messagebox, Event, DISABLED
+from customtkinter import CTkCanvas
 from typing import Literal
 
-from gui.widgets import KTable, KCanvas
-from style import Theme, ImageManager, KImage
-from data import Settings, InstanceManager
+from data import WeeklySettings, InstanceManager, Settings
+from gui.widgets import KTable, KCanvas, KImage
+from style import Theme, ImageManager
 
 from .instance_headers import InstanceColHeader, InstanceRowHeader
-from .instance_cells import InstanceCell
-from .instance_navbar import InstanceNavBar
 from .instance_viewmanager import InstanceViewManager
+from .instance_navbar import InstanceNavBar
+from .instance_cells import InstanceCell
 
 
 ##################################################
-#                 Menu classes                   #
+#                     Code                       #
 ##################################################
-
 
 class InstanceTable(KCanvas):
     """
     Instances Table (colums: chars, rows: instances)
     """
     master: any
-    root: Tk | CTk
 
     table: KTable
     navBar: InstanceNavBar
@@ -66,7 +65,7 @@ class InstanceTable(KCanvas):
             self.table_frame,
             rowheaders=[
                 InstanceRowHeader,
-                InstanceColHeader],
+                InstanceRowHeader],
             colheaders=[InstanceColHeader],
             cells=InstanceCell)
         self.table.topleft = InstanceViewManager(
@@ -78,6 +77,9 @@ class InstanceTable(KCanvas):
         self.navBar = InstanceNavBar(self, self.set_week,
                                      new_char_callback=self.add_char_callback,
                                      new_todo_callback=self.add_todo_callback)
+
+        InstanceManager.reload_observable.on("reload", self.reload_table)
+        WeeklySettings.reload_observable.on("reload", self.reload_table)
 
         self._grid_widgets()
 
@@ -100,7 +102,7 @@ class InstanceTable(KCanvas):
 
     def scroll(self, event: Event | None = None,
                null: bool | None = False) -> None:
-        if Settings.values["view"]["selectedView"] != "scrollable":
+        if WeeklySettings.values["view"]["selectedView"] != "scrollable":
             return
         new_y = self.table.winfo_y() + (event.delta if event else 0)
 
@@ -132,14 +134,17 @@ class InstanceTable(KCanvas):
         Load rows, columns and __values and relaod table
         """
         rows = [{"row": InstanceManager.values[instance]["row"],
-                 "headers": [{"label": instance},
-                             {"label": ','.join(InstanceManager.values[instance]["difficulty"].keys())}]
+                 "headers": [{"label": instance,
+                              "name": instance},
+                             {"label": ','.join(InstanceManager.values[instance]["difficulty"].keys()),
+                              "name": instance}]
                  } for instance in InstanceManager.values.keys() if InstanceManager[instance]["active"]]
 
-        columns = [{"column": Settings["chars"][char]["column"],
-                    "headers": [{'label': f'{Settings["chars"][char]["characterName"].lower()}:'
-                                          f'{Settings["chars"][char]["realmSlug"].lower()}'}]}
-                   for char in Settings["chars"] if Settings["chars"][char]["active"]]
+        columns = [{"column": WeeklySettings["chars"][char]["column"],
+                    "headers": [{'label': f'{WeeklySettings["chars"][char]["characterName"].lower()}:'
+                                          f'{WeeklySettings["chars"][char]["realmSlug"].lower()}',
+                                 "name": char}]}
+                   for char in WeeklySettings["chars"] if WeeklySettings["chars"][char]["active"]]
 
         self.scroll()
         self.table.reload(
@@ -158,8 +163,8 @@ class InstanceTable(KCanvas):
         charname = f"{name}:{realm}".lower()
 
         add = True
-        for char in Settings["chars"]:
-            if charname == char and not Settings["chars"][char]["active"]:
+        for char in WeeklySettings["chars"]:
+            if charname == char and not WeeklySettings["chars"][char]["active"]:
                 if not messagebox.askyesno(
                     "Char hinzufügen",
                     "Dieser Char befindet sich noch im Papierkorb!\n"
@@ -178,11 +183,11 @@ class InstanceTable(KCanvas):
 
         if add:
             try:
-                column = max([Settings.values["chars"][char]["column"] for char in Settings.values["chars"]
-                              if "column" in Settings.values["chars"][char]]) + 1
+                column = max([WeeklySettings.values["chars"][char]["column"] for char in WeeklySettings.values["chars"]
+                              if "column" in WeeklySettings.values["chars"][char]]) + 1
             except ValueError:
                 column = 0
-            Settings["chars"][charname] = {
+            WeeklySettings["chars"][charname] = {
                 "characterName": name,
                 "realmSlug": realm,
                 "active": True,
@@ -190,10 +195,11 @@ class InstanceTable(KCanvas):
 
             for instance in InstanceManager.values:
                 for diff in InstanceManager.values[instance]["difficulty"]:
-                    InstanceManager.values[instance]["difficulty"][diff]["chars"][charname] = {
-                        "done": None}
+                    if charname not in InstanceManager.values[instance]["difficulty"][diff]["chars"]:
+                        InstanceManager.values[instance]["difficulty"][diff]["chars"][charname] = {
+                            "done": None}
 
-            Settings.write()
+            WeeklySettings.write()
             InstanceManager.write()
             self.scroll(null=True)
             self.reload_table()
@@ -224,10 +230,10 @@ class InstanceTable(KCanvas):
                 "active": True,
                 "difficulty": {
                     dif: {"chars": {
-                        char: {"done": None} for char in Settings.values["chars"]
+                        char: {"done": None} for char in WeeklySettings.values["chars"]
                     }} for dif in diff.split(", ")
                 } if diff else {"": {"chars": {
-                    char: {"done": None} for char in Settings.values["chars"]
+                    char: {"done": None} for char in WeeklySettings.values["chars"]
                 }}}
             }
         elif not InstanceManager.values[name]["active"]:
@@ -248,10 +254,10 @@ class InstanceTable(KCanvas):
                     "active": True,
                     "difficulty": {
                         dif: {"chars": {
-                            char: {"done": None} for char in Settings.values["chars"]
+                            char: {"done": None} for char in WeeklySettings.values["chars"]
                         }} for dif in diff.split(", ")
                     } if diff else {"": {"chars": {
-                        char: {"done": None} for char in Settings.values["chars"]
+                        char: {"done": None} for char in WeeklySettings.values["chars"]
                     }}}
                 }
             else:
@@ -266,7 +272,6 @@ class InstanceTable(KCanvas):
             messagebox.showwarning(
                 "Instanz hinzufügen",
                 "Dieses Instanz existiert bereits!")
-        print(InstanceManager.values)
         self.scroll(null=True)
         InstanceManager.write()
         self.reload_table()
@@ -277,9 +282,9 @@ class InstanceTable(KCanvas):
         :param week: File name of the week (week_year.json)
         :return:
         """
-        Settings.write()
+        WeeklySettings.write()
         InstanceManager.write()
-        Settings.today = week
+        WeeklySettings.today = week
         InstanceManager.today = week
         self.table.topleft.reload()
         self.scroll(null=True)

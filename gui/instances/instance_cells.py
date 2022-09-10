@@ -1,6 +1,8 @@
 """
 gui/instances/instance_cells.py
 
+Project: WoW-Dashboard-Client
+Created: 19.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -8,14 +10,13 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
-from customtkinter import *
-from tkinter import messagebox
-from tkinter import *
+from tkinter import messagebox, Event
+from threading import Thread
 from json import dumps
 
 from gui.widgets import KContextMenu, KTable, KCanvas
-from style import Theme
 from data import InstanceManager
+from style import Theme
 
 
 ##################################################
@@ -203,7 +204,6 @@ class InstanceCell(KCanvas):
 
         # Configuration
         self.configure(
-            bd=5,
             background=Theme.background3)
         self.bind("<Configure>", self.__resize)
         self.bind("<Button-1>", self.__click)
@@ -381,12 +381,15 @@ class InstanceCell(KCanvas):
         text_color = text_color if text_color else self.disabled_text_color
         text_font = text_font if text_font else self.disabled_font
 
-        self.create_rectangle(
+        self.create_rectangle_rounded_filled(
             0,
             self._get_height(**kwargs),
             self.width,
             self._get_height_top(**kwargs),
-            fill=fg)
+            r=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
+            fill=fg
+        )
+
         self.create_text(
             self.width / 2,
             self._get_height_text(**kwargs),
@@ -431,21 +434,21 @@ class InstanceCell(KCanvas):
         negative_text_color = negative_text_color if negative_text_color else self.negative_text_color
         negative_text_font = negative_text_font if negative_text_font else self.negative_font
 
-        self.create_rectangle(
+        self.create_rectangle_rounded_filled(
             0,
-            self._get_height(
-                **kwargs),
+            self._get_height(**kwargs),
             self.width / 2,
-            self._get_height_top(
-                **kwargs),
+            self._get_height_top(**kwargs),
+            r_nw=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
+            r_sw=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
             fill=positive_fg)
-        self.create_rectangle(
+        self.create_rectangle_rounded_filled(
             self.width / 2,
-            self._get_height(
-                **kwargs),
+            self._get_height(**kwargs),
             self.width,
-            self._get_height_top(
-                **kwargs),
+            self._get_height_top(**kwargs),
+            r_ne=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
+            r_se=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
             fill=negative_fg)
 
         self.create_text(
@@ -486,7 +489,7 @@ class InstanceCell(KCanvas):
             )
 
     # Done
-    def _done_click(self, indexes: list[int]) -> None:
+    def _done_click_threaded(self, indexes: list[int]) -> None:
         if messagebox.askyesno(
                 "Zurücksetzen",
                 "Sicher das du dieses Feld zurücksetzen willst?"):
@@ -495,6 +498,10 @@ class InstanceCell(KCanvas):
                 InstanceManager.values[self.row]["difficulty"][self.diffs[index]
                                                                ]["chars"][self.column] = {"done": None}
             self._reload()
+
+    def _done_click(self, indexes: list[int]) -> None:
+        Thread(target=self._done_click_threaded,
+               kwargs={"indexes": indexes}).start()
 
     def _done(self,
               fg: str | None = None,
@@ -505,13 +512,14 @@ class InstanceCell(KCanvas):
         text_color = text_color if text_color else self.done_text_color
         text_font = text_font if text_font else self.done_font
 
-        self.create_rectangle(
+        self.create_rectangle_rounded_filled(
             0,
             self._get_height(
                 **kwargs),
             self.width,
             self._get_height_top(
                 **kwargs),
+            r=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
             fill=fg)
 
         self.create_text(
@@ -544,7 +552,9 @@ class InstanceCell(KCanvas):
         text_font = text_font if text_font else self.cancel_font
 
         h1, h2 = self._get_height(**kwargs), self._get_height_top(**kwargs)
-        self.create_rectangle(0, h1, self.width, h2, fill=fg)
+        self.create_rectangle_rounded_filled(0, h1, self.width, h2,
+                                             r=15 if self.height // len(self.diffs) > 30
+                                             else self.height // len(self.diffs) // 3, fill=fg)
         self.create_text(
             self.width /
             2,

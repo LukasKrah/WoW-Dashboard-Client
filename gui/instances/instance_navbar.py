@@ -1,6 +1,8 @@
 """
-widgets/k_navbar.py
+gui/instances/instance_navbar.py
 
+Project: WoW-Dashboard-Client
+Created: 13.08.2022
 Author: Lukas Krahbichler
 """
 
@@ -8,15 +10,15 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
+from customtkinter import CTkButton, CTkOptionMenu
 from datetime import date, timedelta
 from typing import Callable, Literal
-from customtkinter import *
+from tkinter import StringVar
 from os import listdir
-from tkinter import *
 
-from data import Settings
-from style import Theme
 from gui.widgets import KPopUp, KCanvas
+from data import WeeklySettings, Settings
+from style import Theme
 
 ##################################################
 #                     Code                       #
@@ -128,7 +130,8 @@ class InstanceNavBar(KCanvas):
                 if file == thisweek:
                     self.weeks["Diese Woche"] = file
                 else:
-                    self.weeks[file.rstrip(".json")] = file
+                    splitfile = file.rstrip(".json").split("_")
+                    self.weeks[f"KW{splitfile[0]}-{splitfile[1]}"] = file
 
         self.weekvar = StringVar()
         self.week = CTkOptionMenu(
@@ -139,7 +142,7 @@ class InstanceNavBar(KCanvas):
             text_color=Theme.text_color,
             values=list(
                 self.weeks.keys()),
-            command=self.week_call,
+            command=self.call_week,
             text_font=(
                 Theme.wow_font,
                 Theme.fontfactor * 18
@@ -148,6 +151,9 @@ class InstanceNavBar(KCanvas):
 
         # Grid widgets
         self.grid_widgets()
+
+    def call_week(self, value: str) -> None:
+        self.week_call(self.weeks[value])
 
     def grid_widgets(self) -> None:
         """
