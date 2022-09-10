@@ -195,8 +195,9 @@ class InstanceTable(KCanvas):
 
             for instance in InstanceManager.values:
                 for diff in InstanceManager.values[instance]["difficulty"]:
-                    InstanceManager.values[instance]["difficulty"][diff]["chars"][charname] = {
-                        "done": None}
+                    if charname not in InstanceManager.values[instance]["difficulty"][diff]["chars"]:
+                        InstanceManager.values[instance]["difficulty"][diff]["chars"][charname] = {
+                            "done": None}
 
             WeeklySettings.write()
             InstanceManager.write()

@@ -7,8 +7,12 @@ Created: 12.08.2022
 Author: Lukas Krahbichler
 """
 
-from gui import Window
+from version import VersionChanger
 
 
 if __name__ == "__main__":
+    VersionChanger.auto_update("0_2_0")
+
+    from gui import Window
+
     Window().mainloop()

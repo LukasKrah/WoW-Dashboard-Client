@@ -44,7 +44,8 @@ class InstanceRowHeader(KTableHeader):
             index,
             header_index,
             "row",
-            image=KImage(InstanceManager[name]["image"]) if InstanceManager[name]["image"] and header_index == 0 else None,
+            image=KImage(InstanceManager[name]["image"])
+            if InstanceManager[name]["image"] and header_index == 0 else None,
             move_callback=InstanceManager.move_row,
             context_menu=[
                 {
@@ -92,7 +93,7 @@ class InstanceColHeader(KTableHeader):
         super().__init__(
             master,
             name,
-            label.split(":")[:-1],
+            [WeeklySettings["chars"][label]["characterName"]],
             index,
             header_index,
             "column",

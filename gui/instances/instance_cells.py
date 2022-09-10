@@ -11,6 +11,7 @@ Author: Lukas Krahbichler
 ##################################################
 
 from tkinter import messagebox, Event
+from threading import Thread
 from json import dumps
 
 from gui.widgets import KContextMenu, KTable, KCanvas
@@ -488,7 +489,7 @@ class InstanceCell(KCanvas):
             )
 
     # Done
-    def _done_click(self, indexes: list[int]) -> None:
+    def _done_click_threaded(self, indexes: list[int]) -> None:
         if messagebox.askyesno(
                 "Zurücksetzen",
                 "Sicher das du dieses Feld zurücksetzen willst?"):
@@ -497,6 +498,9 @@ class InstanceCell(KCanvas):
                 InstanceManager.values[self.row]["difficulty"][self.diffs[index]
                                                                ]["chars"][self.column] = {"done": None}
             self._reload()
+
+    def _done_click(self, indexes: list[int]) -> None:
+        Thread(target=self._done_click_threaded, kwargs={"indexes": indexes}).start()
 
     def _done(self,
               fg: str | None = None,

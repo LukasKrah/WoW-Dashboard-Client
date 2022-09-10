@@ -1,27 +1,23 @@
 {
-  "program": {
-    "version": "0.2.0"
-  },
-  "chars": {},
-  "view": {
-    "selectedView": "default",
-    "views":
-    {
-      "default": {
-        "name": "Tabelle",
-        "propertys": {}
-      },
-      "scrollable": {
-        "name": "Skalierbar",
-        "propertys": {
-          "sizing": {
-            "name": "Skalierung",
-            "type": "slider",
-            "valid_values": "3:16",
-            "value": 6.0
-          }
+    "chars": {},
+    "view": {
+        "selectedView": "default",
+        "views": {
+            "default": {
+                "name": "Tabelle",
+                "propertys": {}
+            },
+            "scrollable": {
+                "name": "Skalierbar",
+                "propertys": {
+                    "sizing": {
+                        "name": "Skalierung",
+                        "type": "slider",
+                        "valid_values": "3:16",
+                        "value": 6.0
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }

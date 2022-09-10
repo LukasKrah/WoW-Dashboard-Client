@@ -8,6 +8,5 @@ Author: Lukas Krahbichler
 
 from .droplist_settings import DroplistColumns, DroplistSettings
 from .weekly_settings import WeeklySettings, InstanceManager
-from .version import VersionChanger
 from .settings import Settings
 from .API import API

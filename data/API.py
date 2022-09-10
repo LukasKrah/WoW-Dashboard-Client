@@ -34,6 +34,14 @@ class _API:
             "static"
         ).json()["mounts"]
 
+    def get_mount(self, mount_id: int) -> dict:
+        return self.request(f"/data/wow/mount/{mount_id}",
+                            namespace="static").json()
+
+    def get_create_display_media(self, creature_display_id) -> dict:
+        return self.request(f"/data/wow/media/creature-display/{creature_display_id}",
+                            namespace="static").json()["assets"]["value"]
+
     def get_token_history(self) -> int:
         return self.request(
             "/data/wow/token/index",
