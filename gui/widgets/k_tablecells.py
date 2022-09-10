@@ -53,15 +53,23 @@ class KTableCell(KCanvas):
 
         self.configure(bg=Theme.background2)
 
-        self.label_id = self.create_text(0, 0, text=self.label, anchor="center", fill=Theme.text_color,
-                                         font=(Theme.font, Theme.fontfactor*18))
+        self.label_id = self.create_text(
+            0,
+            0,
+            text=self.label,
+            anchor="center",
+            fill=Theme.text_color,
+            font=(
+                Theme.font,
+                Theme.fontfactor *
+                18))
 
         self.width, self.height = 0, 0
 
         self.bind("<Configure>", self.__resize)
 
     def reload(self) -> None:
-        self.coords(self.label_id, self.width//2, self.height//2)
+        self.coords(self.label_id, self.width // 2, self.height // 2)
 
     def __resize(self, event: Event) -> None:
         self.width = event.width

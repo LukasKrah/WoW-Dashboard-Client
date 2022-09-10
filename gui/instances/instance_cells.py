@@ -500,7 +500,8 @@ class InstanceCell(KCanvas):
             self._reload()
 
     def _done_click(self, indexes: list[int]) -> None:
-        Thread(target=self._done_click_threaded, kwargs={"indexes": indexes}).start()
+        Thread(target=self._done_click_threaded,
+               kwargs={"indexes": indexes}).start()
 
     def _done(self,
               fg: str | None = None,

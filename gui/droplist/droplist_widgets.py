@@ -30,8 +30,12 @@ class DroplistColumnHeader(KTableHeader):
                  label: str,
                  index: int,
                  header_index: int,
-                 move_callback: Callable[[str, int, int], None] | None = DroplistColumns.move,
-                 typ: Literal["row", "column"] | None = "column") -> None:
+                 move_callback: Callable[[str,
+                                          int,
+                                          int],
+                                         None] | None = DroplistColumns.move,
+                 typ: Literal["row",
+                              "column"] | None = "column") -> None:
         super().__init__(
             master=master,
             name=name,

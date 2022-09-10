@@ -23,48 +23,38 @@ from typing import Callable
 DEFAULTS = {
     "settings": {
         "program": {
-            "version": "0_2_0"
-        },
+            "version": "0_2_0"},
         "API": {
             "URL": "https://us.battle.net/oauth/token",
             "data": {
-                "grant_type": "client_credentials"
-            },
-            "auth": ["f34246c0c509489e8231d340185a0920", "ZKvfQllQPILTgOzoVrAQabx0DiQTN5DJ"]
-        },
+                "grant_type": "client_credentials"},
+            "auth": [
+                "f34246c0c509489e8231d340185a0920",
+                "ZKvfQllQPILTgOzoVrAQabx0DiQTN5DJ"]},
         "myAccount": {
             "region": "eu",
             "realmSlug": "alleria",
             "characterName": "",
-            "locale": "de_DE"
-        },
+            "locale": "de_DE"},
         "friends": {},
         "add_char": {
-            "last_realm": "Alleria"
-        },
+            "last_realm": "Alleria"},
         "add_todo": {
-            "last_typ": "Daily"
-        }
-    },
+            "last_typ": "Daily"}},
     "droplist": {},
     "droplist_columns": {
         "mount": {
             "label": "Mount",
             "column": 0,
-            "active": True
-        },
+            "active": True},
         "date": {
             "label": "Datum",
             "column": 1,
-            "active": True
-        },
+            "active": True},
         "trys": {
             "label": "Versuche",
             "column": 2,
-            "active": True
-        }
-        }
-}
+            "active": True}}}
 
 
 class VersionChanger:
@@ -75,7 +65,9 @@ class VersionChanger:
         makedirs(f"{VersionChanger.path}backup_{version}")
         for folder in listdir(VersionChanger.path):
             if "." not in folder and "backup" not in folder:
-                copytree(f"{VersionChanger.path}{folder}", f"{VersionChanger.path}backup_{version}/{folder}_{version}")
+                copytree(
+                    f"{VersionChanger.path}{folder}",
+                    f"{VersionChanger.path}backup_{version}/{folder}_{version}")
 
     @staticmethod
     def in_all_json(path: str, callback: Callable) -> None:
@@ -95,7 +87,8 @@ class VersionChanger:
 
     @staticmethod
     def update_none() -> None:
-        rename(f"{VersionChanger.path}settings", f"{VersionChanger.path}weekly_settings")
+        rename(f"{VersionChanger.path}settings",
+               f"{VersionChanger.path}weekly_settings")
 
         def modify_weekly_settings(data: dict) -> dict:
             for key in ["API", "myAccount", "friends", "add_char", "add_todo"]:
@@ -106,14 +99,26 @@ class VersionChanger:
             data["program"]["version"] = "0_2_0"
             return data
 
-        VersionChanger.in_all_json(f"{VersionChanger.path}weekly_settings/", modify_weekly_settings)
+        VersionChanger.in_all_json(
+            f"{VersionChanger.path}weekly_settings/",
+            modify_weekly_settings)
 
-        VersionChanger.create_folder(f"{VersionChanger.path}settings/", "default.json", DEFAULTS["settings"])
-        VersionChanger.create_folder(f"{VersionChanger.path}droplist/", "default.json", DEFAULTS["droplist"])
-        VersionChanger.create_folder(f"{VersionChanger.path}droplist_columns/",
-                                     "default.json", DEFAULTS["droplist_columns"])
+        VersionChanger.create_folder(
+            f"{VersionChanger.path}settings/",
+            "default.json",
+            DEFAULTS["settings"])
+        VersionChanger.create_folder(
+            f"{VersionChanger.path}droplist/",
+            "default.json",
+            DEFAULTS["droplist"])
+        VersionChanger.create_folder(
+            f"{VersionChanger.path}droplist_columns/",
+            "default.json",
+            DEFAULTS["droplist_columns"])
 
-        VersionChanger.in_all_json(f"{VersionChanger.path}settings/", modify_version)
+        VersionChanger.in_all_json(
+            f"{VersionChanger.path}settings/",
+            modify_version)
 
     @staticmethod
     def auto_update(version: str) -> None:

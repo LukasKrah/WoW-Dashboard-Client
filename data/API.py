@@ -39,15 +39,20 @@ class _API:
                             namespace="static").json()
 
     def get_create_display_media(self, creature_display_id) -> dict:
-        return self.request(f"/data/wow/media/creature-display/{creature_display_id}",
-                            namespace="static").json()["assets"]["value"]
+        return self.request(
+            f"/data/wow/media/creature-display/{creature_display_id}",
+            namespace="static").json()["assets"]["value"]
 
     def get_token_history(self) -> int:
         return self.request(
             "/data/wow/token/index",
             "dynamic").json()["price"]
 
-    def request(self, path: str, namespace: Literal["profile", "dynamic", "static"]) -> Response:
+    def request(self,
+                path: str,
+                namespace: Literal["profile",
+                                   "dynamic",
+                                   "static"]) -> Response:
         namespace = f'{namespace}-{Settings["myAccount"]["region"]}'
 
         path = path.replace(

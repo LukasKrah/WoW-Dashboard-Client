@@ -32,7 +32,11 @@ class KImage:
 
     thread: ThreadPoolExecutor
 
-    def __init__(self, path: str, prepare_grey_out: bool | None = True, grey_out_alpha: float | None = 0.2):
+    def __init__(
+            self,
+            path: str,
+            prepare_grey_out: bool | None = True,
+            grey_out_alpha: float | None = 0.2):
         self.prepare_grey_out = prepare_grey_out
         self.grey_out_alpha = grey_out_alpha
 
@@ -42,7 +46,8 @@ class KImage:
 
         if self.prepare_grey_out:
             self.enhancer = ImageEnhance.Brightness(self.img)
-            self.imgTk_greyout = ImageTk.PhotoImage(self.enhancer.enhance(self.grey_out_alpha))
+            self.imgTk_greyout = ImageTk.PhotoImage(
+                self.enhancer.enhance(self.grey_out_alpha))
 
         self.thread = ThreadPoolExecutor(max_workers=1)
 
@@ -79,4 +84,5 @@ class KImage:
         if self.prepare_grey_out:
             self.enhancer = ImageEnhance.Brightness(
                 self.img.resize(size=(int(x), int(y))))
-            self.imgTk_greyout = ImageTk.PhotoImage(self.enhancer.enhance(self.grey_out_alpha))
+            self.imgTk_greyout = ImageTk.PhotoImage(
+                self.enhancer.enhance(self.grey_out_alpha))

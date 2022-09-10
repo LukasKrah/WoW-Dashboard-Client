@@ -43,7 +43,11 @@ class DroplistTable(KCanvas):
         self.mounts = API.get_all_mounts()
 
         # GUI Elems
-        self.table = KTable(self, [DroplistRowHeader], [DroplistColumnHeader], KTableCell)
+        self.table = KTable(
+            self,
+            [DroplistRowHeader],
+            [DroplistColumnHeader],
+            KTableCell)
         self.navbar = DroplistNavBar(self, new_drop_callback=self.add_drop)
 
         self.grid_widgets()

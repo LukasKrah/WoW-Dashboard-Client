@@ -23,6 +23,7 @@ class InstanceRowHeader(KTableHeader):
     """
     InstanceTable rowheader
     """
+
     def __init__(
             self,
             master: KTable,
@@ -63,10 +64,10 @@ class InstanceRowHeader(KTableHeader):
             ],
             fg_color=Theme.background3,
             text_color=Theme.text_color,
-            text_font=(Theme.wow_font, Theme.fontfactor*18),
+            text_font=(Theme.wow_font, Theme.fontfactor * 18),
             move_fg_color=Theme.background2,
             move_text_color=Theme.text_color,
-            move_text_font=(Theme.wow_font, Theme.fontfactor*25),
+            move_text_font=(Theme.wow_font, Theme.fontfactor * 25),
             movemark_color=Theme.done_color,
             movemark_width=20
         )
@@ -76,6 +77,7 @@ class InstanceColHeader(KTableHeader):
     """
     InstanceTable columnheader
     """
+
     def __init__(
             self,
             master: KTable,
@@ -98,8 +100,7 @@ class InstanceColHeader(KTableHeader):
             header_index,
             "column",
             move_callback=WeeklySettings.move_col,
-            context_menu=
-            [
+            context_menu=[
                 {
                     "label": "Alle Aktivieren (ACHTUNG)", "command":
                     lambda n=name: WeeklySettings.activate_whole(n)
@@ -115,10 +116,10 @@ class InstanceColHeader(KTableHeader):
             ],
             fg_color=Theme.background3,
             text_color=Theme.text_color,
-            text_font=(Theme.wow_font, Theme.fontfactor*18),
+            text_font=(Theme.wow_font, Theme.fontfactor * 18),
             move_fg_color=Theme.background2,
             move_text_color=Theme.text_color,
-            move_text_font=(Theme.wow_font, Theme.fontfactor*25),
+            move_text_font=(Theme.wow_font, Theme.fontfactor * 25),
             movemark_color=Theme.done_color,
             movemark_width=20
         )

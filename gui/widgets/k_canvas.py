@@ -32,7 +32,12 @@ class KCanvas(CTkCanvas):
         :param master: Master widget
         """
         super().__init__(master, *args, **kwargs)
-        self.configure(bd=0, highlightthickness=0, width=0, height=0, background="snow")
+        self.configure(
+            bd=0,
+            highlightthickness=0,
+            width=0,
+            height=0,
+            background="snow")
 
         self.custom_tag_count = 0
 
@@ -85,28 +90,51 @@ class KCanvas(CTkCanvas):
         self.custom_tag_count += 1
         tag = f"k_elem_{self.custom_tag_count}"
 
-        self.create_rectangle(x1+r_nw, y1, x2-r_ne, y1+max(r_nw, r_ne),
+        self.create_rectangle(x1 + r_nw, y1, x2 - r_ne, y1 + max(r_nw, r_ne),
                               **kwargs, outline="", tags=[tag])
-        self.create_rectangle(x2, y1+r_ne, x2-max(r_ne, r_se), y2-r_se,
+        self.create_rectangle(x2, y1 + r_ne, x2 - max(r_ne, r_se), y2 - r_se,
                               **kwargs, outline="", tags=[tag])
-        self.create_rectangle(x1+r_sw, y2, x2-r_se, y2-max(r_sw, r_se),
+        self.create_rectangle(x1 + r_sw, y2, x2 - r_se, y2 - max(r_sw, r_se),
                               **kwargs, outline="", tags=[tag])
-        self.create_rectangle(x1, y1+r_nw, x1+max(r_nw, r_sw), y2-r_sw,
+        self.create_rectangle(x1, y1 + r_nw, x1 + max(r_nw, r_sw), y2 - r_sw,
                               **kwargs, outline="", tags=[tag])
-        self.create_rectangle(x1+max(r_nw, r_sw), y1+max(r_nw, r_ne),
-                              x2-max(r_ne, r_se), y2-max(r_se, r_sw),
+        self.create_rectangle(x1 + max(r_nw, r_sw), y1 + max(r_nw, r_ne),
+                              x2 - max(r_ne, r_se), y2 - max(r_se, r_sw),
                               **kwargs, outline="", tags=[tag])
 
         bd = 0
 
-        self.create_arc(x1+bd, y1+bd, x1+(r_nw*2), y1+(r_nw*2), start=90,
-                        **kwargs, outline="", tags=[tag])
-        self.create_arc(x2-bd, y1+bd, x2-(r_ne*2), y1+(r_ne*2), start=0,
-                        **kwargs, outline="", tags=[tag])
-        self.create_arc(x2-bd, y2-bd, x2-(r_se*2), y2-(r_se*2), start=270,
-                        **kwargs, outline="", tags=[tag])
-        self.create_arc(x1+bd, y2-bd, x1+(r_sw*2), y2-(r_sw*2), start=180,
-                        **kwargs, outline="", tags=[tag])
+        self.create_arc(x1 + bd,
+                        y1 + bd,
+                        x1 + (r_nw * 2),
+                        y1 + (r_nw * 2),
+                        start=90,
+                        **kwargs,
+                        outline="",
+                        tags=[tag])
+        self.create_arc(x2 - bd,
+                        y1 + bd,
+                        x2 - (r_ne * 2),
+                        y1 + (r_ne * 2),
+                        start=0,
+                        **kwargs,
+                        outline="",
+                        tags=[tag])
+        self.create_arc(x2 - bd,
+                        y2 - bd,
+                        x2 - (r_se * 2),
+                        y2 - (r_se * 2),
+                        start=270,
+                        **kwargs,
+                        outline="",
+                        tags=[tag])
+        self.create_arc(x1 + bd,
+                        y2 - bd,
+                        x1 + (r_sw * 2),
+                        y2 - (r_sw * 2),
+                        start=180,
+                        **kwargs,
+                        outline="",
+                        tags=[tag])
 
         return tag
-

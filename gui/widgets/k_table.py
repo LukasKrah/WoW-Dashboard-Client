@@ -263,7 +263,10 @@ class KTable(KCanvas):
 
         self.__reload()
 
-    def get_index(self, typ: Literal["row", "column"], name: str) -> int | None:
+    def get_index(self,
+                  typ: Literal["row",
+                               "column"],
+                  name: str) -> int | None:
         match typ:
             case "row":
                 for row in self.__rows:

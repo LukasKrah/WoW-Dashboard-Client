@@ -126,7 +126,8 @@ class _InstanceManager(_WeeklySettingsManager, Debugger):
     reload_observable: Observable
 
     def __init__(self):
-        _WeeklySettingsManager.__init__(self, reset_callback=self.reset_instances)
+        _WeeklySettingsManager.__init__(
+            self, reset_callback=self.reset_instances)
         self.reload_observable = Observable()
 
     def __set_states(self, name: str, value: bool | str | None):
@@ -137,8 +138,7 @@ class _InstanceManager(_WeeklySettingsManager, Debugger):
                 for char in WeeklySettings["chars"]:
                     if char not in self.values[name]["difficulty"][diff]["chars"]:
                         self.values[name]["difficulty"][diff]["chars"]["char"] = {
-                            "done": value
-                        }
+                            "done": value}
         self.reload_observable.trigger("reload")
 
     def activate_whole(self, name: str) -> None:
@@ -193,7 +193,10 @@ class _WeeklySettings(_WeeklySettingsManager, Debugger):
     reload_observable: Observable
 
     def __init__(self):
-        _WeeklySettingsManager.__init__(self, path="data/weekly_settings/", reset_callback=self.reset_settings)
+        _WeeklySettingsManager.__init__(
+            self,
+            path="data/weekly_settings/",
+            reset_callback=self.reset_settings)
         self.reload_observable = Observable()
 
     def __set_states(self, name: str, value: str | bool | None) -> None:  # noqa
@@ -205,8 +208,7 @@ class _WeeklySettings(_WeeklySettingsManager, Debugger):
                 else:
                     if value != "del":
                         InstanceManager.values[instance]["difficulty"][diff]["chars"][name] = {
-                            "done": value
-                        }
+                            "done": value}
         self.reload_observable.trigger("reload")
 
     def activate_whole(self, name: str) -> None:

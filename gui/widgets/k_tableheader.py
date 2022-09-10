@@ -37,7 +37,8 @@ class KTableHeader(KCanvas):
 
     image: KImage | None
     move_callback: Callable[[str, int, int], any]
-    context_menu: list[dict[Literal["label", "command"], Union[str, Callable[[None], any]]]]
+    context_menu: list[dict[Literal["label", "command"],
+                            Union[str, Callable[[None], any]]]]
 
     # Style params
     fg_color: str
@@ -141,7 +142,8 @@ class KTableHeader(KCanvas):
         self.width, self.height = 100, 100
         self.label_ids = []
 
-        self.context_menu_elem = KContextMenu(self, self.context_menu) if self.context_menu else None
+        self.context_menu_elem = KContextMenu(
+            self, self.context_menu) if self.context_menu else None
         if self.context_menu_elem:
             self.bind("<Button-3>", self.context_menu_elem.popup)
 
@@ -159,7 +161,12 @@ class KTableHeader(KCanvas):
         Create all "widgets"
         """
         if self.image:
-            self.create_image(0, 0, image=self.image.imgTk, anchor="center", tags=["image"])
+            self.create_image(
+                0,
+                0,
+                image=self.image.imgTk,
+                anchor="center",
+                tags=["image"])
 
         for label in self.labels:
             self.label_ids.append(self.create_text(0, 0, text=label))
@@ -167,7 +174,8 @@ class KTableHeader(KCanvas):
         self.reload(full_reformat=True)
 
     # --- GUI Functions --- #
-    def reload(self, full_reformat: bool | None = False, grey_out: bool | None = False) -> None:
+    def reload(self, full_reformat: bool | None = False,
+               grey_out: bool | None = False) -> None:
         """
         Reload (mainly called after Resize) position and sizes
         :param full_reformat: Whether everything (fill, font, anchor) should be set
@@ -178,15 +186,22 @@ class KTableHeader(KCanvas):
 
         labels_len = len(self.labels) + 1
         for index, label_id in enumerate(self.label_ids):
-            self.coords(label_id, self.width//2, (self.height / labels_len) * (index + 1))
+            self.coords(label_id, self.width // 2,
+                        (self.height / labels_len) * (index + 1))
             if full_reformat:
-                self.itemconfigure(label_id, fill=self.text_color, font=self.text_font, anchor="center")
+                self.itemconfigure(
+                    label_id,
+                    fill=self.text_color,
+                    font=self.text_font,
+                    anchor="center")
 
         if self.image:
             self.image.resize(self.width, self.height, "cover")
             self.coords("image", self.width // 2, self.height // 2)
-            self.itemconfigure("image", image=self.image.imgTk_greyout if grey_out else self.image.imgTk,
-                               anchor="center")
+            self.itemconfigure(
+                "image",
+                image=self.image.imgTk_greyout if grey_out else self.image.imgTk,
+                anchor="center")
 
     def __resize(self, event: Event) -> None:
         self.height = event.height
@@ -207,7 +222,8 @@ class KTableHeader(KCanvas):
                 eventcoord = event.y
                 size = self.height
 
-        self.__all_header_by_index = [[] for _header in self.__all_header_elems]
+        self.__all_header_by_index = [[]
+                                      for _header in self.__all_header_elems]
         for header in self.__all_header_elems:
             self.__all_header_by_index[self.__all_header_elems[header][
                 0].index] = self.__all_header_elems[header]
@@ -219,7 +235,10 @@ class KTableHeader(KCanvas):
             else:
                 header.configure(bg=header.move_fg_color)
             for label_id in header.label_ids:
-                header.itemconfigure(label_id, font=header.move_text_font, fill=header.move_text_color)
+                header.itemconfigure(
+                    label_id,
+                    font=header.move_text_font,
+                    fill=header.move_text_color)
 
         # Calculate dragindex
         modify = 0.5 if eventcoord >= 0 else -0.5
@@ -330,6 +349,7 @@ class KTableRowHeader(KTableHeader):
     """
     Default Row-Header widget
     """
+
     def __init__(
             self,
             master: KTable,
@@ -358,6 +378,7 @@ class KTableColHeader(KTableHeader):
     """
     Default Column-Header widget
     """
+
     def __init__(
             self,
             master: KTable,

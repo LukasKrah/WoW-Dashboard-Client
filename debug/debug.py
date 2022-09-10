@@ -20,5 +20,4 @@ class Debugger:
 
     def debug(self, *args: any) -> None:
         if self.debug_prints:
-            print(self.__class__.__name__, "|", self, "|",  *args)
-
+            print(self.__class__.__name__, "|", self, "|", *args)
