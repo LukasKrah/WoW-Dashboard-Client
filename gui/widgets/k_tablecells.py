@@ -58,6 +58,7 @@ class KTableCell(KCanvas):
             0,
             text=self.label,
             anchor="center",
+            justify="center",
             fill=Theme.text_color,
             font=(
                 Theme.font,

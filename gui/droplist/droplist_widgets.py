@@ -12,9 +12,10 @@ Author: Lukas Krahbichler
 
 from typing import Literal, Callable
 from customtkinter import CTkButton
+from time import strftime, gmtime
 from tkinter import Misc
 
-from gui.widgets import KTableHeader, KCanvas, KPopUp
+from gui.widgets import KTableHeader, KCanvas, KPopUp, KTableCell, KTable
 from data import DroplistColumns
 from style import Theme
 
@@ -22,6 +23,53 @@ from style import Theme
 ##################################################
 #                     Code                       #
 ##################################################
+
+class DroplistCell(KTableCell):
+    master: KTable
+
+    def __init__(self,
+                 master: KTable,
+                 col_name: str,
+                 row_name: str,
+                 ) -> None:
+        self.master = master
+
+        match col_name:
+            case "date":
+                week = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
+                week_day = week[int(strftime("%u", gmtime(self.master.values[row_name]["columns"][col_name]+7200)))-1]
+
+                super().__init__(master, col_name, row_name,
+                                 label=strftime(f"%H:%M:%S {week_day} %d.%m.%Y",
+                                                gmtime(self.master.values[row_name]["columns"][col_name]+7200)))
+            case "trys":
+                splitlab = self.master.values[row_name]["columns"][col_name].split("/")
+                prop = self.get_propabilty(int(splitlab[0]), int(splitlab[1]))
+
+                label = f"Versuche: {splitlab[0]}\n"\
+                        f"Ø benötige Versuche: {splitlab[1]}\n"\
+                        f"Wahrscheinlichkeit: {prop*100}%"
+
+                super().__init__(master, col_name, row_name,
+                                 label=label)
+
+                self.configure(background='#%02x%02x%02x' % (int(255*prop), int(255*(1-prop)), 0))
+                if prop < 0.5:
+                    self.itemconfigure(self.label_id, fill=Theme.text_color_reverse)
+
+            case _:
+                super().__init__(master, col_name, row_name)
+
+    def get_propabilty(self, trys: int, full: int) -> float:
+        factor = 1 / full
+        prop = factor
+        num = factor
+        for index in range(trys - 1):
+            num *= (1 - factor)
+            prop += num
+
+        return round(prop, 4)
+
 
 class DroplistColumnHeader(KTableHeader):
     def __init__(self,

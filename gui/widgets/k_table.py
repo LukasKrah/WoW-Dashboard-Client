@@ -128,8 +128,9 @@ class KTable(KCanvas):
                     self.cell_widgets[row][column].destroy()
 
         for del_cel in del_cells:
-            splitdel = del_cel.split(",")
-            del self.cell_widgets[splitdel[0]][splitdel[1]]
+            splitcell = del_cel.split(",")
+            del self.cell_widgets[splitcell[0]][splitcell[1]]
+        del del_cells
 
         for header, colrows, typ in ((self.row_headerwidgets, self.__rows, "row"), (
                 self.column_headerwidgets, self.__columns, "column")):
@@ -142,10 +143,12 @@ class KTable(KCanvas):
                     for widget in header[headers]:
                         self.grid_columnconfigure(
                             widget.grid_info()[typ], weight=0)
+                        widget.grid_forget()
                         widget.destroy()
 
             for del_header in del_headers:
                 del header[del_header]
+            del del_headers
 
         # Column headers
         for col in self.__columns:

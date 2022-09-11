@@ -12,7 +12,7 @@ Author: Lukas Krahbichler
 
 from gui.widgets import KTableHeader, KTable, KImage
 from data import WeeklySettings, InstanceManager
-from style import Theme
+from style import Theme, ImageManager
 
 
 ##################################################
@@ -92,10 +92,13 @@ class InstanceColHeader(KTableHeader):
         :param master: Master table passed by KTable
         :param name: Columname passed by KTable
         """
+
+        img = ImageManager.get_race_image(WeeklySettings["chars"][name]["race"])
+
         super().__init__(
             master,
             name,
-            [WeeklySettings["chars"][label]["characterName"]],
+            [WeeklySettings["chars"][name]["characterName"]],
             index,
             header_index,
             "column",
@@ -114,6 +117,7 @@ class InstanceColHeader(KTableHeader):
                     lambda n=name: WeeklySettings.delete_whole(n)
                 }
             ],
+            image=KImage(img) if img else None,
             fg_color=Theme.background3,
             text_color=Theme.text_color,
             text_font=(Theme.wow_font, Theme.fontfactor * 18),

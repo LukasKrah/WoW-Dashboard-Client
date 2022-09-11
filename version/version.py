@@ -126,7 +126,9 @@ class VersionChanger:
         try:
             with open(f"{VersionChanger.path}settings/settings.json") as settings:
                 cur_version = loads(settings.read())["program"]["version"]
-        except (KeyError, FileNotFoundError):
+        except FileNotFoundError:
+            return None
+        except KeyError:
             cur_version = "none"
         old_index = versions.index(cur_version)
         new_index = versions.index(version)

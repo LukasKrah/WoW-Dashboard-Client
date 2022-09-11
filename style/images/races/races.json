@@ -1,0 +1,140 @@
+[
+  {
+    "path": "mensch.jpg",
+    "keywords": [
+      "Mensch"
+    ]
+  },
+  {
+    "path": "troll.jpg",
+    "keywords": [
+      "Troll"
+    ]
+  },
+  {
+    "path": "dreanei.jpg",
+    "keywords": [
+      "Draenei"
+    ]
+  },
+  {
+    "path": "blutelf.jpg",
+    "keywords": [
+      "Blutelf"
+    ]
+  },
+  {
+    "path": "nachtelf.jpg",
+    "keywords": [
+      "Nachtelf"
+    ]
+  },
+  {
+    "path": "zwerg.jpg",
+    "keywords": [
+      "Zwerg"
+    ]
+  },
+  {
+    "path": "pandare.jpg",
+    "keywords": [
+      "Pandaren"
+    ]
+  },
+  {
+    "path": "tauren.jpg",
+    "keywords": [
+      "Tauren"
+    ]
+  },
+  {
+    "path": "untoter.jpg",
+    "keywords": [
+      "Untoter"
+    ]
+  },
+  {
+    "path": "orc.jpg",
+    "keywords": [
+      "Orc"
+    ]
+  },
+  {
+    "path": "gnom.jpg",
+    "keywords": [
+      "Gnom"
+    ]
+  },
+  {
+    "path": "goblin.jpg",
+    "keywords": [
+      "Goblin"
+    ]
+  },
+  {
+    "path": "kul_tiraner.jpg",
+    "keywords": [
+      "Kul Tiraner"
+    ]
+  },
+  {
+    "path": "zandalari_troll.jpg",
+    "keywords": [
+      "Zandalaritroll"
+    ]
+  },
+  {
+    "path": "lichtgeschmiedeter_dreanei.jpg",
+    "keywords": [
+      "Lichtgeschmiedeter Draenei"
+    ]
+  },
+  {
+    "path": "hochberg_tauren.jpg",
+    "keywords": [
+      "Hochbergtauren"
+    ]
+  },
+  {
+    "path": "nachtgeborener.jpg",
+    "keywords": [
+      "Nachtgeborener"
+    ]
+  },
+  {
+    "path": "worgen.jpg",
+    "keywords": [
+      "Worgen"
+    ]
+  },
+  {
+    "path": "dunkeleisenzwerg.jpg",
+    "keywords": [
+      "Dunkeleisenzwerg"
+    ]
+  },
+  {
+    "path": "vulpera.jpg",
+    "keywords": [
+      "Vulpera"
+    ]
+  },
+  {
+    "path": "maghar.jpg",
+    "keywords": [
+      "Mag'har"
+    ]
+  },
+  {
+    "path": "leerenelf.jpg",
+    "keywords": [
+      "Leerenelf"
+    ]
+  },
+  {
+    "path": "mechagnom.jpg",
+    "keywords": [
+      "Mechagnom"
+    ]
+  }
+]

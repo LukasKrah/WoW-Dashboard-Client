@@ -16,7 +16,7 @@ from time import time
 from data import API, DroplistColumns, DroplistSettings
 from gui.widgets import KCanvas, KTable, KTableCell
 
-from .droplist_widgets import DroplistColumnHeader, DroplistRowHeader, DroplistNavBar
+from .droplist_widgets import DroplistColumnHeader, DroplistRowHeader, DroplistNavBar, DroplistCell
 
 
 ##################################################
@@ -47,7 +47,7 @@ class DroplistTable(KCanvas):
             self,
             [DroplistRowHeader],
             [DroplistColumnHeader],
-            KTableCell)
+            [KTableCell, DroplistCell, DroplistCell])
         self.navbar = DroplistNavBar(self, new_drop_callback=self.add_drop)
 
         self.grid_widgets()

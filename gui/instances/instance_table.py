@@ -14,7 +14,7 @@ from tkinter import messagebox, Event, DISABLED
 from customtkinter import CTkCanvas
 from typing import Literal
 
-from data import WeeklySettings, InstanceManager, Settings
+from data import WeeklySettings, InstanceManager, Settings, API
 from gui.widgets import KTable, KCanvas, KImage
 from style import Theme, ImageManager
 
@@ -190,6 +190,7 @@ class InstanceTable(KCanvas):
             WeeklySettings["chars"][charname] = {
                 "characterName": name,
                 "realmSlug": realm,
+                "race": API.get_char_race(realm.lower(), name.lower()),
                 "active": True,
                 "column": column}
 

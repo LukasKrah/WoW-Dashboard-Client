@@ -43,6 +43,14 @@ class _API:
             f"/data/wow/media/creature-display/{creature_display_id}",
             namespace="static").json()["assets"]["value"]
 
+    def get_char_race(self, realm_slug: str, character_name: str) -> str | None:
+        try:
+            return self.request(f"/profile/wow/character/{realm_slug}/{character_name}/appearance",
+                                namespace="profile"
+                                ).json()["playable_race"]["name"]
+        except KeyError:
+            return ""
+
     def get_token_history(self) -> int:
         return self.request(
             "/data/wow/token/index",

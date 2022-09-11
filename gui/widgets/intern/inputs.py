@@ -175,9 +175,6 @@ class KOptionMenu(KCanvas):
         self.optionMenu.set(value) if value else ...
         self.grid_widgets()
 
-        self.bind("<Expose>", self.default_value)
-
-    def default_value(self, _event: Event) -> None:
         self.optionMenu.set(self.value) if self.value else ...
 
     def grid_widgets(self) -> None:
