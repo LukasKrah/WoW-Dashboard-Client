@@ -17,6 +17,7 @@ from .k_contextmenu import KContextMenu
 from .k_canvas import KCanvas
 from .k_table import KTable
 from .k_image import KImage
+from .k_popup import KPopUp
 
 
 ##################################################
@@ -39,6 +40,7 @@ class KTableHeader(KCanvas):
     move_callback: Callable[[str, int, int], any]
     context_menu: list[dict[Literal["label", "command"],
                             Union[str, Callable[[None], any]]]]
+    edit_menu: KPopUp | None
 
     # Style params
     fg_color: str
@@ -75,6 +77,7 @@ class KTableHeader(KCanvas):
             image: KImage | None = None,
             move_callback: Callable[[str, int, int], any] | None = None,
             context_menu: list[dict[Literal["label", "command"], Union[str, Callable[[None], any]]]] | None = None,
+            edit_menu: KPopUp | None = None,
 
             fg_color: str | None = "#222222",
             text_color: str | None = "#CCCCCC",
@@ -97,6 +100,7 @@ class KTableHeader(KCanvas):
         :param image: Image to show in header
         :param move_callback: Callback for moving rows/cols. Will pass name, current index and new index
         :param context_menu: Right click context menu
+        :param edit_menu: Double click edit menu
         :param fg_color: Normal foreground color
         :param text_color: Normal text color
         :param text_font: Normal text font
@@ -118,6 +122,7 @@ class KTableHeader(KCanvas):
         self.image = image
         self.move_callback = move_callback
         self.context_menu = context_menu
+        self.edit_menu = edit_menu
 
         # Style params
         self.fg_color = fg_color
@@ -134,7 +139,7 @@ class KTableHeader(KCanvas):
 
         # Vars for drag'n'drop
         self.__dragindex = 0
-        self.__all_header_elems = self.master.row_headerwidgets if self.typ == "row" \
+        self.__all_header_elems = self.__all_header_elems = self.master.row_headerwidgets if self.typ == "row" \
             else self.master.column_headerwidgets
         self.__all_header_by_index = []
 
@@ -173,6 +178,11 @@ class KTableHeader(KCanvas):
 
         self.reload(full_reformat=True)
 
+    def set_labels(self, labels: list) -> None:
+        self.labels = labels
+        for index, label_id in enumerate(self.label_ids):
+            self.itemconfigure(label_id, text=self.labels[index])
+
     # --- GUI Functions --- #
     def reload(self, full_reformat: bool | None = False,
                grey_out: bool | None = False) -> None:
@@ -191,6 +201,7 @@ class KTableHeader(KCanvas):
             if full_reformat:
                 self.itemconfigure(
                     label_id,
+                    text=self.labels[index],
                     fill=self.text_color,
                     font=self.text_font,
                     anchor="center")
@@ -224,6 +235,7 @@ class KTableHeader(KCanvas):
 
         self.__all_header_by_index = [[]
                                       for _header in self.__all_header_elems]
+
         for header in self.__all_header_elems:
             self.__all_header_by_index[self.__all_header_elems[header][
                 0].index] = self.__all_header_elems[header]

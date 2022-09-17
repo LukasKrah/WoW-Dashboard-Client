@@ -90,6 +90,11 @@ class KEntry(KCanvas):
                 newstring += let
         self.textvar.set(newstring)
 
+    def set(self, value: str) -> None:
+        print("SET", value)
+        self.entry.delete(0, END)
+        self.entry.insert(0, value)
+
     def get(self) -> str:
         value = self.entry.get()
         if self.value is not None:
@@ -182,6 +187,9 @@ class KOptionMenu(KCanvas):
             row=0, column=0, sticky="NSEW", pady=(
                 (Theme.fontfactor * 18) + 30, 0))
 
+    def set(self, value: str) -> None:
+        self.optionMenu.set(value)
+
     def get(self) -> str:
         value = self.optionMenu.get()
         if self.value is not None:
@@ -253,11 +261,11 @@ class KMenu(KCanvas):
                 selectcolor=Theme.text_color,
                 onvalue=1,
                 offvalue=0)
-            self.selection[value].trace_add("write", self.set)
+            self.selection[value].trace_add("write", self._change)
 
         self.grid_widgets()
 
-    def set(self, *_args: str) -> None:
+    def _change(self, *_args: str) -> None:
         selection_labels = []
         for selection in self.selection:
             if self.selection[selection].get():
@@ -270,6 +278,9 @@ class KMenu(KCanvas):
         self.menuButton.grid(
             row=0, column=0, sticky="NSEW", pady=(
                 (Theme.fontfactor * 18) + 30, 0))
+
+    def set(self, value: str) -> None:
+        self.menuButton.set(value)
 
     def get(self) -> dict | None:
         return self.menuButton.text_label["text"] if self.menuButton.text_label["text"] != self.label else None

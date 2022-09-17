@@ -10,7 +10,7 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
-from typing import Literal
+from typing import Literal, Callable
 
 from style import Theme
 
@@ -117,13 +117,9 @@ class KTable(KCanvas):
         for row in self.cell_widgets:
             for column in self.cell_widgets[row]:
                 if row not in [
-                        header["headers"][0]["label"] for header in self.__rows] or column not in [
-                        header["headers"][0]["label"] for header in self.__columns]:
+                        header["headers"][0]["name"] for header in self.__rows] or column not in [
+                        header["headers"][0]["name"] for header in self.__columns]:
                     del_cells.append(f"{row},{column}")
-                    self.grid_columnconfigure(
-                        self.cell_widgets[row][column].grid_info()["column"], weight=0)
-                    self.grid_rowconfigure(
-                        self.cell_widgets[row][column].grid_info()["row"], weight=0)
                     self.cell_widgets[row][column].grid_forget()
                     self.cell_widgets[row][column].destroy()
 
@@ -137,12 +133,16 @@ class KTable(KCanvas):
             del_headers = []
 
             for headers in header:
-                if headers not in [colrow["headers"][0]["label"]
+                if headers not in [colrow["headers"][0]["name"]
                                    for colrow in colrows]:
                     del_headers.append(headers)
                     for widget in header[headers]:
-                        self.grid_columnconfigure(
-                            widget.grid_info()[typ], weight=0)
+                        if typ == "column":
+                            self.grid_columnconfigure(widget.grid_info()[typ],
+                                                      weight=0)
+                        else:
+                            self.grid_rowconfigure(widget.grid_info()[typ],
+                                                   weight=0)
                         widget.grid_forget()
                         widget.destroy()
 
@@ -154,12 +154,12 @@ class KTable(KCanvas):
         for col in self.__columns:
             add = False
             for colindex, colheader in enumerate(self.colheaders):
-                if col["headers"][0]["label"] not in self.column_headerwidgets or add:
+                if col["headers"][0]["name"] not in self.column_headerwidgets or add:
                     if not add:
-                        self.column_headerwidgets[col["headers"][0]["label"]] = [
+                        self.column_headerwidgets[col["headers"][0]["name"]] = [
                         ]
                         add = True
-                    self.column_headerwidgets[col["headers"][0]["label"]].append(
+                    self.column_headerwidgets[col["headers"][0]["name"]].append(
                         colheader(
                             self,
                             col["headers"][colindex]["name"],
@@ -168,21 +168,28 @@ class KTable(KCanvas):
                             colindex
                         )
                     )
-                self.column_headerwidgets[col["headers"][0]["label"]][colindex].grid(
-                    row=colindex,
-                    column=col["column"] +
-                    self.col_offset,
-                    sticky="NSEW")
+                grid_infos = self.column_headerwidgets[col["headers"][0]["name"]][colindex].grid_info()
+                grid = True
+
+                if "row" in grid_infos and "column" in grid_infos:
+                    if grid_infos["row"] == colindex and grid_infos["column"] == col["column"] + self.col_offset:
+                        grid = False
+                if grid:
+                    self.column_headerwidgets[col["headers"][0]["name"]][colindex].grid(
+                        row=colindex,
+                        column=col["column"] +
+                        self.col_offset,
+                        sticky="NSEW")
 
         # Row headers
         for row in self.__rows:
             add = False
             for rowindex, rowheader in enumerate(self.rowheaders):
-                if row["headers"][0]["label"] not in self.row_headerwidgets or add:
+                if row["headers"][0]["name"] not in self.row_headerwidgets or add:
                     if not add:
-                        self.row_headerwidgets[row["headers"][0]["label"]] = []
+                        self.row_headerwidgets[row["headers"][0]["name"]] = []
                         add = True
-                    self.row_headerwidgets[row["headers"][0]["label"]].append(
+                    self.row_headerwidgets[row["headers"][0]["name"]].append(
                         rowheader(
                             self,
                             row["headers"][rowindex]["name"],
@@ -191,35 +198,52 @@ class KTable(KCanvas):
                             rowindex
                         )
                     )
-                self.row_headerwidgets[row["headers"][0]["label"]][rowindex].grid(
-                    row=row["row"] + self.row_offset,
-                    column=rowindex,
-                    sticky="NSEW")
+                grid_infos = self.row_headerwidgets[row["headers"][0]["name"]][rowindex].grid_info()
+                grid = True
+
+                if "row" in grid_infos and "column" in grid_infos:
+                    if grid_infos["row"] == row["row"] + self.row_offset and grid_infos["column"] == rowindex:
+                        grid = False
+
+                if grid:
+                    self.row_headerwidgets[row["headers"][0]["name"]][rowindex].grid(
+                        row=row["row"] + self.row_offset,
+                        column=rowindex,
+                        sticky="NSEW")
 
         # Table
         for rowindex, row in enumerate(self.__rows):
             for colindex, col in enumerate(self.__columns):
-                if row["headers"][0]["label"] not in self.cell_widgets:
-                    self.cell_widgets[row["headers"][0]["label"]] = {}
-                if col["headers"][0]["label"] not in self.cell_widgets[row["headers"][0]["label"]]:
+                if row["headers"][0]["name"] not in self.cell_widgets:
+                    self.cell_widgets[row["headers"][0]["name"]] = {}
+                if col["headers"][0]["label"] not in self.cell_widgets[row["headers"][0]["name"]]:
                     if isinstance(self.cells, list):
-                        self.cell_widgets[row["headers"][0]["label"]][col["headers"][0]["label"]] = \
+                        self.cell_widgets[row["headers"][0]["name"]][col["headers"][0]["name"]] = \
                             self.cells[colindex if self.cell_split == "column" else rowindex](
                                 self, col["headers"][0]["name"], row["headers"][0]["name"])
                     else:
-                        self.cell_widgets[row["headers"][0]["label"]][col["headers"][0]["label"]] = \
+                        self.cell_widgets[row["headers"][0]["name"]][col["headers"][0]["name"]] = \
                             self.cells(self, col["headers"][0]["name"], row["headers"][0]["name"])
 
-                self.cell_widgets[row["headers"][0]["label"]
-                                  ][col["headers"][0]["label"]].reload()
-                self.cell_widgets[row["headers"][0]["label"]][col["headers"][0]["label"]].grid(
-                    row=row["row"] +
-                    self.row_offset,
-                    column=col["column"] +
-                    self.col_offset,
-                    padx=5,
-                    pady=5,
-                    sticky="NSEW")
+                grid_infos = self.cell_widgets[row["headers"][0]["name"]][col["headers"][0]["name"]].grid_info()
+                grid = True
+
+                if "row" in grid_infos and "column" in grid_infos:
+                    if grid_infos["row"] == row["row"] + self.row_offset and \
+                            grid_infos["column"] == col["column"] + self.col_offset:
+                        grid = False
+
+                if grid:
+                    self.cell_widgets[row["headers"][0]["name"]
+                                      ][col["headers"][0]["name"]].reload()
+                    self.cell_widgets[row["headers"][0]["name"]][col["headers"][0]["name"]].grid(
+                        row=row["row"] +
+                        self.row_offset,
+                        column=col["column"] +
+                        self.col_offset,
+                        padx=5,
+                        pady=5,
+                        sticky="NSEW")
 
         # Weights
         for row in range(self.row_offset):
@@ -281,6 +305,31 @@ class KTable(KCanvas):
                     for subcol in column["headers"]:
                         if subcol["name"] == name:
                             return column["column"]
+
+    def rename_row(
+            self,
+            oldname: str,
+            newname: str,
+    ) -> None:
+        """
+        Rename a row without deleting it
+        :param header_index:
+        :param oldname:
+        :param newname:
+        :param rename_callback:
+        :return:
+        """
+        self.row_headerwidgets[newname] = self.row_headerwidgets[oldname]
+        del self.row_headerwidgets[oldname]
+        self.cell_widgets[newname] = self.cell_widgets[oldname]
+        del self.cell_widgets[oldname]
+
+    def rename_column(self, oldname: str, newname: str) -> None:
+        self.column_headerwidgets[newname] = self.column_headerwidgets[oldname]
+        del self.row_headerwidgets[oldname]
+        for cellrow in self.cell_widgets:
+            self.cell_widgets[cellrow][newname] = self.cell_widgets[cellrow][oldname]
+            del self.cell_widgets[cellrow][oldname]
 
     @property
     def rows(self) -> list:

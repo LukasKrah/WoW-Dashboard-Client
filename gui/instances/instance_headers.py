@@ -10,7 +10,9 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
-from gui.widgets import KTableHeader, KTable, KImage
+from tkinter import Event
+
+from gui.widgets import KTableHeader, KTable, KImage, KPopUp
 from data import WeeklySettings, InstanceManager
 from style import Theme, ImageManager
 
@@ -38,6 +40,7 @@ class InstanceRowHeader(KTableHeader):
         :param master: Master table passed by KTable
         :param name: Rowname passed by KTable
         """
+
         super().__init__(
             master,
             name,
@@ -62,6 +65,14 @@ class InstanceRowHeader(KTableHeader):
                     lambda n=name: InstanceManager.delete_whole(n)
                 }
             ],
+            edit_menu=KPopUp(master, "Instanz bearbeiten",
+                             [
+                                 {
+                                     "type": "InputText",
+                                     "label": "Name"
+                                 }
+                             ],
+                             confirm_call=self.edit) if header_index == 0 else None,
             fg_color=Theme.background3,
             text_color=Theme.text_color,
             text_font=(Theme.wow_font, Theme.fontfactor * 18),
@@ -71,6 +82,26 @@ class InstanceRowHeader(KTableHeader):
             movemark_color=Theme.done_color,
             movemark_width=20
         )
+
+        if self.header_index == 0:
+            self.bind("<Button-2>", self.open_popup)
+
+    def open_popup(self, _event: Event) -> None:
+        self.edit_menu.open_popup()
+        self.edit_menu.set_values(self.name)
+
+    def edit(self, name: str) -> None:
+        if name != self.name and self.header_index == 0:
+            InstanceManager.values[name] = InstanceManager.values[self.name]
+            del InstanceManager.values[self.name]
+            self.master.rename_row(self.name, name)
+
+            self.name = name
+            self.master.row_headerwidgets[self.name][1].name = name
+
+            if self.typ == "row":
+                self.master.row_headerwidgets[self.name][0].set_labels([self.name])
+            InstanceManager.reload_observable.trigger("reload")
 
 
 class InstanceColHeader(KTableHeader):
@@ -98,7 +129,7 @@ class InstanceColHeader(KTableHeader):
         super().__init__(
             master,
             name,
-            [WeeklySettings["chars"][name]["characterName"]],
+            [label],
             index,
             header_index,
             "column",

@@ -10,6 +10,7 @@ Author: Lukas Krahbichler
 #                    Imports                     #
 ##################################################
 
+from concurrent.futures import ThreadPoolExecutor, Future
 from tkinter import messagebox, Event, DISABLED
 from customtkinter import CTkCanvas
 from typing import Literal
@@ -39,6 +40,8 @@ class InstanceTable(KCanvas):
 
     relheight: float
 
+    thread: ThreadPoolExecutor
+
     def __init__(
             self,
             *args: any,
@@ -51,6 +54,7 @@ class InstanceTable(KCanvas):
         self.configure(background=Theme.background3)
 
         self.relheight = 5.0
+        self.thread = ThreadPoolExecutor(max_workers=1)
 
         self.table_frame = CTkCanvas(self)
         photo = KImage("style/images/shadowlands.jpg")
@@ -73,7 +77,6 @@ class InstanceTable(KCanvas):
             set_view_callback=self.set_view,
             scale_view_callback=self.scale_view)
 
-        self.reload_table()
         self.navBar = InstanceNavBar(self, self.set_week,
                                      new_char_callback=self.add_char_callback,
                                      new_todo_callback=self.add_todo_callback)
@@ -100,8 +103,8 @@ class InstanceTable(KCanvas):
                 self.table.place(
                     x=0, y=0, anchor="nw", relwidth=1, relheight=1)
 
-    def scroll(self, event: Event | None = None,
-               null: bool | None = False) -> None:
+    def _scroll(self, event: Event | None = None,
+                null: bool | None = False) -> None:
         if WeeklySettings.values["view"]["selectedView"] != "scrollable":
             return
         new_y = self.table.winfo_y() + (event.delta if event else 0)
@@ -119,6 +122,10 @@ class InstanceTable(KCanvas):
                             if InstanceManager.values[instance]["active"]]) + 1) /
             self.relheight)
 
+    def scroll(self, event: Event | None = None,
+               null: bool | None = False) -> None:
+        self.thread.submit(self._scroll, event=event, null=null)
+
     def _grid_widgets(self) -> None:
         """
         Grid Widgets
@@ -129,10 +136,7 @@ class InstanceTable(KCanvas):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-    def reload_table(self) -> None:
-        """
-        Load rows, columns and __values and relaod table
-        """
+    def _reload_table(self) -> None:
         rows = [{"row": InstanceManager.values[instance]["row"],
                  "headers": [{"label": instance,
                               "name": instance},
@@ -141,8 +145,7 @@ class InstanceTable(KCanvas):
                  } for instance in InstanceManager.values.keys() if InstanceManager[instance]["active"]]
 
         columns = [{"column": WeeklySettings["chars"][char]["column"],
-                    "headers": [{'label': f'{WeeklySettings["chars"][char]["characterName"].lower()}:'
-                                          f'{WeeklySettings["chars"][char]["realmSlug"].lower()}',
+                    "headers": [{'label': f'{WeeklySettings["chars"][char]["characterName"]}',
                                  "name": char}]}
                    for char in WeeklySettings["chars"] if WeeklySettings["chars"][char]["active"]]
 
@@ -151,6 +154,13 @@ class InstanceTable(KCanvas):
             rows=rows,
             columns=columns,
             values=InstanceManager.values)
+
+    def reload_table(self) -> None:
+        """
+        Load rows, columns and __values and relaod table
+        """
+        print("FIRST RELOAD")
+        self.thread.submit(self._reload_table)
 
     def add_char_callback(self, name: str, realm: str) -> None:
         """
@@ -288,5 +298,6 @@ class InstanceTable(KCanvas):
         WeeklySettings.today = week
         InstanceManager.today = week
         self.table.topleft.reload()
-        self.scroll(null=True)
-        self.reload_table()
+        self._scroll(null=True)
+        self.update_idletasks()
+        self.after(100, self.reload_table)

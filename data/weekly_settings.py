@@ -156,8 +156,9 @@ class _InstanceManager(_WeeklySettingsManager, Debugger):
         del self.values[name]["row"]
         self.reload_observable.trigger("reload")
 
-    def move_row(self, name: str, cur_index: int, new_index: int) -> None:
+    def move_row(self, name: str, _cur_index: int, new_index: int) -> None:
         self.debug("ROW", name, new_index)
+        cur_index = InstanceManager.values[name]["row"]
         if new_index != InstanceManager.values[name]["row"]:
             for instance in InstanceManager.values:
                 if instance != name and InstanceManager.values[instance]["active"]:
@@ -227,9 +228,10 @@ class _WeeklySettings(_WeeklySettingsManager, Debugger):
 
         self.reload_observable.trigger("reload")
 
-    def move_col(self, name: str, cur_index: int, new_index: int) -> None:
+    def move_col(self, name: str, _cur_index: int, new_index: int) -> None:
         self.debug("COL", name, new_index)
-        if new_index != WeeklySettings["chars"][name]["column"]:
+        cur_index = WeeklySettings.values["chars"][name]["column"]
+        if new_index != WeeklySettings.values["chars"][name]["column"]:
             for user in WeeklySettings.values["chars"]:
                 if user != name and WeeklySettings.values["chars"][user]["active"]:
                     if cur_index < WeeklySettings.values["chars"][user]["column"] < new_index + 1:

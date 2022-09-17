@@ -13,6 +13,7 @@ Author: Lukas Krahbichler
 from customtkinter import CTk
 from os import kill, getpid
 from tkinter import Event
+from time import sleep
 
 from data import WeeklySettings, InstanceManager, Settings
 from style import Theme
@@ -37,12 +38,13 @@ class Window(CTk):
     def __init__(self, *args: any, **kwargs: any) -> None:
         super().__init__(*args, **kwargs)
 
+        self.state("zoomed")
+
         self.title("WoW-Dashboard")
         self.wm_iconbitmap("style/images/wow.ico")
         self.minsize(
             self.winfo_screenwidth() // 2,
             self.winfo_screenheight() // 2)
-        self.state("zoomed")
         self.option_add("*font", Theme.font)
 
         self.current_window = "instanceTable"

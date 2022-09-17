@@ -12,6 +12,8 @@ Author: Lukas Krahbichler
 ##################################################
 
 from concurrent.futures import ThreadPoolExecutor
+from time import time
+
 from PIL import Image, ImageTk, ImageEnhance
 from typing import Literal
 
@@ -42,6 +44,7 @@ class KImage:
 
         img = Image.open(path)
         self.img = img
+
         self.imgTk = ImageTk.PhotoImage(self.img)
 
         if self.prepare_grey_out:

@@ -213,21 +213,21 @@ class InstanceCell(KCanvas):
         self.bind("<Motion>", self.__hover)
 
     def reload(self) -> None:
-        self.__states = ["disable" for _diff in self.diffs]
+        states = ["disable" for _diff in self.diffs]
         for index, diff in enumerate(self.diffs):
             try:
                 if self.column in InstanceManager[self.row]["difficulty"][diff]["chars"]:
                     self.con[index].change_label(0, "Deaktivieren")
                     match InstanceManager[self.row]["difficulty"][diff]["chars"][self.column]["done"]:
                         case True:
-                            self.__states[index] = "done"
+                            states[index] = "done"
                         case False:
-                            self.__states[index] = "cancel"
+                            states[index] = "cancel"
                         case None:
-                            self.__states[index] = "neutral"
-                    self._reload()
+                            states[index] = "neutral"
             except KeyError:
                 ...
+        self.__states = states
         self._reload()
 
     # Index and height helping funcs
