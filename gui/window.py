@@ -37,6 +37,7 @@ class Window(CTk):
 
     def __init__(self, *args: any, **kwargs: any) -> None:
         super().__init__(*args, **kwargs)
+        self.update()
 
         self.state("zoomed")
 

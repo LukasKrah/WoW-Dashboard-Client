@@ -381,14 +381,12 @@ class InstanceCell(KCanvas):
         text_color = text_color if text_color else self.disabled_text_color
         text_font = text_font if text_font else self.disabled_font
 
-        self.create_rectangle_rounded_filled(
-            0,
-            self._get_height(**kwargs),
-            self.width,
-            self._get_height_top(**kwargs),
-            r=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
-            fill=fg
-        )
+        self.create_gradient(0, self._get_height(**kwargs), self.width, self._get_height_top(**kwargs),
+                             from_color=fg, to_factor=0.5)
+
+        self.rounded_cornors(0, self._get_height(**kwargs), self.width, self._get_height_top(**kwargs),
+                             radius=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
+                             fill=Theme.background3)
 
         self.create_text(
             self.width / 2,
@@ -434,22 +432,14 @@ class InstanceCell(KCanvas):
         negative_text_color = negative_text_color if negative_text_color else self.negative_text_color
         negative_text_font = negative_text_font if negative_text_font else self.negative_font
 
-        self.create_rectangle_rounded_filled(
-            0,
-            self._get_height(**kwargs),
-            self.width / 2,
-            self._get_height_top(**kwargs),
-            r_nw=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
-            r_sw=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
-            fill=positive_fg)
-        self.create_rectangle_rounded_filled(
-            self.width / 2,
-            self._get_height(**kwargs),
-            self.width,
-            self._get_height_top(**kwargs),
-            r_ne=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
-            r_se=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
-            fill=negative_fg)
+        self.create_gradient(0, self._get_height(**kwargs), self.width // 2, self._get_height_top(**kwargs),
+                             from_color=positive_fg, to_factor=0.6 )
+        self.create_gradient(self.width // 2, self._get_height(**kwargs), self.width, self._get_height_top(**kwargs),
+                             from_color=negative_fg, to_factor=0.6)
+
+        self.rounded_cornors(0, self._get_height(**kwargs), self.width, self._get_height_top(**kwargs),
+                             radius=15 if self.height // len(self.diffs) > 30 else self.height // len(self.diffs) // 3,
+                             fill=Theme.background3)
 
         self.create_text(
             self.width / 4,
