@@ -65,10 +65,10 @@
   This project should keep you motivated doing your _**dailys**_ and _**weeklys**_ in _**World of Warcraft**_
   while keeping a _**full overview**_. <br />
   <br>
-  Remebering the tasks of _**last week**_ can often be difficult so WoW-Dashboard just _**takes over all your tasks**_
+  Remembering the tasks of _**last week**_ can often be difficult so WoW-Dashboard just _**takes over all your tasks**_
   from week to week. <br >
   <br />
-  In the _**future WoW-Dashboard**_ should get a _**server**_ and will proccess _**a lot of data**_ from the
+  In the _**future WoW-Dashboard**_ should get a _**server**_ and will process _**a lot of data**_ from the
   _**WoW-APi**_ such as _**Achievements, WoW-Token History, Character Infos**_ and it will even be possible
   to _**automatically**_ detect what tasks you have done.
 
@@ -98,7 +98,7 @@
 
 <h3 id="installation">2. Installation and Setup</h3>
 
-* If you don't already have installed _**python 3.10.x**_ or higher get it from [![python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)](https://www.python.org/downloads)
+* If you haven't already installed _**python 3.10.x**_ or higher, get it from [![python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)](https://www.python.org/downloads)
 
 <br />
 
@@ -136,7 +136,7 @@
 <h3 id="about_me">3. About me</h3>
 
 * My main language is _**German**_ but obviously here I prefer using _**English**_
-  so please understand that my English is not the yellow from the egg.
+  so please understand that my English is not "the yellow from the egg".
 
 
 * My public _**GitHub**_ statistics: <br />
